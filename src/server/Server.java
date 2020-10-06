@@ -1,9 +1,6 @@
 package server;
 
-import handlers.ClearHandler;
-import handlers.FillHandler;
-import handlers.LoginHandler;
-import handlers.RegisterHandler;
+import handlers.*;
 
 /**
  * The Family Map server.
@@ -11,10 +8,12 @@ import handlers.RegisterHandler;
 public class Server {
 	public static void main(String[] args) {
 		// Instantiate handlers
+		RegisterHandler registerHandler = new RegisterHandler();
 		LoginHandler loginHandler = new LoginHandler();
 		ClearHandler clearHandler = new ClearHandler();
+		LoadHandler loadHandler = new LoadHandler();
 		FillHandler fillHandler = new FillHandler();
-		RegisterHandler registerHandler = new RegisterHandler();
+		FetchDataHandler fetchDataHandler = new FetchDataHandler();
 		
 		// Set up run loop
 	}

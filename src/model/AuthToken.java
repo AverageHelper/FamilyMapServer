@@ -27,16 +27,32 @@ public class AuthToken {
 		return id;
 	}
 	
+	/**
+	 * Sets a new <code>id</code> on the auth token.
+	 * @param id The new ID.
+	 * @throws IllegalArgumentException If <code>id</code> is empty.
+	 */
 	public void setId(@NotNull String id) {
-		this.id=id;
+		if (id.isEmpty()) {
+			throw new IllegalArgumentException("id parameter must not be empty");
+		}
+		this.id = id;
 	}
 	
 	public @NotNull String getUserId() {
 		return userId;
 	}
 	
+	/**
+	 * Sets a new <code>userId</code> on the auth token.
+	 * @param userId The new user ID.
+	 * @throws IllegalArgumentException If <code>userId</code> is empty.
+	 */
 	public void setUserId(@NotNull String userId) {
-		this.userId=userId;
+		if (userId.isEmpty()) {
+			throw new IllegalArgumentException("userId parameter must not be empty");
+		}
+		this.userId = userId;
 	}
 	
 	public int getCreatedAt() {
@@ -44,7 +60,7 @@ public class AuthToken {
 	}
 	
 	public void setCreatedAt(int createdAt) {
-		this.createdAt=createdAt;
+		this.createdAt = createdAt;
 	}
 	
 	public boolean isValid() {
@@ -52,6 +68,6 @@ public class AuthToken {
 	}
 	
 	public void setValid(boolean valid) {
-		isValid=valid;
+		isValid = valid;
 	}
 }
