@@ -3,6 +3,7 @@ package dao;
 import org.jetbrains.annotations.NotNull;
 
 public enum TableName {
+	// Defined by the database schema
 	AUTH_TOKEN("AuthToken"),
 	EVENT("Event"),
 	PERSON("Person"),

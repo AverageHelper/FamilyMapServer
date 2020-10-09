@@ -3,12 +3,23 @@ package dao;
 import model.Event;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+
 /**
  * An object that manages the reading and writing of Event data in the database.
  */
 public class EventDao {
+	private final Connection connection;
 	private static @NotNull TableName tableName() {
 		return TableName.EVENT;
+	}
+	
+	/**
+	 * Creates an <code>EventDao</code> object.
+	 * @param connection The database connection to use to perform access-related tasks.
+	 */
+	public EventDao(Connection connection) {
+		this.connection = connection;
 	}
 	
 	/**
@@ -16,9 +27,9 @@ public class EventDao {
 	 *
 	 * @param id The event's unique identifier.
 	 * @return A fully realized <code>Event</code> object if the user was found.
-	 * @throws Exception An exception if the read fails.
+	 * @throws DataAccessException An exception if the read fails.
 	 */
-	static @NotNull Event readWithId(@NotNull String id) throws Exception {
+	static @NotNull Event readWithId(@NotNull String id) throws DataAccessException {
 		return null;
 	}
 	

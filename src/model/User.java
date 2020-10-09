@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A representation of a unique Family Map user.
  */
-public class User {
+public class User implements ModelData {
 	private @NotNull String id;
 	private @NotNull String username;
 	private @NotNull String passwordHash;
@@ -13,6 +13,15 @@ public class User {
 	private @NotNull String lastName;
 	private @NotNull Gender gender;
 	
+	/**
+	 * Creates a <code>User</code> object.
+	 * @param id The person's unique ID.
+	 * @param username The user's unique username.
+	 * @param passwordHash The hash of the user's password.
+	 * @param firstName The person's first name.
+	 * @param lastName The person's last name.
+	 * @param gender The person's gender.
+	 */
 	public User(
 		@NotNull String id,
 		@NotNull String username,

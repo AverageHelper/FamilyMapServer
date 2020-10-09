@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A representation of a person connected to a user and a life event.
  */
-public class Person {
+public class Person implements ModelData {
 	private @NotNull String id;
 	private @NotNull String userId;
 	private @NotNull String firstName;
@@ -16,6 +16,17 @@ public class Person {
 	private @Nullable String motherId;
 	private @Nullable String spouseId;
 	
+	/**
+	 * Creates a <code>Person</code> object.
+	 * @param id The person's unique ID.
+	 * @param userId The unique ID of the user who created this person.
+	 * @param firstName The person's first name.
+	 * @param lastName The person's last name.
+	 * @param gender The person's gender.
+	 * @param fatherId The ID of the person's father.
+	 * @param motherId The ID of the person's mother.
+	 * @param spouseId The ID of the person's spouse.
+	 */
 	public Person(
 		@NotNull String id,
 		@NotNull String userId,

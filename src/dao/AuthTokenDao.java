@@ -3,12 +3,23 @@ package dao;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Connection;
+
 /**
  * An object that manages the reading and writing of AuthToken data in the database.
  */
 public class AuthTokenDao {
+	private final Connection connection;
 	private static @NotNull TableName tableName() {
 		return TableName.AUTH_TOKEN;
+	}
+	
+	/**
+	 * Creates an <code>AuthTokenDao</code> object.
+	 * @param connection The database connection to use to perform access-related tasks.
+	 */
+	public AuthTokenDao(Connection connection) {
+		this.connection = connection;
 	}
 	
 	/**
@@ -16,9 +27,9 @@ public class AuthTokenDao {
 	 *
 	 * @param id The token's unique identifier.
 	 * @return A fully realized <code>AuthToken</code> object if the user was found.
-	 * @throws Exception An exception if the read fails.
+	 * @throws DataAccessException An exception if the read fails.
 	 */
-	static @NotNull AuthToken readWithId(@NotNull String id) throws Exception {
+	static @NotNull AuthToken readWithId(@NotNull String id) throws DataAccessException {
 		return null;
 	}
 	

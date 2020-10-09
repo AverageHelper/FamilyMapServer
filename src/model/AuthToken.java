@@ -5,12 +5,19 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An authorization token. A valid authorization token grants access to a user's data.
  */
-public class AuthToken {
+public class AuthToken implements ModelData {
 	private @NotNull String id;
 	private @NotNull String userId;
 	private int createdAt;
 	private boolean isValid;
 	
+	/**
+	 * Creates an <code>AuthToken</code> object.
+	 * @param id The token string.
+	 * @param userId The unique ID of the user for whom this token permits access.
+	 * @param createdAt The time of the token's creation in seconds from the reference date.
+	 * @param isValid Whether the token is valid.
+	 */
 	public AuthToken(
 		@NotNull String id,
 		@NotNull String userId,

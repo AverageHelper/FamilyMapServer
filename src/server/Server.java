@@ -15,6 +15,10 @@ public class Server {
 		FillHandler fillHandler = new FillHandler();
 		FetchDataHandler fetchDataHandler = new FetchDataHandler();
 		
-		// Set up run loop
+		// HTTP stuff?
+		
+		// Get the request path
+		// Figure out the appropriate handler
+		// Make sure we've got the right parameters
 	}
 }

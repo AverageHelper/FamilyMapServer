@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A representation of a life event.
  */
-public class Event {
+public class Event implements ModelData {
 	private @NotNull String id;
 	private @NotNull String userId;
 	private @NotNull String personId;
@@ -17,6 +17,18 @@ public class Event {
 	private @NotNull EventType eventType;
 	private int year;
 	
+	/**
+	 * Creates an <code>Event</code> object.
+	 * @param id The event's unique ID.
+	 * @param userId The unique ID of the user who created this event.
+	 * @param personId The unique ID of the person whom this event describes.
+	 * @param latitude The event's latitudinal coordinate.
+	 * @param longitude The event's longitudinal coordinate.
+	 * @param country The country in which the event took place.
+	 * @param city The city in which the event took place.
+	 * @param eventType The type of life event this record describes.
+	 * @param year The year on the Gregorian calendar in which this event took place.
+	 */
 	public Event(
 		@NotNull String id,
 		@NotNull String userId,
