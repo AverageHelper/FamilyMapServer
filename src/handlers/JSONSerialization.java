@@ -8,7 +8,7 @@ import com.google.gson.*;
  *
  * This class also includes a static <code>fromJson</code> helper to instantiate objects of arbitrary types from JSON data.
  */
-public class JSONConvertible {
+public class JSONSerialization {
 	/**
 	 * @return A JSON string representing the object.
 	 */
