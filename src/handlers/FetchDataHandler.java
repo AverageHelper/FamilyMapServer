@@ -1,5 +1,7 @@
 package handlers;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import dao.TableName;
 import model.User;
 import org.jetbrains.annotations.NotNull;
@@ -9,10 +11,18 @@ import services.FetchDataFailureReason;
 import services.FetchDataResult;
 import services.FetchDataService;
 
+import java.io.IOException;
+
 /**
  * An object that handles multiple data-fetch requests.
  */
-public class FetchDataHandler {
+public class FetchDataHandler implements HttpHandler {
+	
+	@Override
+	public void handle(HttpExchange exchange) throws IOException {
+		// Construct and return the HTTP response
+	}
+	
 	/**
 	 * Attempts to fetch data about a user with the given <code>id</code>.
 	 * @param id The ID of the user to fetch.

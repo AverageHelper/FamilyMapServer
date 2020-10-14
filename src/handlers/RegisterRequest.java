@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Data formatted to request the creation of a new user in the database and a new authorization token.
  */
-public class RegisterRequest {
+public class RegisterRequest extends JSONConvertible {
 	private final @NotNull String username;
 	private final @NotNull String password;
 	private final @NotNull String firstName;

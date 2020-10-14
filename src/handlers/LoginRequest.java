@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Data formatted to request an authorization token from the server.
  */
-public class LoginRequest {
+public class LoginRequest extends JSONConvertible {
 	private final @NotNull String username;
 	private final @NotNull String password;
 	

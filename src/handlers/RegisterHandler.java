@@ -1,5 +1,7 @@
 package handlers;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import model.AuthToken;
 import model.Gender;
 import org.jetbrains.annotations.NotNull;
@@ -8,10 +10,18 @@ import services.RegisterFailureReason;
 import services.RegisterResult;
 import services.RegisterService;
 
+import java.io.IOException;
+
 /**
  * An object that handles multiple user registration requests.
  */
-public class RegisterHandler {
+public class RegisterHandler implements HttpHandler {
+	
+	@Override
+	public void handle(HttpExchange exchange) throws IOException {
+		// Construct and return the HTTP response
+	}
+	
 	/**
 	 * Attempts to create a new user in the database and get an authentication token for the user.
 	 * @param username The user's identifying name. This must be different from all other usernames.

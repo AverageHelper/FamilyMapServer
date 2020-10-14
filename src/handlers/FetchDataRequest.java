@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Data formatted to request a single data object from the server.
  */
-public class FetchDataRequest {
+public class FetchDataRequest extends JSONConvertible {
 	private final @NotNull TableName tableName;
 	private @Nullable String id;
 	
