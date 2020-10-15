@@ -12,7 +12,6 @@ import java.sql.Connection;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventDaoTest {
-	
 	private Database db;
 	private EventDao eventDao;
 	private Event testEvent;

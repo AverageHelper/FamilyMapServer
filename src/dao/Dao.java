@@ -1,6 +1,5 @@
 package dao;
 
-import model.Event;
 import model.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
