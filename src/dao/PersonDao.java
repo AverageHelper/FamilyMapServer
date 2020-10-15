@@ -10,10 +10,6 @@ import java.sql.Connection;
  * An object that manages the reading and writing of <code>Person</code> records in the database.
  */
 public class PersonDao extends Dao<Person> {
-	private static @NotNull TableName tableName() {
-		return TableName.PERSON;
-	}
-	
 	/**
 	 * Creates a <code>PersonDao</code> object.
 	 *
@@ -24,6 +20,11 @@ public class PersonDao extends Dao<Person> {
 	}
 	
 	@Override
+	protected @NotNull DatabaseTable table() {
+		return DatabaseTable.PERSON;
+	}
+	
+	@Override
 	public void insert(@NotNull Person record) throws DataAccessException {
 	
 	}
@@ -31,10 +32,5 @@ public class PersonDao extends Dao<Person> {
 	@Override
 	public @Nullable Person find(@NotNull String id) throws DataAccessException {
 		return null;
-	}
-	
-	@Override
-	public void delete(@NotNull String id) throws DataAccessException {
-	
 	}
 }

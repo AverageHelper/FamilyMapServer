@@ -20,7 +20,7 @@ class GenderTest {
 	@ParameterizedTest
 	@MethodSource("provideCasesForMatchingStringValues")
 	void case_hasMatchingStringValue(Gender gender, String value) {
-		assertEquals(gender.getValue(), value);
+		assertEquals(value, gender.getValue());
 	}
 	
 	@ParameterizedTest
@@ -28,7 +28,7 @@ class GenderTest {
 	void createsCasesFromStringValue(Gender expected, String value) {
 		Gender result = Gender.fromValue(value);
 		assertNotNull(result);
-		assertEquals(result, expected);
+		assertEquals(expected, result);
 	}
 	
 	@Test

@@ -1,6 +1,6 @@
 package handlers;
 
-import dao.TableName;
+import dao.DatabaseTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,24 +8,24 @@ import org.jetbrains.annotations.Nullable;
  * Data formatted to request a single data object from the server.
  */
 public class FetchDataRequest extends JSONSerialization {
-	private final @NotNull TableName tableName;
+	private final @NotNull DatabaseTable databaseTable;
 	private @Nullable String id;
 	
 	// TODO: Add more fields to describe the data to be fetched, how it ought to be sorted, etc.
 	
 	/**
 	 * Creates a <code>FetchDataRequest</code> object.
-	 * @param tableName The name of the type of data to fetch from the database.
+	 * @param databaseTable The name of the type of data to fetch from the database.
 	 */
-	public FetchDataRequest(@NotNull TableName tableName) {
-		this.tableName = tableName;
+	public FetchDataRequest(@NotNull DatabaseTable databaseTable) {
+		this.databaseTable = databaseTable;
 	}
 	
 	/**
 	 * @return The type of data to be fetched.
 	 */
-	public @NotNull TableName getTableName() {
-		return tableName;
+	public @NotNull DatabaseTable getTable() {
+		return databaseTable;
 	}
 	
 	/**

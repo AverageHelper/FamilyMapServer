@@ -3,6 +3,8 @@ package model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * A representation of a person connected to a user and a life event.
  */
@@ -110,5 +112,25 @@ public class Person implements ModelData {
 	
 	public void setSpouseId(@Nullable String spouseId) {
 		this.spouseId = spouseId;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Person person = (Person) o;
+		return getId().equals(person.getId()) &&
+			getAssociatedUsername().equals(person.getAssociatedUsername()) &&
+			getFirstName().equals(person.getFirstName()) &&
+			getLastName().equals(person.getLastName()) &&
+			getGender() == person.getGender() &&
+			Objects.equals(getFatherId(), person.getFatherId()) &&
+			Objects.equals(getMotherId(), person.getMotherId()) &&
+			Objects.equals(getSpouseId(), person.getSpouseId());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getAssociatedUsername(), getFirstName(), getLastName(), getGender(), getFatherId(), getMotherId(), getSpouseId());
 	}
 }

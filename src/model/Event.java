@@ -3,6 +3,8 @@ package model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * A representation of a life event.
  */
@@ -64,7 +66,7 @@ public class Event implements ModelData {
 		return associatedUsername;
 	}
 	
-	public void setAssociatedUsername(@NotNull String userId) {
+	public void setAssociatedUsername(@NotNull String associatedUsername) {
 		this.associatedUsername = associatedUsername;
 	}
 	
@@ -122,5 +124,26 @@ public class Event implements ModelData {
 	
 	public void setYear(int year) {
 		this.year = year;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Event event = (Event) o;
+		return getYear() == event.getYear() &&
+			getId().equals(event.getId()) &&
+			getAssociatedUsername().equals(event.getAssociatedUsername()) &&
+			getPersonId().equals(event.getPersonId()) &&
+			Objects.equals(getLatitude(), event.getLatitude()) &&
+			Objects.equals(getLongitude(), event.getLongitude()) &&
+			Objects.equals(getCountry(), event.getCountry()) &&
+			Objects.equals(getCity(), event.getCity()) &&
+			getEventType() == event.getEventType();
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getAssociatedUsername(), getPersonId(), getLatitude(), getLongitude(), getCountry(), getCity(), getEventType(), getYear());
 	}
 }

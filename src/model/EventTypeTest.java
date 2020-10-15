@@ -23,7 +23,7 @@ class EventTypeTest {
 	@ParameterizedTest
 	@MethodSource("provideCasesForMatchingStringValues")
 	void case_hasMatchingStringValue(EventType event, String value) {
-		assertEquals(event.getValue(), value);
+		assertEquals(value, event.getValue());
 	}
 	
 	@ParameterizedTest
@@ -31,7 +31,7 @@ class EventTypeTest {
 	void createsCasesFromStringValue(EventType expected, String value) {
 		EventType result = EventType.fromValue(value);
 		assertNotNull(result);
-		assertEquals(result, expected);
+		assertEquals(expected, result);
 	}
 	
 	@Test

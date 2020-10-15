@@ -3,6 +3,8 @@ package model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * A representation of a unique Family Map user.
  */
@@ -102,5 +104,24 @@ public class User implements ModelData {
 	
 	public void setPersonId(@Nullable String personId) {
 		this.personId = personId;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		User user = (User) o;
+		return getUsername().equals(user.getUsername()) &&
+			getPassword().equals(user.getPassword()) &&
+			getEmail().equals(user.getEmail()) &&
+			getFirstName().equals(user.getFirstName()) &&
+			getLastName().equals(user.getLastName()) &&
+			getGender() == user.getGender() &&
+			Objects.equals(getPersonId(), user.getPersonId());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(getUsername(), getPassword(), getEmail(), getFirstName(), getLastName(), getGender(), getPersonId());
 	}
 }

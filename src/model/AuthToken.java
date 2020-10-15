@@ -2,6 +2,8 @@ package model;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * An authorization token. A valid authorization token grants access to a user's data.
  */
@@ -77,5 +79,21 @@ public class AuthToken implements ModelData {
 	
 	public void setValid(boolean valid) {
 		isValid = valid;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		AuthToken authToken = (AuthToken) o;
+		return getCreatedAt() == authToken.getCreatedAt() &&
+			isValid() == authToken.isValid() &&
+			getId().equals(authToken.getId()) &&
+			getAssociatedUsername().equals(authToken.getAssociatedUsername());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(), getAssociatedUsername(), getCreatedAt(), isValid());
 	}
 }

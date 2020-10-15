@@ -2,7 +2,7 @@ package handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import dao.TableName;
+import dao.DatabaseTable;
 import model.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +31,7 @@ public class FetchDataHandler implements HttpHandler {
 	 */
 	public @Nullable User getUserWithId(@NotNull String id) throws FetchDataFailureException {
 		FetchDataService service = new FetchDataService();
-		FetchDataRequest request = new FetchDataRequest(TableName.USER);
+		FetchDataRequest request = new FetchDataRequest(DatabaseTable.USER);
 		FetchDataResult<User> result = service.fetch(request);
 		
 		if (result.getFailureReason() == FetchDataFailureReason.NOT_FOUND) {

@@ -7,5 +7,8 @@ import org.jetbrains.annotations.NotNull;
  * @param <ID> A type representing the stable identity of the entity associated with an instance.
  */
 public interface Identifiable<ID> {
+	/**
+	 * @return The stable identity of the entity associated with this instance.
+	 */
 	public @NotNull ID getId();
 }

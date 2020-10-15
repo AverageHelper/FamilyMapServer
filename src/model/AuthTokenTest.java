@@ -20,7 +20,7 @@ class AuthTokenTest {
 	
 	@Test
 	void getId_shouldReturnTheInitialId() {
-		assertEquals(authToken.getId(), "token_id");
+		assertEquals("token_id", authToken.getId());
 	}
 	
 	@ParameterizedTest
