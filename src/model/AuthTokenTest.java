@@ -15,7 +15,7 @@ class AuthTokenTest {
 	
 	@BeforeEach
 	void setUp() {
-		authToken = new AuthToken("token_id", "token_userId", 42, true);
+		authToken = new AuthToken("token_id", "token_user", 42, true);
 	}
 	
 	@Test
@@ -38,22 +38,22 @@ class AuthTokenTest {
 	}
 	
 	@Test
-	void getUserId_shouldReturnTheInitialUserId() {
-		assertEquals(authToken.getUserId(), "token_userId");
+	void getUserId_shouldReturnTheInitialAssocUsername() {
+		assertEquals(authToken.getAssociatedUsername(), "token_user");
 	}
 	
 	@ParameterizedTest
-	@ValueSource(strings = {"new_userId", "token_userId", "CAPS", "$@%*"})
-	void setUserId_shouldChangeTheStoredUserId(String newId) {
-		authToken.setUserId(newId);
-		assertEquals(authToken.getUserId(), newId);
+	@ValueSource(strings = {"new_userId", "token_user", "CAPS", "$@%*"})
+	void setUserId_shouldChangeTheStoredAssocUsername(String newId) {
+		authToken.setAssociatedUsername(newId);
+		assertEquals(authToken.getAssociatedUsername(), newId);
 	}
 	
 	@ParameterizedTest
 	@NullSource
 	@EmptySource
 	void setUserId_shouldFailToSetEmptyUserId(String newId) {
-		assertThrows(IllegalArgumentException.class, () -> authToken.setUserId(newId));
+		assertThrows(IllegalArgumentException.class, () -> authToken.setAssociatedUsername(newId));
 	}
 	
 	@Test

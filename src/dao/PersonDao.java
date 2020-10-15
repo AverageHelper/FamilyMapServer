@@ -2,54 +2,39 @@ package dao;
 
 import model.Person;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 
 /**
- * An object that manages the reading and writing of Person data in the database.
+ * An object that manages the reading and writing of <code>Person</code> records in the database.
  */
-public class PersonDao {
-	private final Connection connection;
+public class PersonDao extends Dao<Person> {
 	private static @NotNull TableName tableName() {
 		return TableName.PERSON;
 	}
 	
 	/**
 	 * Creates a <code>PersonDao</code> object.
+	 *
 	 * @param connection The database connection to use to perform access-related tasks.
 	 */
 	public PersonDao(Connection connection) {
-		this.connection = connection;
+		super(connection);
 	}
 	
-	/**
-	 * Attempts to read from the database a Person record with the given <code>id</code>.
-	 *
-	 * @param id The person's unique identifier.
-	 * @return A fully realized <code>Person</code> object if the user was found.
-	 * @throws DataAccessException An exception if the read fails.
-	 */
-	static @NotNull Person readWithId(@NotNull String id) throws DataAccessException {
+	@Override
+	public void insert(@NotNull Person record) throws DataAccessException {
+	
+	}
+	
+	@Override
+	public @Nullable Person find(@NotNull String id) throws DataAccessException {
 		return null;
 	}
 	
-	/**
-	 * Attempts to write the person record to the database.
-	 *
-	 * @param person The person data to write.
-	 * @throws Exception An exception if the write fails.
-	 */
-	static void write(@NotNull Person person) throws Exception {
-	
-	}
-	
-	/**
-	 * Attempts to remove from the database a given Person object.
-	 *
-	 * @param person The person to delete.
-	 * @throws Exception An exception if the write fails.
-	 */
-	static void delete(@NotNull Person person) throws Exception {
+	@Override
+	public void delete(@NotNull String id) throws DataAccessException {
 	
 	}
 }

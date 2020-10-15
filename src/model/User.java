@@ -1,49 +1,51 @@
 package model;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A representation of a unique Family Map user.
  */
 public class User implements ModelData {
-	private @NotNull String id;
 	private @NotNull String username;
-	private @NotNull String passwordHash;
+	private @NotNull String password;
+	private @NotNull String email;
 	private @NotNull String firstName;
 	private @NotNull String lastName;
 	private @NotNull Gender gender;
+	private @Nullable String personId;
 	
 	/**
 	 * Creates a <code>User</code> object.
-	 * @param id The person's unique ID.
 	 * @param username The user's unique username.
-	 * @param passwordHash The hash of the user's password.
+	 * @param password The hash of the user's password.
+	 * @param email The user's email address.
 	 * @param firstName The person's first name.
 	 * @param lastName The person's last name.
 	 * @param gender The person's gender.
+	 * @param personId The user's associated Person entry.
 	 */
 	public User(
-		@NotNull String id,
 		@NotNull String username,
-		@NotNull String passwordHash,
+		@NotNull String password,
+		@NotNull String email,
 		@NotNull String firstName,
 		@NotNull String lastName,
-		@NotNull Gender gender
+		@NotNull Gender gender,
+		@Nullable String personId
 	) {
-		this.id = id;
 		this.username = username;
-		this.passwordHash = passwordHash;
+		this.email = email;
+		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
+		this.personId = personId;
 	}
 	
+	@Override
 	public @NotNull String getId() {
-		return id;
-	}
-	
-	public void setId(@NotNull String id) {
-		this.id = id;
+		return username;
 	}
 	
 	public @NotNull String getUsername() {
@@ -54,12 +56,20 @@ public class User implements ModelData {
 		this.username = username;
 	}
 	
-	public @NotNull String getPasswordHash() {
-		return passwordHash;
+	public @NotNull String getPassword() {
+		return password;
 	}
 	
-	public void setPasswordHash(@NotNull String passwordHash) {
-		this.passwordHash = passwordHash;
+	public void setPassword(@NotNull String password) {
+		this.password = password;
+	}
+	
+	public @NotNull String getEmail() {
+		return this.email;
+	}
+	
+	public void setEmail(@NotNull String email) {
+		this.email = email;
 	}
 	
 	public @NotNull String getFirstName() {
@@ -84,5 +94,13 @@ public class User implements ModelData {
 	
 	public void setGender(@NotNull Gender gender) {
 		this.gender = gender;
+	}
+	
+	public @Nullable String getPersonId() {
+		return personId;
+	}
+	
+	public void setPersonId(@Nullable String personId) {
+		this.personId = personId;
 	}
 }

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Event implements ModelData {
 	private @NotNull String id;
-	private @NotNull String userId;
+	private @NotNull String associatedUsername;
 	private @NotNull String personId;
 	private @Nullable Double latitude;
 	private @Nullable Double longitude;
@@ -20,7 +20,7 @@ public class Event implements ModelData {
 	/**
 	 * Creates an <code>Event</code> object.
 	 * @param id The event's unique ID.
-	 * @param userId The unique ID of the user who created this event.
+	 * @param associatedUsername The unique ID of the user who created this event.
 	 * @param personId The unique ID of the person whom this event describes.
 	 * @param latitude The event's latitudinal coordinate.
 	 * @param longitude The event's longitudinal coordinate.
@@ -31,7 +31,7 @@ public class Event implements ModelData {
 	 */
 	public Event(
 		@NotNull String id,
-		@NotNull String userId,
+		@NotNull String associatedUsername,
 		@NotNull String personId,
 		@Nullable Double latitude,
 		@Nullable Double longitude,
@@ -41,7 +41,7 @@ public class Event implements ModelData {
 		int year
 	) {
 		this.id = id;
-		this.userId = userId;
+		this.associatedUsername = associatedUsername;
 		this.personId = personId;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -51,6 +51,7 @@ public class Event implements ModelData {
 		this.year = year;
 	}
 	
+	@Override
 	public @NotNull String getId() {
 		return id;
 	}
@@ -59,12 +60,12 @@ public class Event implements ModelData {
 		this.id = id;
 	}
 	
-	public @NotNull String getUserId() {
-		return userId;
+	public @NotNull String getAssociatedUsername() {
+		return associatedUsername;
 	}
 	
-	public void setUserId(@NotNull String userId) {
-		this.userId=userId;
+	public void setAssociatedUsername(@NotNull String userId) {
+		this.associatedUsername = associatedUsername;
 	}
 	
 	public @NotNull String getPersonId() {
@@ -72,7 +73,7 @@ public class Event implements ModelData {
 	}
 	
 	public void setPersonId(@NotNull String personId) {
-		this.personId=personId;
+		this.personId = personId;
 	}
 	
 	public @Nullable Double getLatitude() {

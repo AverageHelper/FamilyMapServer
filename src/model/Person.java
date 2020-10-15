@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Person implements ModelData {
 	private @NotNull String id;
-	private @NotNull String userId;
+	private @NotNull String associatedUsername;
 	private @NotNull String firstName;
 	private @NotNull String lastName;
 	private @NotNull Gender gender;
@@ -19,7 +19,7 @@ public class Person implements ModelData {
 	/**
 	 * Creates a <code>Person</code> object.
 	 * @param id The person's unique ID.
-	 * @param userId The unique ID of the user who created this person.
+	 * @param associatedUsername The unique ID of the user who created this person.
 	 * @param firstName The person's first name.
 	 * @param lastName The person's last name.
 	 * @param gender The person's gender.
@@ -29,7 +29,7 @@ public class Person implements ModelData {
 	 */
 	public Person(
 		@NotNull String id,
-		@NotNull String userId,
+		@NotNull String associatedUsername,
 		@NotNull String firstName,
 		@NotNull String lastName,
 		@NotNull Gender gender,
@@ -38,7 +38,7 @@ public class Person implements ModelData {
 		@Nullable String spouseId
 	) {
 		this.id = id;
-		this.userId = userId;
+		this.associatedUsername = associatedUsername;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
@@ -47,6 +47,7 @@ public class Person implements ModelData {
 		this.spouseId = spouseId;
 	}
 	
+	@Override
 	public @NotNull String getId() {
 		return id;
 	}
@@ -55,12 +56,12 @@ public class Person implements ModelData {
 		this.id = id;
 	}
 	
-	public @NotNull String getUserId() {
-		return userId;
+	public @NotNull String getAssociatedUsername() {
+		return associatedUsername;
 	}
 	
-	public void setUserId(@NotNull String userId) {
-		this.userId = userId;
+	public void setAssociatedUsername(@NotNull String associatedUsername) {
+		this.associatedUsername = associatedUsername;
 	}
 	
 	public @NotNull String getFirstName() {

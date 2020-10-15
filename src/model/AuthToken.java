@@ -7,29 +7,30 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AuthToken implements ModelData {
 	private @NotNull String id;
-	private @NotNull String userId;
+	private @NotNull String associatedUsername;
 	private int createdAt;
 	private boolean isValid;
 	
 	/**
 	 * Creates an <code>AuthToken</code> object.
 	 * @param id The token string.
-	 * @param userId The unique ID of the user for whom this token permits access.
+	 * @param associatedUsername The unique ID of the user for whom this token permits access.
 	 * @param createdAt The time of the token's creation in seconds from the reference date.
 	 * @param isValid Whether the token is valid.
 	 */
 	public AuthToken(
 		@NotNull String id,
-		@NotNull String userId,
+		@NotNull String associatedUsername,
 		int createdAt,
 		boolean isValid
 	) {
 		this.id = id;
-		this.userId = userId;
+		this.associatedUsername = associatedUsername;
 		this.createdAt = createdAt;
 		this.isValid = isValid;
 	}
 	
+	@Override
 	public @NotNull String getId() {
 		return id;
 	}
@@ -46,20 +47,20 @@ public class AuthToken implements ModelData {
 		this.id = id;
 	}
 	
-	public @NotNull String getUserId() {
-		return userId;
+	public @NotNull String getAssociatedUsername() {
+		return associatedUsername;
 	}
 	
 	/**
 	 * Sets a new <code>userId</code> on the auth token.
-	 * @param userId The new user ID.
+	 * @param associatedUsername The new user ID.
 	 * @throws IllegalArgumentException If <code>userId</code> is empty.
 	 */
-	public void setUserId(@NotNull String userId) {
-		if (userId.isEmpty()) {
+	public void setAssociatedUsername(@NotNull String associatedUsername) {
+		if (associatedUsername.isEmpty()) {
 			throw new IllegalArgumentException("userId parameter must not be empty");
 		}
-		this.userId = userId;
+		this.associatedUsername = associatedUsername;
 	}
 	
 	public int getCreatedAt() {
