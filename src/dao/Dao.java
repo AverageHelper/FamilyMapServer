@@ -1,13 +1,11 @@
 package dao;
 
+import model.Event;
 import model.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Objects that extend this class manage the reading and writing of records in the database.
@@ -47,8 +45,46 @@ public abstract class Dao<T extends ModelData> {
 	 * @return A fully realized object of type <code>T</code>, or <code>null</code> if the record could not be found.
 	 * @throws DataAccessException An exception if the read fails.
 	 */
-	public abstract @Nullable T find(@NotNull String id) throws DataAccessException;
+	public @Nullable T find(@NotNull String id) throws DataAccessException {
+		ResultSet rs = null;
+		String sql = "SELECT * FROM " +
+			table().getName() +
+			" WHERE " +
+			table().getPrimaryKey() +
+			" = ?;";
+		
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setString(1, id);
+			rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				return buildRecordFromQueryResult(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DataAccessException("Error encountered while finding record: " + e.getMessage());
+			
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		// No event found with the given ID
+		return null;
+	}
 	
+	/**
+	 * Builds an instance of the model type from the given SQL query result set.
+	 * @param rs The result of a <code>SELECT</code> query.
+	 * @return An instance of <code>T</code>.
+	 * @throws SQLException An exception if the data is incorrectly structured.
+	 */
+	protected abstract @NotNull T buildRecordFromQueryResult(ResultSet rs) throws SQLException;
 	
 	
 	/**

@@ -58,53 +58,23 @@ public class EventDao extends Dao<Event> {
 		}
 	}
 	
-	@Override
-	public @Nullable Event find(@NotNull String id) throws DataAccessException {
-		ResultSet rs = null;
-		String sql = "SELECT * FROM " +
-			table().getName() +
-			" WHERE " +
-			table().getPrimaryKey() +
-			" = ?;";
-		
-		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-			stmt.setString(1, id);
-			rs = stmt.executeQuery();
-			
-			if (rs.next()) {
-				String eventTypeName = rs.getString("event_type");
-				EventType eventType = EventType.fromValue(eventTypeName);
-				if (eventType != null) {
-					return new Event(
-						rs.getString("id"),
-						rs.getString("associated_username"),
-						rs.getString("person_id"),
-						rs.getDouble("latitude"),
-						rs.getDouble("longitude"),
-						rs.getString("country"),
-						rs.getString("city"),
-						eventType,
-						rs.getInt("year")
-					);
-				} else {
-					throw new SQLIntegrityConstraintViolationException("No valid event_type found");
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DataAccessException("Error encountered while finding event: " + e.getMessage());
-			
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+	protected @NotNull Event buildRecordFromQueryResult(ResultSet rs) throws SQLException {
+		String eventTypeName = rs.getString("event_type");
+		EventType eventType = EventType.fromValue(eventTypeName);
+		if (eventType == null) {
+			throw new SQLIntegrityConstraintViolationException("No valid event_type found");
 		}
 		
-		// No event found with the given ID
-		return null;
+		return new Event(
+			rs.getString("id"),
+			rs.getString("associated_username"),
+			rs.getString("person_id"),
+			rs.getDouble("latitude"),
+			rs.getDouble("longitude"),
+			rs.getString("country"),
+			rs.getString("city"),
+			eventType,
+			rs.getInt("year")
+		);
 	}
 }

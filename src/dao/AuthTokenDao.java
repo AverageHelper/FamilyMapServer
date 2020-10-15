@@ -2,9 +2,10 @@ package dao;
 
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * An object that manages the reading and writing of <code>AuthToken</code> records in the database.
@@ -30,7 +31,7 @@ public class AuthTokenDao extends Dao<AuthToken> {
 	}
 	
 	@Override
-	public @Nullable AuthToken find(@NotNull String id) throws DataAccessException {
+	protected @NotNull AuthToken buildRecordFromQueryResult(ResultSet rs) throws SQLException {
 		return null;
 	}
 }

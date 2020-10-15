@@ -19,7 +19,7 @@ class EventDaoTest {
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		testEvent = new Event("event_id", "somebody", "karen", 35.9, 140.1, null, null, EventType.BIRTH, 2019);
+		testEvent = new Event("event_id", "somebody", "karen", 35.9, 140.1, "United States", "Provo", EventType.BIRTH, 2019);
 		
 		db = new Database();
 		Connection conn = db.getConnection();

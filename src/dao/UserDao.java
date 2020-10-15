@@ -2,9 +2,10 @@ package dao;
 
 import model.User;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * An object that manages the reading and writing of <code>User</code> records in the database.
@@ -30,7 +31,7 @@ public class UserDao extends Dao<User> {
 	}
 	
 	@Override
-	public @Nullable User find(@NotNull String id) throws DataAccessException {
+	protected @NotNull User buildRecordFromQueryResult(ResultSet rs) throws SQLException {
 		return null;
 	}
 }
