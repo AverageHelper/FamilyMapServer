@@ -20,12 +20,14 @@ public abstract class Dao<T extends ModelData> {
 	
 	
 	
+	
 	/**
 	 * The name of the database table associated with records managed by this DAO.
 	 *
 	 * @return A <code>DatabaseTable</code> instance that represents records' table name.
 	 */
 	protected abstract @NotNull DatabaseTable table();
+	
 	
 	
 	
@@ -36,6 +38,7 @@ public abstract class Dao<T extends ModelData> {
 	 * @throws DataAccessException An exception if the write fails.
 	 */
 	public abstract void insert(@NotNull T record) throws DataAccessException;
+	
 	
 	
 	
@@ -66,7 +69,7 @@ public abstract class Dao<T extends ModelData> {
 			rs = stmt.executeQuery();
 			
 			while (rs.next()) {
-				@NotNull T result = buildRecordFromQueryResult(rs);
+				@NotNull T result = recordFromQueryResult(rs);
 				results.add(result);
 			}
 		} catch (SQLException e) {
@@ -103,13 +106,47 @@ public abstract class Dao<T extends ModelData> {
 		return results.get(0);
 	}
 	
+	
+	
+	
 	/**
 	 * Builds an instance of the model type from the given SQL query result set.
+	 *
 	 * @param rs The result of a <code>SELECT</code> query.
 	 * @return An instance of <code>T</code>.
 	 * @throws SQLException An exception if the data is incorrectly structured.
 	 */
-	protected abstract @NotNull T buildRecordFromQueryResult(ResultSet rs) throws SQLException;
+	protected abstract @NotNull T recordFromQueryResult(ResultSet rs) throws SQLException;
+	
+	
+	
+	
+	
+	/**
+	 * Gets a string from the given result set. If the returned value is <code>null</code>,
+	 * an <code>SQLIntegrityConstraintViolationException</code> is thrown.
+	 *
+	 * @param rs The SQL result set.
+	 * @param columnLabel The column label where the string is stored.
+	 * @return The non-<code>null</code> value at the given column.
+	 * @throws SQLException An exception if there was a problem retrieving the value from the result set, or if the returned value was <code>null</code>.
+	 */
+	protected @NotNull String getNotNullString(
+		@NotNull ResultSet rs,
+		@NotNull String columnLabel
+	) throws SQLException {
+		String value = rs.getString(columnLabel);
+		if (value == null) {
+			throw new SQLIntegrityConstraintViolationException(
+				"No valid string for " +
+					columnLabel +
+					" found"
+			);
+		}
+		return value;
+	}
+	
+	
 	
 	
 	/**

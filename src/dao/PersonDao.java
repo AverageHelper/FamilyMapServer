@@ -47,18 +47,18 @@ public class PersonDao extends Dao<Person> {
 	}
 	
 	@Override
-	protected @NotNull Person buildRecordFromQueryResult(ResultSet rs) throws SQLException {
-		String genderValue = rs.getString("gender");
+	protected @NotNull Person recordFromQueryResult(ResultSet rs) throws SQLException {
+		String genderValue = getNotNullString(rs, "gender");
 		Gender gender = Gender.fromValue(genderValue);
 		if (gender == null) {
 			throw new SQLIntegrityConstraintViolationException("No valid event_type found");
 		}
 		
 		return new Person(
-			rs.getString("id"),
-			rs.getString("associated_username"),
-			rs.getString("first_name"),
-			rs.getString("last_name"),
+			getNotNullString(rs, "id"),
+			getNotNullString(rs, "associated_username"),
+			getNotNullString(rs, "first_name"),
+			getNotNullString(rs, "last_name"),
 			gender,
 			rs.getString("father_id"),
 			rs.getString("mother_id"),

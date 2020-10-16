@@ -58,17 +58,17 @@ public class EventDao extends Dao<Event> {
 		}
 	}
 	
-	protected @NotNull Event buildRecordFromQueryResult(ResultSet rs) throws SQLException {
-		String eventTypeName = rs.getString("event_type");
+	protected @NotNull Event recordFromQueryResult(ResultSet rs) throws SQLException {
+		String eventTypeName = getNotNullString(rs, "event_type");
 		EventType eventType = EventType.fromValue(eventTypeName);
 		if (eventType == null) {
 			throw new SQLIntegrityConstraintViolationException("No valid event_type found");
 		}
 		
 		return new Event(
-			rs.getString("id"),
-			rs.getString("associated_username"),
-			rs.getString("person_id"),
+			getNotNullString(rs, "id"),
+			getNotNullString(rs, "associated_username"),
+			getNotNullString(rs, "person_id"),
 			rs.getDouble("latitude"),
 			rs.getDouble("longitude"),
 			rs.getString("country"),

@@ -45,19 +45,19 @@ public class UserDao extends Dao<User> {
 	}
 	
 	@Override
-	protected @NotNull User buildRecordFromQueryResult(ResultSet rs) throws SQLException {
-		String genderValue = rs.getString("gender");
+	protected @NotNull User recordFromQueryResult(ResultSet rs) throws SQLException {
+		String genderValue = getNotNullString(rs, "gender");
 		Gender gender = Gender.fromValue(genderValue);
 		if (gender == null) {
 			throw new SQLIntegrityConstraintViolationException("No valid event_type found");
 		}
 		
 		return new User(
-			rs.getString("username"),
-			rs.getString("password"),
-			rs.getString("email"),
-			rs.getString("first_name"),
-			rs.getString("last_name"),
+			getNotNullString(rs, "username"),
+			getNotNullString(rs, "password"),
+			getNotNullString(rs, "email"),
+			getNotNullString(rs, "first_name"),
+			getNotNullString(rs, "last_name"),
 			gender,
 			rs.getString("person_id")
 		);

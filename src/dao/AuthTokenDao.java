@@ -41,12 +41,12 @@ public class AuthTokenDao extends Dao<AuthToken> {
 	}
 	
 	@Override
-	protected @NotNull AuthToken buildRecordFromQueryResult(ResultSet rs) throws SQLException {
+	protected @NotNull AuthToken recordFromQueryResult(ResultSet rs) throws SQLException {
 		long timestamp = rs.getLong("created_at");
 		java.util.Date createdAt = new java.util.Date(timestamp);
 		return new AuthToken(
-			rs.getString("id"),
-			rs.getString("associated_username"),
+			getNotNullString(rs, "id"),
+			getNotNullString(rs, "associated_username"),
 			createdAt,
 			rs.getBoolean("is_valid")
 		);
