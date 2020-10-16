@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Objects that extend this class manage the reading and writing of records in the database.
@@ -38,26 +40,34 @@ public abstract class Dao<T extends ModelData> {
 	
 	
 	/**
-	 * Attempts to fetch from the database a record with the given <code>id</code>.
+	 * Attempts to fetch from the database a list of records which have the given <code>value</code>
+	 * for the given <code>key</code>.
 	 *
-	 * @param id The value of the record's primary key.
-	 * @return A fully realized object of type <code>T</code>, or <code>null</code> if the record could not be found.
-	 * @throws DataAccessException An exception if the read fails.
+	 * @param column The table column by which to filter results.
+	 * @param value The value which the record should have at the specified <code>column</code> to match the filter.
+	 * @return A list of fully realized objects of type <code>T</code>.
+	 * @throws DataAccessException An exception if the read fails, or any of the objects could not be deserialized from the returned data.
 	 */
-	public @Nullable T find(@NotNull String id) throws DataAccessException {
+	protected @NotNull List<T> findMultiple(
+		@NotNull String column,
+		@NotNull String value
+	) throws DataAccessException {
+		List<T> results = new ArrayList<>();
+		
 		ResultSet rs = null;
 		String sql = "SELECT * FROM " +
 			table().getName() +
 			" WHERE " +
-			table().getPrimaryKey() +
+			column +
 			" = ?;";
 		
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-			stmt.setString(1, id);
+			stmt.setString(1, value);
 			rs = stmt.executeQuery();
 			
-			if (rs.next()) {
-				return buildRecordFromQueryResult(rs);
+			while (rs.next()) {
+				@NotNull T result = buildRecordFromQueryResult(rs);
+				results.add(result);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -73,8 +83,24 @@ public abstract class Dao<T extends ModelData> {
 			}
 		}
 		
-		// No event found with the given ID
-		return null;
+		return results;
+	}
+	
+	
+	
+	/**
+	 * Attempts to fetch from the database a record with the given <code>id</code>.
+	 *
+	 * @param id The value of the record's primary key.
+	 * @return A fully realized object of type <code>T</code>, or <code>null</code> if the record could not be found.
+	 * @throws DataAccessException An exception if the read fails, or the object could not be deserialized from the returned data.
+	 */
+	public @Nullable T find(@NotNull String id) throws DataAccessException {
+		List<T> results = findMultiple(table().getPrimaryKey(), id);
+		if (results.isEmpty()) {
+			return null;
+		}
+		return results.get(0);
 	}
 	
 	/**

@@ -5,6 +5,7 @@ import model.Person;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
+import java.util.List;
 
 /**
  * An object that manages the reading and writing of <code>Person</code> records in the database.
@@ -63,5 +64,16 @@ public class PersonDao extends Dao<Person> {
 			rs.getString("mother_id"),
 			rs.getString("spouse_id")
 		);
+	}
+	
+	/**
+	 * Attempts to fetch from the database a list of person records associated with a user with the given <code>username</code>.
+	 *
+	 * @param username The username of the user to which Person records should be associated to match the filter.
+	 * @return A list of fully realized <code>Person</code> objects.
+	 * @throws DataAccessException An exception if the read fails, or any of the objects could not be deserialized from the returned data.
+	 */
+	public @NotNull List<Person> findForUser(@NotNull String username) throws DataAccessException {
+		return findMultiple("associated_username", username);
 	}
 }

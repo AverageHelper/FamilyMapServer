@@ -17,7 +17,12 @@ class AuthTokenDaoTest {
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		testToken = new AuthToken("token_id", "some_user", 14000000, true);
+		testToken = new AuthToken(
+			"token_id",
+			"some_user",
+			14000000,
+			true
+		);
 		
 		db = new Database();
 		Connection conn = db.getConnection();
@@ -33,6 +38,8 @@ class AuthTokenDaoTest {
 		db.closeConnection(false);
 	}
 	
+	// - Insert
+	
 	@Test
 	void testInsert_addsToEmptyDatabase() throws DataAccessException {
 		authTokenDao.insert(testToken);
@@ -46,6 +53,8 @@ class AuthTokenDaoTest {
 		authTokenDao.insert(testToken);
 		assertThrows(DataAccessException.class, () -> authTokenDao.insert(testToken));
 	}
+	
+	// - Find
 	
 	@Test
 	void testFind_returnsExtantRecord() throws DataAccessException {
@@ -65,6 +74,8 @@ class AuthTokenDaoTest {
 	void testFind_returnsNullIfDatabaseEmpty() throws DataAccessException {
 		assertNull(authTokenDao.find(testToken.getId()));
 	}
+	
+	// - Delete
 	
 	@Test
 	void testDelete_removesExtantRecord() throws DataAccessException {
@@ -86,6 +97,8 @@ class AuthTokenDaoTest {
 		authTokenDao.delete(testToken.getId());
 		assertNull(authTokenDao.find(testToken.getId()), "SANITY FAIL: No test data was put in before delete, but it was found in the database");
 	}
+	
+	// - Clear All
 	
 	@Test
 	void testClearAll_doesNothingToEmptyDatabase() throws DataAccessException {

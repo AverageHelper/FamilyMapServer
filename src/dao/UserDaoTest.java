@@ -18,7 +18,15 @@ class UserDaoTest {
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		testUser = new User("test_user", "Pa$$w0rd", "test.user@example.com", "Test", "User", Gender.FEMALE, null);
+		testUser = new User(
+			"test_user",
+			"Pa$$w0rd",
+			"test.user@example.com",
+			"Test",
+			"User",
+			Gender.FEMALE,
+			null
+		);
 		
 		db = new Database();
 		Connection conn = db.getConnection();
@@ -34,6 +42,8 @@ class UserDaoTest {
 		db.closeConnection(false);
 	}
 	
+	// - Insert
+	
 	@Test
 	void testInsert_addsToEmptyDatabase() throws DataAccessException {
 		userDao.insert(testUser);
@@ -47,6 +57,8 @@ class UserDaoTest {
 		userDao.insert(testUser);
 		assertThrows(DataAccessException.class, () -> userDao.insert(testUser));
 	}
+	
+	// - Find
 	
 	@Test
 	void testFind_returnsExtantRecord() throws DataAccessException {
@@ -66,6 +78,8 @@ class UserDaoTest {
 	void testFind_returnsNullIfDatabaseEmpty() throws DataAccessException {
 		assertNull(userDao.find(testUser.getId()));
 	}
+	
+	// Delete
 	
 	@Test
 	void testDelete_removesExtantRecord() throws DataAccessException {
@@ -87,6 +101,8 @@ class UserDaoTest {
 		userDao.delete(testUser.getId());
 		assertNull(userDao.find(testUser.getId()), "SANITY FAIL: No test data was put in before delete, but it was found in the database");
 	}
+	
+	// Clear All
 	
 	@Test
 	void testClearAll_doesNothingToEmptyDatabase() throws DataAccessException {
