@@ -39,6 +39,13 @@ class AuthTokenDaoTest {
 		db.closeConnection(false);
 	}
 	
+	// - Meta
+	
+	@Test
+	void testDao_usesAuthTokenTable() {
+		assertEquals(DatabaseTable.AUTH_TOKEN, authTokenDao.table());
+	}
+	
 	// - Insert
 	
 	@Test

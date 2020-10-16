@@ -68,6 +68,13 @@ class PersonDaoTest {
 		db.closeConnection(false);
 	}
 	
+	// - Meta
+	
+	@Test
+	void testDao_usesPersonTable() {
+		assertEquals(DatabaseTable.PERSON, personDao.table());
+	}
+	
 	// - Insert
 	
 	@Test

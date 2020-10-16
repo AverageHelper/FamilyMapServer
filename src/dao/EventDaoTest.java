@@ -71,6 +71,13 @@ class EventDaoTest {
 		db.closeConnection(false);
 	}
 	
+	// - Meta
+	
+	@Test
+	void testDao_usesEventTable() {
+		assertEquals(DatabaseTable.EVENT, eventDao.table());
+	}
+	
 	// - Insert
 	
 	@Test

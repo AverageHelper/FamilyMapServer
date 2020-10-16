@@ -42,6 +42,13 @@ class UserDaoTest {
 		db.closeConnection(false);
 	}
 	
+	// - Meta
+	
+	@Test
+	void testDao_usesUserTable() {
+		assertEquals(DatabaseTable.USER, userDao.table());
+	}
+	
 	// - Insert
 	
 	@Test
