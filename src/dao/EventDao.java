@@ -3,7 +3,6 @@ package dao;
 import model.Event;
 import model.EventType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.List;

@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthTokenTest {
@@ -15,7 +17,12 @@ class AuthTokenTest {
 	
 	@BeforeEach
 	void setUp() {
-		authToken = new AuthToken("token_id", "token_user", 42, true);
+		authToken = new AuthToken(
+			"token_id",
+			"token_user",
+			new Date(42),
+			true
+		);
 	}
 	
 	@Test
@@ -27,7 +34,7 @@ class AuthTokenTest {
 	@ValueSource(strings = {"new_id", "token_id", "CAPS", "$@%*"})
 	void setId_shouldChangeStoredID(String newId) {
 		authToken.setId(newId);
-		assertEquals(authToken.getId(), newId);
+		assertEquals(newId, authToken.getId());
 	}
 	
 	@ParameterizedTest
@@ -39,14 +46,14 @@ class AuthTokenTest {
 	
 	@Test
 	void getUserId_shouldReturnTheInitialAssocUsername() {
-		assertEquals(authToken.getAssociatedUsername(), "token_user");
+		assertEquals("token_user", authToken.getAssociatedUsername());
 	}
 	
 	@ParameterizedTest
 	@ValueSource(strings = {"new_userId", "token_user", "CAPS", "$@%*"})
 	void setUserId_shouldChangeTheStoredAssocUsername(String newId) {
 		authToken.setAssociatedUsername(newId);
-		assertEquals(authToken.getAssociatedUsername(), newId);
+		assertEquals(newId, authToken.getAssociatedUsername());
 	}
 	
 	@ParameterizedTest
@@ -58,14 +65,14 @@ class AuthTokenTest {
 	
 	@Test
 	void getCreatedAt_shouldReturnTheInitialCreationTimestamp() {
-		assertEquals(authToken.getCreatedAt(), 42);
+		assertEquals(42, authToken.getCreatedAt().getTime());
 	}
 	
 	@ParameterizedTest
 	@ValueSource(ints = {0, -50, 120, Integer.MAX_VALUE, Integer.MIN_VALUE})
 	void setCreatedAt_shouldChangeTheCreationTimestamp(int timestamp) {
-		authToken.setCreatedAt(timestamp);
-		assertEquals(authToken.getCreatedAt(), timestamp);
+		authToken.setCreatedAt(new Date(timestamp));
+		assertEquals(timestamp, authToken.getCreatedAt().getTime());
 	}
 	
 	@Test

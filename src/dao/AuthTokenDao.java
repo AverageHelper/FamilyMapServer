@@ -31,7 +31,7 @@ public class AuthTokenDao extends Dao<AuthToken> {
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setString(1, record.getId());
 			stmt.setString(2, record.getAssociatedUsername());
-			stmt.setInt(3, record.getCreatedAt());
+			stmt.setLong(3, record.getCreatedAt().getTime());
 			stmt.setBoolean(4, record.isValid());
 			
 			stmt.executeUpdate();
@@ -42,10 +42,12 @@ public class AuthTokenDao extends Dao<AuthToken> {
 	
 	@Override
 	protected @NotNull AuthToken buildRecordFromQueryResult(ResultSet rs) throws SQLException {
+		long timestamp = rs.getLong("created_at");
+		java.util.Date createdAt = new java.util.Date(timestamp);
 		return new AuthToken(
 			rs.getString("id"),
 			rs.getString("associated_username"),
-			rs.getInt("created_at"),
+			createdAt,
 			rs.getBoolean("is_valid")
 		);
 	}

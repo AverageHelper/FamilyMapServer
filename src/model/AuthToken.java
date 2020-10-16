@@ -2,6 +2,7 @@ package model;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -10,20 +11,20 @@ import java.util.Objects;
 public class AuthToken implements ModelData {
 	private @NotNull String id;
 	private @NotNull String associatedUsername;
-	private int createdAt;
+	private @NotNull Date createdAt;
 	private boolean isValid;
 	
 	/**
 	 * Creates an <code>AuthToken</code> object.
 	 * @param id The token string.
 	 * @param associatedUsername The unique ID of the user for whom this token permits access.
-	 * @param createdAt The time of the token's creation in seconds from the reference date.
+	 * @param createdAt The time of the token's creation.
 	 * @param isValid Whether the token is valid.
 	 */
 	public AuthToken(
 		@NotNull String id,
 		@NotNull String associatedUsername,
-		int createdAt,
+		@NotNull Date createdAt,
 		boolean isValid
 	) {
 		this.id = id;
@@ -65,11 +66,11 @@ public class AuthToken implements ModelData {
 		this.associatedUsername = associatedUsername;
 	}
 	
-	public int getCreatedAt() {
+	public @NotNull Date getCreatedAt() {
 		return createdAt;
 	}
 	
-	public void setCreatedAt(int createdAt) {
+	public void setCreatedAt(@NotNull Date createdAt) {
 		this.createdAt = createdAt;
 	}
 	
@@ -86,7 +87,7 @@ public class AuthToken implements ModelData {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		AuthToken authToken = (AuthToken) o;
-		return getCreatedAt() == authToken.getCreatedAt() &&
+		return getCreatedAt().equals(authToken.getCreatedAt()) &&
 			isValid() == authToken.isValid() &&
 			getId().equals(authToken.getId()) &&
 			getAssociatedUsername().equals(authToken.getAssociatedUsername());
@@ -95,5 +96,15 @@ public class AuthToken implements ModelData {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getId(), getAssociatedUsername(), getCreatedAt(), isValid());
+	}
+	
+	@Override
+	public String toString() {
+		return "AuthToken{" +
+			"id='" + id + '\'' +
+			", associatedUsername='" + associatedUsername + '\'' +
+			", createdAt=" + createdAt +
+			", isValid=" + isValid +
+			'}';
 	}
 }

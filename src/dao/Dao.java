@@ -23,7 +23,7 @@ public abstract class Dao<T extends ModelData> {
 	/**
 	 * The name of the database table associated with records managed by this DAO.
 	 *
-	 * @return A <code>TableName</code> instance that represents records' table name.
+	 * @return A <code>DatabaseTable</code> instance that represents records' table name.
 	 */
 	protected abstract @NotNull DatabaseTable table();
 	

@@ -124,4 +124,17 @@ public class User implements ModelData {
 	public int hashCode() {
 		return Objects.hash(getUsername(), getPassword(), getEmail(), getFirstName(), getLastName(), getGender(), getPersonId());
 	}
+	
+	@Override
+	public String toString() {
+		return "User{" +
+			"username='" + username + '\'' +
+			", password='" + password + '\'' +
+			", email='" + email + '\'' +
+			", firstName='" + firstName + '\'' +
+			", lastName='" + lastName + '\'' +
+			", gender=" + gender +
+			", personId='" + personId + '\'' +
+			'}';
+	}
 }

@@ -146,4 +146,19 @@ public class Event implements ModelData {
 	public int hashCode() {
 		return Objects.hash(getId(), getAssociatedUsername(), getPersonId(), getLatitude(), getLongitude(), getCountry(), getCity(), getEventType(), getYear());
 	}
+	
+	@Override
+	public String toString() {
+		return "Event{" +
+			"id='" + id + '\'' +
+			", associatedUsername='" + associatedUsername + '\'' +
+			", personId='" + personId + '\'' +
+			", latitude=" + latitude +
+			", longitude=" + longitude +
+			", country='" + country + '\'' +
+			", city='" + city + '\'' +
+			", eventType=" + eventType +
+			", year=" + year +
+			'}';
+	}
 }

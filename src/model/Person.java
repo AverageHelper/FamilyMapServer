@@ -133,4 +133,18 @@ public class Person implements ModelData {
 	public int hashCode() {
 		return Objects.hash(getId(), getAssociatedUsername(), getFirstName(), getLastName(), getGender(), getFatherId(), getMotherId(), getSpouseId());
 	}
+	
+	@Override
+	public String toString() {
+		return "Person{" +
+			"id='" + id + '\'' +
+			", associatedUsername='" + associatedUsername + '\'' +
+			", firstName='" + firstName + '\'' +
+			", lastName='" + lastName + '\'' +
+			", gender=" + gender +
+			", fatherId='" + fatherId + '\'' +
+			", motherId='" + motherId + '\'' +
+			", spouseId='" + spouseId + '\'' +
+			'}';
+	}
 }
