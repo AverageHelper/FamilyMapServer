@@ -79,7 +79,8 @@ public class EventDao extends Dao<Event> {
 	}
 	
 	/**
-	 * Attempts to fetch from the database a list of events associated with a user with the given <code>username</code>.
+	 * Attempts to fetch from the database a list of events associated with a user with the given
+	 * <code>username</code>.
 	 *
 	 * @param username The username of the user to which Event records should be associated to match the filter.
 	 * @return A list of fully realized <code>Event</code> objects.
