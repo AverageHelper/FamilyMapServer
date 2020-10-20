@@ -15,7 +15,7 @@ import java.util.logging.*;
 public class Server {
 	
 	private static final int MAX_WAITING_CONNECTIONS = 12;
-	static Logger logger;
+	public static Logger logger;
 	
 	static {
 		try {
@@ -34,7 +34,7 @@ public class Server {
 		logger.setLevel(logLevel);
 		logger.setUseParentHandlers(false);
 		
-		Handler consoleHandler = new ConsoleHandler();
+		java.util.logging.Handler consoleHandler = new ConsoleHandler();
 		consoleHandler.setLevel(logLevel);
 		consoleHandler.setFormatter(new SimpleFormatter());
 		logger.addHandler(consoleHandler);

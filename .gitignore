@@ -1,4 +1,5 @@
 /database.db
 /docs/**
 /out/
-/familymap.sqlite
+/*.sqlite
+/log.txt

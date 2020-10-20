@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 public class ClearResult {
 	private final @Nullable ClearFailureReason failureReason;
 	
-	public ClearResult(@Nullable ClearFailureReason failureReason) {
-		this.failureReason = failureReason;
+	public ClearResult() {
+		this(null);
 	}
 	
-	public ClearResult() {
-		this.failureReason = null;
+	public ClearResult(@Nullable ClearFailureReason failureReason) {
+		this.failureReason = failureReason;
 	}
 	
 	/**

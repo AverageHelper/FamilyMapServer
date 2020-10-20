@@ -2,8 +2,11 @@ package handlers;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import dao.DataAccessException;
+import dao.Database;
+import org.jetbrains.annotations.NotNull;
 import services.ClearFailureException;
+import services.ClearFailureReason;
 import services.ClearResult;
 import services.ClearService;
 
@@ -13,7 +16,15 @@ import java.net.HttpURLConnection;
 /**
  * An object that handles multiple clear-database handlers.
  */
-public class ClearHandler implements HttpHandler {
+public class ClearHandler extends Handler {
+	
+	public ClearHandler() {
+		super();
+	}
+	
+	public ClearHandler(@NotNull Database database) {
+		super(database);
+	}
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
@@ -35,22 +46,36 @@ public class ClearHandler implements HttpHandler {
 						// Extract the provided auth token
 						String authToken = reqHeaders.getFirst(HEADER_KEY_AUTHORIZATION);
 						
-						// TODO: Verify that the auth token is in the database and is valid
+						// Ensure the token is valid
+						if (!authTokenIsValid(authToken)) {
+							throw new ClearFailureException(ClearFailureReason.UNAUTHENTICATED);
+						}
 						
 						this.clear();
 						success = true;
 					}
 				}
-			} catch (ClearFailureException exception) {
+			} catch (ClearFailureException e) {
 				// handle normal failures
-				switch (exception.getReason()) {
+				switch (e.getReason()) {
 					case UNIMPLEMENTED:
 						exchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAVAILABLE, 0);
+						
+					case UNAUTHENTICATED:
+						exchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAUTHORIZED, 0);
+						
+					case DATABASE:
+						exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
 				}
-				
-				if (success) {
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-				}
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+				exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+			}
+			
+			// We made it?
+			if (success) {
+				// We made it!
+				exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
 			}
 		} catch (IOException exception) {
 			System.out.println(exception.getMessage());
@@ -67,7 +92,7 @@ public class ClearHandler implements HttpHandler {
 	 */
 	public void clear() throws ClearFailureException {
 		ClearService service = new ClearService();
-		ClearResult result = service.clear();
+		ClearResult result = service.clear(database);
 		
 		if (result.getFailureReason() != null) {
 			throw new ClearFailureException(result.getFailureReason());
