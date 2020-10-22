@@ -9,7 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * A class that extends this class has access to the main database.
+ */
 public abstract class Handler implements HttpHandler {
 	
 	protected final @NotNull Database database;
@@ -71,11 +75,14 @@ public abstract class Handler implements HttpHandler {
 		if (authToken == null) {
 			return null;
 		}
-		AuthTokenDao dao = new AuthTokenDao(getDatabaseConnection());
-		AuthToken token = dao.find(authToken);
-		closeWithoutSaving();
-		if (token != null && token.isValid()) {
-			return token.getAssociatedUsername();
+		AtomicReference<AuthToken> token = new AtomicReference<>(null);
+		database.runTransaction(conn -> {
+			AuthTokenDao dao = new AuthTokenDao(getDatabaseConnection());
+			token.set(dao.find(authToken));
+			return false;
+		});
+		if (token.get() != null && token.get().isValid()) {
+			return token.get().getAssociatedUsername();
 		}
 		return null;
 	}

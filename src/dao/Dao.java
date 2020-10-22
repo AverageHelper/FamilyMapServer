@@ -3,6 +3,7 @@ package dao;
 import model.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.sqlite.SQLiteErrorCode;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public abstract class Dao<T extends ModelData> {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new DataAccessException("Error encountered while finding record: " + e.getMessage());
+			throw new DataAccessException(e, "Error encountered while finding record: " + e.getMessage());
 			
 		} finally {
 			if (rs != null) {
@@ -104,6 +105,33 @@ public abstract class Dao<T extends ModelData> {
 			return null;
 		}
 		return results.get(0);
+	}
+	
+	
+	/**
+	 * @return The number of records in the database table.
+	 * @throws DataAccessException An exception if the read fails.
+	 */
+	public int count() throws DataAccessException {
+		String sql = "SELECT COUNT(DISTINCT " +
+			table().getPrimaryKey() +
+			") FROM " +
+			table().getName();
+		
+		try (Statement stmt = connection.createStatement()) {
+			ResultSet rs = stmt.executeQuery(sql);
+			rs.next();
+			return rs.getInt(1);
+			
+		} catch (SQLException e) {
+			throw new DataAccessException(
+				e,
+				"Error encountered while reading table '" +
+					table().getName() +
+					"': "
+					+ e.getMessage()
+			);
+		}
 	}
 	
 	
@@ -168,7 +196,7 @@ public abstract class Dao<T extends ModelData> {
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new DataAccessException("Error encountered while deleting event: " + e.getMessage());
+			throw new DataAccessException(e, "Error encountered while deleting event: " + e.getMessage());
 		}
 	}
 	
@@ -187,6 +215,7 @@ public abstract class Dao<T extends ModelData> {
 			
 		} catch (SQLException e) {
 			throw new DataAccessException(
+				e,
 				"Error encountered while clearing table '" +
 					table().getName() +
 					"': "

@@ -1,7 +1,6 @@
 package handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import dao.DatabaseTable;
 import model.User;
 import org.jetbrains.annotations.NotNull;
@@ -14,9 +13,9 @@ import services.FetchDataService;
 import java.io.IOException;
 
 /**
- * An object that handles multiple data-fetch requests.
+ * An object that handles data-fetch requests.
  */
-public class FetchDataHandler implements HttpHandler {
+public class FetchDataHandler extends Handler {
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {

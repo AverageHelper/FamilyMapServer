@@ -36,7 +36,7 @@ public class AuthTokenDao extends Dao<AuthToken> {
 			
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-			throw new DataAccessException("Error encountered while inserting into the database: " + e.getMessage());
+			throw new DataAccessException(e, "Error encountered while inserting into the database: " + e.getMessage());
 		}
 	}
 	

@@ -1,7 +1,7 @@
 package handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import dao.DataAccessException;
 import model.AuthToken;
 import model.Gender;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +13,9 @@ import services.RegisterService;
 import java.io.IOException;
 
 /**
- * An object that handles multiple user registration requests.
+ * An object that handles user registration requests.
  */
-public class RegisterHandler implements HttpHandler {
+public class RegisterHandler extends Handler {
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
@@ -26,6 +26,7 @@ public class RegisterHandler implements HttpHandler {
 	 * Attempts to create a new user in the database and get an authentication token for the user.
 	 * @param username The user's identifying name. This must be different from all other usernames.
 	 * @param password The user's password.
+	 * @param email The user's email.
 	 * @param firstName The user's first name.
 	 * @param lastName The user's surname.
 	 * @param gender The user's gender.
@@ -36,16 +37,30 @@ public class RegisterHandler implements HttpHandler {
 	public @NotNull AuthToken register(
 		@NotNull String username,
 		@NotNull String password,
+		@NotNull String email,
 		@NotNull String firstName,
 		@NotNull String lastName,
 		@NotNull Gender gender
 	) throws RegisterFailureException {
-		RegisterService service = new RegisterService();
-		RegisterRequest request = new RegisterRequest(username, password, firstName, lastName, gender);
-		RegisterResult result = service.register(request);
+		RegisterRequest req = new RegisterRequest(
+			username,
+			password,
+			email,
+			firstName,
+			lastName,
+			gender
+		);
+		
+		RegisterService service = new RegisterService(database);
+		RegisterResult result;
+		try {
+			result = service.register(req);
+		} catch (DataAccessException e) {
+			throw new RegisterFailureException(RegisterFailureReason.DUPLICATE_USERNAME, e);
+		}
 		
 		if (result.getFailureReason() != null) {
-			throw new RegisterFailureException(result.getFailureReason());
+			throw new RegisterFailureException(result.getFailureReason(), null);
 		}
 		if (result.getToken() != null) {
 			return result.getToken();

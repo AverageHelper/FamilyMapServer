@@ -57,10 +57,9 @@ class EventDaoTest {
 		);
 		
 		db = new Database();
-		Connection conn = db.getConnection();
-		// Clear old data
 		db.clearTables();
 		
+		Connection conn = db.getConnection();
 		userDao = new UserDao(conn);
 		eventDao = new EventDao(conn);
 	}

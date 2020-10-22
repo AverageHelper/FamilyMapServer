@@ -9,10 +9,10 @@ import java.util.Objects;
  * An authorization token. A valid authorization token grants access to a user's data.
  */
 public class AuthToken implements ModelData {
-	private @NotNull String id;
-	private @NotNull String associatedUsername;
-	private @NotNull Date createdAt;
-	private boolean isValid;
+	private final @NotNull String id;
+	private final @NotNull String associatedUsername;
+	private final @NotNull Date createdAt;
+	private final boolean isValid;
 	
 	/**
 	 * Creates an <code>AuthToken</code> object.
@@ -27,6 +27,12 @@ public class AuthToken implements ModelData {
 		@NotNull Date createdAt,
 		boolean isValid
 	) {
+		if (id.isEmpty()) {
+			throw new IllegalArgumentException("'id' parameter must not be empty");
+		}
+		if (associatedUsername.isEmpty()) {
+			throw new IllegalArgumentException("userId parameter must not be empty");
+		}
 		this.id = id;
 		this.associatedUsername = associatedUsername;
 		this.createdAt = createdAt;
@@ -38,48 +44,16 @@ public class AuthToken implements ModelData {
 		return id;
 	}
 	
-	/**
-	 * Sets a new <code>id</code> on the auth token.
-	 * @param id The new ID.
-	 * @throws IllegalArgumentException If <code>id</code> is empty.
-	 */
-	public void setId(@NotNull String id) {
-		if (id.isEmpty()) {
-			throw new IllegalArgumentException("id parameter must not be empty");
-		}
-		this.id = id;
-	}
-	
 	public @NotNull String getAssociatedUsername() {
 		return associatedUsername;
-	}
-	
-	/**
-	 * Sets a new <code>userId</code> on the auth token.
-	 * @param associatedUsername The new user ID.
-	 * @throws IllegalArgumentException If <code>userId</code> is empty.
-	 */
-	public void setAssociatedUsername(@NotNull String associatedUsername) {
-		if (associatedUsername.isEmpty()) {
-			throw new IllegalArgumentException("userId parameter must not be empty");
-		}
-		this.associatedUsername = associatedUsername;
 	}
 	
 	public @NotNull Date getCreatedAt() {
 		return createdAt;
 	}
 	
-	public void setCreatedAt(@NotNull Date createdAt) {
-		this.createdAt = createdAt;
-	}
-	
 	public boolean isValid() {
 		return isValid;
-	}
-	
-	public void setValid(boolean valid) {
-		isValid = valid;
 	}
 	
 	@Override

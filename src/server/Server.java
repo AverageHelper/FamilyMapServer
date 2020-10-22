@@ -3,10 +3,12 @@ package server;
 import com.sun.net.httpserver.HttpServer;
 import handlers.*;
 import handlers.FileHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.MalformedParametersException;
 import java.net.InetSocketAddress;
+import java.util.Random;
 import java.util.logging.*;
 
 /**
@@ -46,6 +48,26 @@ public class Server {
 		fileHandler.setLevel(logLevel);
 		fileHandler.setFormatter(new SimpleFormatter());
 		logger.addHandler(fileHandler);
+	}
+	
+	public static @NotNull String randomString(int targetStringLength) {
+		int leftLimit = 97; // letter 'a'
+		int rightLimit = 122; // letter 'z'
+		Random random = new Random();
+		StringBuilder buffer = new StringBuilder(targetStringLength);
+		
+		for (int i = 0; i < targetStringLength; i++) {
+			int randomLimitedInt = leftLimit + (int)
+				(random.nextFloat() * (rightLimit - leftLimit + 1));
+			buffer.append((char) randomLimitedInt);
+		}
+		
+		return buffer.toString();
+	}
+	
+	public static final int OBJECT_ID_LENGTH = 32;
+	public static @NotNull String newObjectIdentifier() {
+		return randomString(OBJECT_ID_LENGTH);
 	}
 	
 	private void run(String portNumber) {

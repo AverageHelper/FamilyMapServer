@@ -1,7 +1,6 @@
 package handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
 import services.LoginFailureException;
@@ -11,9 +10,9 @@ import services.LoginService;
 import java.io.IOException;
 
 /**
- * An object that handles multiple user login requests.
+ * An object that handles user login requests.
  */
-public class LoginHandler implements HttpHandler {
+public class LoginHandler extends Handler {
 	
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {

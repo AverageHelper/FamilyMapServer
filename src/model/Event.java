@@ -9,15 +9,15 @@ import java.util.Objects;
  * A representation of a life event.
  */
 public class Event implements ModelData {
-	private @NotNull String id;
-	private @NotNull String associatedUsername;
-	private @NotNull String personId;
-	private @Nullable Double latitude;
-	private @Nullable Double longitude;
-	private @Nullable String country;
-	private @Nullable String city;
-	private @NotNull EventType eventType;
-	private int year;
+	private final @NotNull String id;
+	private final @NotNull String associatedUsername;
+	private final @NotNull String personId;
+	private final @Nullable Double latitude;
+	private final @Nullable Double longitude;
+	private final @Nullable String country;
+	private final @Nullable String city;
+	private final @NotNull EventType eventType;
+	private final int year;
 	
 	/**
 	 * Creates an <code>Event</code> object.
@@ -58,72 +58,36 @@ public class Event implements ModelData {
 		return id;
 	}
 	
-	public void setId(@NotNull String id) {
-		this.id = id;
-	}
-	
 	public @NotNull String getAssociatedUsername() {
 		return associatedUsername;
-	}
-	
-	public void setAssociatedUsername(@NotNull String associatedUsername) {
-		this.associatedUsername = associatedUsername;
 	}
 	
 	public @NotNull String getPersonId() {
 		return personId;
 	}
 	
-	public void setPersonId(@NotNull String personId) {
-		this.personId = personId;
-	}
-	
 	public @Nullable Double getLatitude() {
 		return latitude;
-	}
-	
-	public void setLatitude(@Nullable Double latitude) {
-		this.latitude = latitude;
 	}
 	
 	public @Nullable Double getLongitude() {
 		return longitude;
 	}
 	
-	public void setLongitude(@Nullable Double longitude) {
-		this.longitude = longitude;
-	}
-	
 	public @Nullable String getCountry() {
 		return country;
-	}
-	
-	public void setCountry(@Nullable String country) {
-		this.country = country;
 	}
 	
 	public @Nullable String getCity() {
 		return city;
 	}
 	
-	public void setCity(@Nullable String city) {
-		this.city = city;
-	}
-	
 	public @NotNull EventType getEventType() {
 		return eventType;
 	}
 	
-	public void setEventType(@NotNull EventType eventType) {
-		this.eventType = eventType;
-	}
-	
 	public int getYear() {
 		return year;
-	}
-	
-	public void setYear(int year) {
-		this.year = year;
 	}
 	
 	@Override

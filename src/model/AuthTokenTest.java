@@ -31,17 +31,33 @@ class AuthTokenTest {
 	}
 	
 	@ParameterizedTest
-	@ValueSource(strings = {"new_id", "token_id", "CAPS", "$@%*"})
-	void setId_shouldChangeStoredID(String newId) {
-		authToken.setId(newId);
-		assertEquals(newId, authToken.getId());
+	@NullSource
+	@EmptySource
+	void testInit_shouldFailToSetEmptyId(String newId) {
+		assertThrows(
+			IllegalArgumentException.class,
+			() -> new AuthToken(
+				newId,
+				authToken.getAssociatedUsername(),
+				authToken.getCreatedAt(),
+				authToken.isValid()
+			)
+		);
 	}
 	
 	@ParameterizedTest
 	@NullSource
 	@EmptySource
-	void setId_shouldFailToSetEmptyId(String newId) {
-		assertThrows(IllegalArgumentException.class, () -> authToken.setId(newId));
+	void testInit_shouldFailToSetEmptyUserId(String newId) {
+		assertThrows(
+			IllegalArgumentException.class,
+			() -> new AuthToken(
+				authToken.getId(),
+				newId,
+				authToken.getCreatedAt(),
+				authToken.isValid()
+			)
+		);
 	}
 	
 	@Test
@@ -49,42 +65,13 @@ class AuthTokenTest {
 		assertEquals("token_user", authToken.getAssociatedUsername());
 	}
 	
-	@ParameterizedTest
-	@ValueSource(strings = {"new_userId", "token_user", "CAPS", "$@%*"})
-	void setUserId_shouldChangeTheStoredAssocUsername(String newId) {
-		authToken.setAssociatedUsername(newId);
-		assertEquals(newId, authToken.getAssociatedUsername());
-	}
-	
-	@ParameterizedTest
-	@NullSource
-	@EmptySource
-	void setUserId_shouldFailToSetEmptyUserId(String newId) {
-		assertThrows(IllegalArgumentException.class, () -> authToken.setAssociatedUsername(newId));
-	}
-	
 	@Test
 	void getCreatedAt_shouldReturnTheInitialCreationTimestamp() {
 		assertEquals(42, authToken.getCreatedAt().getTime());
 	}
 	
-	@ParameterizedTest
-	@ValueSource(ints = {0, -50, 120, Integer.MAX_VALUE, Integer.MIN_VALUE})
-	void setCreatedAt_shouldChangeTheCreationTimestamp(int timestamp) {
-		authToken.setCreatedAt(new Date(timestamp));
-		assertEquals(timestamp, authToken.getCreatedAt().getTime());
-	}
-	
 	@Test
 	void isValid_shouldReturnTheInitialValidState() {
-		assertTrue(authToken.isValid());
-	}
-	
-	@Test
-	void setValid_shouldChangeTheStoredValidState() {
-		authToken.setValid(false);
-		assertFalse(authToken.isValid());
-		authToken.setValid(true);
 		assertTrue(authToken.isValid());
 	}
 }

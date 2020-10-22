@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 
 /**
- * An object that handles multiple clear-database handlers.
+ * An object that handles clear-database requests.
  */
 public class ClearHandler extends Handler {
 	
@@ -91,8 +91,8 @@ public class ClearHandler extends Handler {
 	 * @throws ClearFailureException If the operation fails.
 	 */
 	public void clear() throws ClearFailureException {
-		ClearService service = new ClearService();
-		ClearResult result = service.clear(database);
+		ClearService service = new ClearService(database);
+		ClearResult result = service.clear();
 		
 		if (result.getFailureReason() != null) {
 			throw new ClearFailureException(result.getFailureReason());

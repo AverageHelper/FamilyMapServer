@@ -2,6 +2,7 @@ package dao;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.sqlite.SQLiteErrorCode;
 import server.Server;
 
 import java.io.BufferedReader;
@@ -16,7 +17,8 @@ import java.util.logging.Level;
  */
 public class Database {
 	private static final String CREATE_TABLES_FILE = "CreateTables.txt";
-	private static final String MAIN_DATABASE_NAME = "familymap.sqlite";
+	public static final String MAIN_DATABASE_NAME = "familymap.sqlite";
+	public static final String TEST_DATABASE_NAME = "familymap_tests.sqlite";
 	
 	private final @NotNull String databaseName;
 	private @Nullable Connection conn;
@@ -70,7 +72,10 @@ public class Database {
 	 */
 	public @NotNull Connection openConnection() throws DataAccessException {
 		if (conn != null) {
-			throw new DataAccessException("There is already an active connection. Close it first.");
+			throw new DataAccessException(
+				SQLiteErrorCode.SQLITE_BUSY,
+				"There is already an active connection. Close it first."
+			);
 		}
 		try {
 			//The Structure for this Connection is driver:language:path
@@ -84,7 +89,7 @@ public class Database {
 			conn.setAutoCommit(false);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new DataAccessException("Unable to open connection to database: " + e.getMessage());
+			throw new DataAccessException(e, "Unable to open connection to database: " + e.getMessage());
 		}
 		
 		return conn;
@@ -135,19 +140,30 @@ public class Database {
 			conn.close();
 			conn = null;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DataAccessException("Unable to close database connection: " + e.getMessage());
+			throw new DataAccessException(e, "Unable to close database connection: " + e.getMessage());
 		}
 	}
 	
 	/**
-	 * Clears all database tables.
-	 * @throws DataAccessException An exception if there was an issue clearing the database.
+	 * Runs the given function in a discrete database connection. Return `true` in that expression
+	 * to commit changes to the database, and `false` to close the connection without committing.
+	 *
+	 * If any exceptions are thrown during the transaction, then the connection is automatically
+	 * closed without committing changes.
+	 *
+	 * @throws DataAccessException An exception if a database error occurs in the transaction body.
 	 */
-	public void clearTables() throws DataAccessException {
-		if (conn == null) {
-			throw new DataAccessException("There is no active database connection.");
+	public void runTransaction(@NotNull DatabaseTransaction transaction) throws DataAccessException {
+		Connection conn = this.openConnection();
+		boolean commit = false;
+		try {
+			commit = transaction.run(conn);
+		} finally {
+			this.closeConnection(commit);
 		}
+	}
+	
+	private void _clearTables(@NotNull Connection conn) throws DataAccessException {
 		DatabaseTable[] tables = DatabaseTable.values();
 		
 		for (DatabaseTable table : tables) {
@@ -159,6 +175,7 @@ public class Database {
 				
 			} catch (SQLException e) {
 				throw new DataAccessException(
+					e,
 					"Error encountered while clearing table '" +
 						table.getName() +
 						"': "
@@ -166,6 +183,25 @@ public class Database {
 				);
 			}
 		}
+	}
+	
+	/**
+	 * Clears all database tables using the provided database connection.
+	 * @throws DataAccessException An exception if there was an issue clearing the database.
+	 */
+	public void clearTablesUsingConnection(@NotNull Connection conn) throws DataAccessException {
+		this._clearTables(conn);
+	}
+	
+	/**
+	 * Clears all database tables.
+	 * @throws DataAccessException An exception if there was an issue clearing the database.
+	 */
+	public void clearTables() throws DataAccessException {
+		runTransaction(conn -> {
+			this._clearTables(conn);
+			return true;
+		});
 	}
 }
 

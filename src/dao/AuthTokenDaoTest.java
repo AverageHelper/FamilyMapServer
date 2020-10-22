@@ -26,10 +26,9 @@ class AuthTokenDaoTest {
 		);
 		
 		db = new Database();
-		Connection conn = db.getConnection();
-		// Clear old data
 		db.clearTables();
 		
+		Connection conn = db.getConnection();
 		authTokenDao = new AuthTokenDao(conn);
 	}
 	
