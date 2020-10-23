@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * An object that serves a single user registration request.
  */
 public class RegisterService {
-	private final Database db;
+	private final @NotNull Database db;
 	
 	public RegisterService(@NotNull Database database) {
 		this.db = database;
@@ -28,7 +28,9 @@ public class RegisterService {
 	
 	/**
 	 * Registers a new user.
+	 *
 	 * @param request Information about the new user's account.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
 	 * @return The result of the request.
 	 */
 	public @NotNull RegisterResult register(RegisterRequest request) throws DataAccessException {

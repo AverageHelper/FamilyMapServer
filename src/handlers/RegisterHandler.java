@@ -56,7 +56,7 @@ public class RegisterHandler extends Handler {
 		try {
 			result = service.register(req);
 		} catch (DataAccessException e) {
-			throw new RegisterFailureException(RegisterFailureReason.DUPLICATE_USERNAME, e);
+			throw new RegisterFailureException(RegisterFailureReason.DATABASE, e);
 		}
 		
 		if (result.getFailureReason() != null) {

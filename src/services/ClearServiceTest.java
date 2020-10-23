@@ -1,19 +1,15 @@
-package handlers;
+package services;
 
 import dao.*;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import services.ClearFailureException;
-
-import java.sql.Connection;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ClearHandlerTest {
+class ClearServiceTest {
 	private Database db;
-	private ClearHandler handler;
+	private ClearService service;
 	private final String testTokenId = "this_authorizes_test_user";
 	private final String testEventId = "test_event";
 	private final String testUserId = "test_user";
@@ -68,8 +64,8 @@ class ClearHandlerTest {
 	@BeforeEach
 	void setUp() throws DataAccessException {
 		db = new Database(Database.TEST_DATABASE_NAME);
+		service = new ClearService(db);
 		db.clearTables();
-		handler = new ClearHandler(db);
 	}
 	
 	private void assertDatabaseEmpty() throws DataAccessException {
@@ -89,17 +85,10 @@ class ClearHandlerTest {
 		});
 	}
 	
-//	@Test
-//	void testHandle() throws DataAccessException {
-//		preloadDatabase();
-//
-//		assertDatabaseEmpty();
-//	}
-	
 	@Test
-	void testClear_clearsDataFromAllTables() throws DataAccessException, ClearFailureException {
+	void testClear_clearsDataFromAllTables() throws DataAccessException {
 		preloadDatabase();
-		handler.clear();
+		assertTrue(service.clear());
 		assertDatabaseEmpty();
 	}
 }

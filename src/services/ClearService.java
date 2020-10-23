@@ -19,12 +19,8 @@ public class ClearService {
 	 *
 	 * @return A new <code>ClearResult</code> that describes the result of the operation.
 	 */
-	public ClearResult clear() {
-		try {
-			db.clearTables();
-			return new ClearResult();
-		} catch (DataAccessException e) {
-			return new ClearResult(ClearFailureReason.DATABASE);
-		}
+	public boolean clear() throws DataAccessException {
+		db.clearTables();
+		return true;
 	}
 }

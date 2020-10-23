@@ -14,10 +14,9 @@ import server.Server;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterServiceTest {
-	
-	Database db;
-	RegisterService service;
-	final String testUsername = "test_user";
+	private Database db;
+	private RegisterService service;
+	private final String testUsername = "test_user";
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
@@ -27,7 +26,7 @@ class RegisterServiceTest {
 	}
 	
 	@Test
-	void testRegister_newUser() throws DataAccessException {
+	void testRegister_succeedsWithNewUser() throws DataAccessException {
 		RegisterRequest req = new RegisterRequest(
 			testUsername,
 			"Pa$$w0rd",
@@ -41,17 +40,17 @@ class RegisterServiceTest {
 		assertNotNull(res.getToken());
 		
 		AuthToken token = res.getToken();
-		assertEquals(token.getAssociatedUsername(), testUsername);
+		assertEquals(testUsername, token.getAssociatedUsername());
 		assertTrue(token.isValid());
 		assertNotNull(token.getCreatedAt());
 		assertNotNull(token.getId());
-		assertEquals(token.getId().length(), Server.OBJECT_ID_LENGTH);
+		assertEquals(Server.OBJECT_ID_LENGTH, token.getId().length());
 		
 		db.runTransaction(conn -> {
 			AuthTokenDao authTokenDao = new AuthTokenDao(conn);
 			assertEquals(
-				authTokenDao.count(),
 				1,
+				authTokenDao.count(),
 				"No auth tokens were added to the database."
 			);
 			return false;
@@ -59,7 +58,7 @@ class RegisterServiceTest {
 	}
 	
 	@Test
-	void testRegister_duplicateUsername() throws DataAccessException {
+	void testRegister_failsWithDuplicateUsername() throws DataAccessException {
 		RegisterRequest req = new RegisterRequest(
 			testUsername,
 			"Pa$$w0rd",
@@ -73,13 +72,13 @@ class RegisterServiceTest {
 		
 		res = service.register(req);
 		assertNull(res.getToken());
-		assertEquals(res.getFailureReason(), RegisterFailureReason.DUPLICATE_USERNAME);
+		assertEquals(RegisterFailureReason.DUPLICATE_USERNAME, res.getFailureReason());
 		
 		db.runTransaction(conn -> {
 			AuthTokenDao authTokenDao = new AuthTokenDao(conn);
 			assertEquals(
-				authTokenDao.count(),
 				1,
+				authTokenDao.count(),
 				"A token had been added to the database, but should not have been."
 			);
 			return false;

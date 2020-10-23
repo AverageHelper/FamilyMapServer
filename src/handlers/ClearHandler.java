@@ -5,9 +5,6 @@ import com.sun.net.httpserver.HttpExchange;
 import dao.DataAccessException;
 import dao.Database;
 import org.jetbrains.annotations.NotNull;
-import services.ClearFailureException;
-import services.ClearFailureReason;
-import services.ClearResult;
 import services.ClearService;
 
 import java.io.IOException;
@@ -38,34 +35,22 @@ public class ClearHandler extends Handler {
 				// Only allow POST requests for this operation
 				if (exchange.getRequestMethod().toLowerCase().equals("post")) {
 					// Get the HTTP request headers
-					Headers reqHeaders = exchange.getRequestHeaders();
+//					Headers reqHeaders = exchange.getRequestHeaders();
 					
 					// Ensure "Authorization" header is present
-					final String HEADER_KEY_AUTHORIZATION = "Authorization";
-					if (reqHeaders.containsKey(HEADER_KEY_AUTHORIZATION)) {
-						// Extract the provided auth token
-						String authToken = reqHeaders.getFirst(HEADER_KEY_AUTHORIZATION);
-						
-						// Ensure the token is valid
-						if (!authTokenIsValid(authToken)) {
-							throw new ClearFailureException(ClearFailureReason.UNAUTHENTICATED);
-						}
-						
-						this.clear();
-						success = true;
-					}
-				}
-			} catch (ClearFailureException e) {
-				// handle normal failures
-				switch (e.getReason()) {
-					case UNIMPLEMENTED:
-						exchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAVAILABLE, 0);
-						
-					case UNAUTHENTICATED:
-						exchange.sendResponseHeaders(HttpURLConnection.HTTP_UNAUTHORIZED, 0);
-						
-					case DATABASE:
-						exchange.sendResponseHeaders(HttpURLConnection.HTTP_INTERNAL_ERROR, 0);
+//					final String HEADER_KEY_AUTHORIZATION = "Authorization";
+//					if (reqHeaders.containsKey(HEADER_KEY_AUTHORIZATION)) {
+					// Extract the provided auth token
+//						String authToken = reqHeaders.getFirst(HEADER_KEY_AUTHORIZATION);
+					
+					// Ensure the token is valid
+//						if (!authTokenIsValid(authToken)) {
+//							throw new ClearFailureException(ClearFailureReason.UNAUTHENTICATED);
+//						}
+					
+					this.clear();
+					success=true;
+//					}
 				}
 			} catch (DataAccessException e) {
 				e.printStackTrace();
@@ -88,14 +73,10 @@ public class ClearHandler extends Handler {
 	
 	/**
 	 * Attempts to clear the database.
-	 * @throws ClearFailureException If the operation fails.
+	 * @throws DataAccessException If the operation fails.
 	 */
-	public void clear() throws ClearFailureException {
+	public void clear() throws DataAccessException {
 		ClearService service = new ClearService(database);
-		ClearResult result = service.clear();
-		
-		if (result.getFailureReason() != null) {
-			throw new ClearFailureException(result.getFailureReason());
-		}
+		service.clear();
 	}
 }

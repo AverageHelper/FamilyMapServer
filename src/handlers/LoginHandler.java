@@ -1,9 +1,11 @@
 package handlers;
 
 import com.sun.net.httpserver.HttpExchange;
+import dao.DataAccessException;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
 import services.LoginFailureException;
+import services.LoginFailureReason;
 import services.LoginResult;
 import services.LoginService;
 
@@ -27,13 +29,21 @@ public class LoginHandler extends Handler {
 	 * @return A new auth token.
 	 * @throws LoginFailureException If the login failed.
 	 */
-	public @NotNull AuthToken login(@NotNull String username, @NotNull String password) throws Exception {
-		LoginService service = new LoginService();
-		LoginRequest request = new LoginRequest(username, password);
-		LoginResult result = service.login(request);
+	public @NotNull AuthToken login(
+		@NotNull String username,
+		@NotNull String password
+	) throws Exception {
+		LoginRequest req = new LoginRequest(username, password);
+		LoginService service = new LoginService(database);
+		LoginResult result;
+		try {
+			result = service.login(req);
+		} catch (DataAccessException e) {
+			throw new LoginFailureException(LoginFailureReason.DATABASE, e);
+		}
 		
 		if (result.getFailureReason() != null) {
-			throw new LoginFailureException(result.getFailureReason());
+			throw new LoginFailureException(result.getFailureReason(), null);
 		}
 		if (result.getToken() != null) {
 			return result.getToken();
