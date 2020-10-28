@@ -11,8 +11,6 @@ public class FetchDataRequest extends JSONSerialization {
 	private final @NotNull DatabaseTable databaseTable;
 	private @Nullable String id;
 	
-	// TODO: Add more fields to describe the data to be fetched, how it ought to be sorted, etc.
-	
 	/**
 	 * Creates a <code>FetchDataRequest</code> object.
 	 * @param databaseTable The name of the type of data to fetch from the database.

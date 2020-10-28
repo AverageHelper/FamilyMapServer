@@ -8,8 +8,7 @@ import model.AuthToken;
 import model.Gender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.sqlite.SQLiteErrorCode;
-import server.Server;
+import utilities.NameGenerator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,7 +43,7 @@ class RegisterServiceTest {
 		assertTrue(token.isValid());
 		assertNotNull(token.getCreatedAt());
 		assertNotNull(token.getId());
-		assertEquals(Server.OBJECT_ID_LENGTH, token.getId().length());
+		assertEquals(NameGenerator.OBJECT_ID_LENGTH, token.getId().length());
 		
 		db.runTransaction(conn -> {
 			AuthTokenDao authTokenDao = new AuthTokenDao(conn);

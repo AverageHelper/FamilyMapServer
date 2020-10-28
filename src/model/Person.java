@@ -14,9 +14,9 @@ public class Person implements ModelData {
 	private @NotNull String firstName;
 	private @NotNull String lastName;
 	private @NotNull Gender gender;
-	private @Nullable String fatherId;
-	private @Nullable String motherId;
-	private @Nullable String spouseId;
+	private @Nullable String fatherID;
+	private @Nullable String motherID;
+	private @Nullable String spouseID;
 	
 	/**
 	 * Creates a <code>Person</code> object.
@@ -25,9 +25,9 @@ public class Person implements ModelData {
 	 * @param firstName The person's first name.
 	 * @param lastName The person's last name.
 	 * @param gender The person's gender.
-	 * @param fatherId The ID of the person's father.
-	 * @param motherId The ID of the person's mother.
-	 * @param spouseId The ID of the person's spouse.
+	 * @param fatherID The ID of the person's father.
+	 * @param motherID The ID of the person's mother.
+	 * @param spouseID The ID of the person's spouse.
 	 */
 	public Person(
 		@NotNull String id,
@@ -35,18 +35,18 @@ public class Person implements ModelData {
 		@NotNull String firstName,
 		@NotNull String lastName,
 		@NotNull Gender gender,
-		@Nullable String fatherId,
-		@Nullable String motherId,
-		@Nullable String spouseId
+		@Nullable String fatherID,
+		@Nullable String motherID,
+		@Nullable String spouseID
 	) {
 		this.id = id;
 		this.associatedUsername = associatedUsername;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
-		this.fatherId = fatherId;
-		this.motherId = motherId;
-		this.spouseId = spouseId;
+		this.fatherID=fatherID;
+		this.motherID=motherID;
+		this.spouseID=spouseID;
 	}
 	
 	@Override
@@ -90,28 +90,28 @@ public class Person implements ModelData {
 		this.gender = gender;
 	}
 	
-	public @Nullable String getFatherId() {
-		return fatherId;
+	public @Nullable String getFatherID() {
+		return fatherID;
 	}
 	
-	public void setFatherId(@Nullable String fatherId) {
-		this.fatherId = fatherId;
+	public void setFatherID(@Nullable String fatherID) {
+		this.fatherID=fatherID;
 	}
 	
-	public @Nullable String getMotherId() {
-		return motherId;
+	public @Nullable String getMotherID() {
+		return motherID;
 	}
 	
-	public void setMotherId(@Nullable String motherId) {
-		this.motherId = motherId;
+	public void setMotherID(@Nullable String motherID) {
+		this.motherID=motherID;
 	}
 	
-	public @Nullable String getSpouseId() {
-		return spouseId;
+	public @Nullable String getSpouseID() {
+		return spouseID;
 	}
 	
-	public void setSpouseId(@Nullable String spouseId) {
-		this.spouseId = spouseId;
+	public void setSpouseID(@Nullable String spouseID) {
+		this.spouseID=spouseID;
 	}
 	
 	@Override
@@ -124,14 +124,14 @@ public class Person implements ModelData {
 			getFirstName().equals(person.getFirstName()) &&
 			getLastName().equals(person.getLastName()) &&
 			getGender() == person.getGender() &&
-			Objects.equals(getFatherId(), person.getFatherId()) &&
-			Objects.equals(getMotherId(), person.getMotherId()) &&
-			Objects.equals(getSpouseId(), person.getSpouseId());
+			Objects.equals(getFatherID(), person.getFatherID()) &&
+			Objects.equals(getMotherID(), person.getMotherID()) &&
+			Objects.equals(getSpouseID(), person.getSpouseID());
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getAssociatedUsername(), getFirstName(), getLastName(), getGender(), getFatherId(), getMotherId(), getSpouseId());
+		return Objects.hash(getId(), getAssociatedUsername(), getFirstName(), getLastName(), getGender(), getFatherID(), getMotherID(), getSpouseID());
 	}
 	
 	@Override
@@ -142,9 +142,9 @@ public class Person implements ModelData {
 			", firstName='" + firstName + '\'' +
 			", lastName='" + lastName + '\'' +
 			", gender=" + gender +
-			", fatherId='" + fatherId + '\'' +
-			", motherId='" + motherId + '\'' +
-			", spouseId='" + spouseId + '\'' +
+			", fatherId='" + fatherID + '\'' +
+			", motherId='" + motherID + '\'' +
+			", spouseId='" + spouseID + '\'' +
 			'}';
 	}
 }

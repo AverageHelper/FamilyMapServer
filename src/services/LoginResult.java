@@ -9,14 +9,17 @@ import org.jetbrains.annotations.Nullable;
  */
 public class LoginResult {
 	private final @Nullable AuthToken token;
+	private final @Nullable String personID;
 	private final @Nullable LoginFailureReason failureReason;
 	
 	/**
 	 * Creates a successful <code>LoginResult</code>.
 	 * @param token An <code>AuthToken</code> that the user may use to access data.
+	 * @param personID The ID of the user's new <code>Person</code> entry.
 	 */
-	public LoginResult(@NotNull AuthToken token) {
+	public LoginResult(@NotNull AuthToken token, @Nullable String personID) {
 		this.token = token;
+		this.personID = personID;
 		this.failureReason = null;
 	}
 	
@@ -26,6 +29,7 @@ public class LoginResult {
 	 */
 	public LoginResult(@NotNull LoginFailureReason failureReason) {
 		this.token = null;
+		this.personID = null;
 		this.failureReason = failureReason;
 	}
 	
@@ -34,6 +38,13 @@ public class LoginResult {
 	 */
 	public @Nullable AuthToken getToken() {
 		return token;
+	}
+	
+	/**
+	 * @return The ID of the user's <code>Person</code> entry, or <code>null</code> if the request failed (i.e. if <code>getFailureReason()</code> returns a non-<code>null</code> value).
+	 */
+	public @Nullable String getPersonID() {
+		return personID;
 	}
 	
 	/**

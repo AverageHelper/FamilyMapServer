@@ -36,9 +36,9 @@ public class PersonDao extends Dao<Person> {
 			stmt.setString(3, record.getFirstName());
 			stmt.setString(4, record.getLastName());
 			stmt.setString(5, record.getGender().getValue());
-			stmt.setString(6, record.getFatherId());
-			stmt.setString(7, record.getMotherId());
-			stmt.setString(8, record.getSpouseId());
+			stmt.setString(6, record.getFatherID());
+			stmt.setString(7, record.getMotherID());
+			stmt.setString(8, record.getSpouseID());
 			
 			stmt.executeUpdate();
 		} catch (SQLException e) {
@@ -67,13 +67,13 @@ public class PersonDao extends Dao<Person> {
 	}
 	
 	/**
-	 * Attempts to fetch from the database a list of person records associated with a user with the given <code>username</code>.
+	 * Attempts to fetch from the database a list of person records associated with a user with the given <code>userName</code>.
 	 *
-	 * @param username The username of the user to which Person records should be associated to match the filter.
+	 * @param userName The ID of the user to which <code>Person</code> records should be associated to match the filter.
 	 * @return A list of fully realized <code>Person</code> objects.
 	 * @throws DataAccessException An exception if the read fails, or any of the objects could not be deserialized from the returned data.
 	 */
-	public @NotNull List<Person> findForUser(@NotNull String username) throws DataAccessException {
-		return findMultiple("associated_username", username);
+	public @NotNull List<Person> findForUser(@NotNull String userName) throws DataAccessException {
+		return findMultiple("associated_username", userName);
 	}
 }

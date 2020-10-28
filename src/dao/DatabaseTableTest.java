@@ -14,7 +14,7 @@ class DatabaseTableTest {
 			Arguments.of(DatabaseTable.AUTH_TOKEN, "AuthToken", "id"),
 			Arguments.of(DatabaseTable.EVENT, "Event", "id"),
 			Arguments.of(DatabaseTable.PERSON, "Person", "id"),
-			Arguments.of(DatabaseTable.USER, "User", "username")
+			Arguments.of(DatabaseTable.USER, "User", "userName")
 		);
 	}
 	

@@ -1,25 +1,47 @@
 package handlers;
 
-import com.sun.net.httpserver.HttpExchange;
+import dao.DataAccessException;
+import dao.Database;
 import dao.DatabaseTable;
 import model.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.sqlite.SQLiteErrorCode;
 import services.FetchDataFailureException;
 import services.FetchDataFailureReason;
 import services.FetchDataResult;
 import services.FetchDataService;
-
-import java.io.IOException;
 
 /**
  * An object that handles data-fetch requests.
  */
 public class FetchDataHandler extends Handler {
 	
+	public FetchDataHandler() {
+		super();
+	}
+	
+	public FetchDataHandler(@NotNull Database database) {
+		super(database);
+	}
+	
 	@Override
-	public void handle(HttpExchange exchange) throws IOException {
-		// Construct and return the HTTP response
+	public @NotNull String expectedHTTPMethod() {
+		return "GET";
+	}
+	
+	@Override
+	public boolean requiresAuthToken() {
+		return true;
+	}
+	
+	@Override
+	public @NotNull ErrorResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException {
+		if (userName == null) {
+			throw new DataAccessException(SQLiteErrorCode.SQLITE_AUTH, "No user ID was provided.");
+		}
+		
+		return new ErrorResponse("Not implemented");
 	}
 	
 	/**

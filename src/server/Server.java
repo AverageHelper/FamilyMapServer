@@ -3,12 +3,10 @@ package server;
 import com.sun.net.httpserver.HttpServer;
 import handlers.*;
 import handlers.FileHandler;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.MalformedParametersException;
 import java.net.InetSocketAddress;
-import java.util.Random;
 import java.util.logging.*;
 
 /**
@@ -50,26 +48,6 @@ public class Server {
 		logger.addHandler(fileHandler);
 	}
 	
-	public static @NotNull String randomString(int targetStringLength) {
-		int leftLimit = 97; // letter 'a'
-		int rightLimit = 122; // letter 'z'
-		Random random = new Random();
-		StringBuilder buffer = new StringBuilder(targetStringLength);
-		
-		for (int i = 0; i < targetStringLength; i++) {
-			int randomLimitedInt = leftLimit + (int)
-				(random.nextFloat() * (rightLimit - leftLimit + 1));
-			buffer.append((char) randomLimitedInt);
-		}
-		
-		return buffer.toString();
-	}
-	
-	public static final int OBJECT_ID_LENGTH = 32;
-	public static @NotNull String newObjectIdentifier() {
-		return randomString(OBJECT_ID_LENGTH);
-	}
-	
 	private void run(String portNumber) {
 		logger.info("Starting FamilyMap");
 		
@@ -99,7 +77,7 @@ public class Server {
 		server.createContext("/clear", new ClearHandler());
 		
 		// Add entries
-		server.createContext("/fill/[username]/{generations}", new FillHandler());
+		server.createContext("/fill", new FillHandler());
 		server.createContext("/load", new LoadHandler());
 		
 		// Fetch entries
@@ -118,10 +96,11 @@ public class Server {
 	}
 	
 	public static void main(String[] args) {
-		String portNumber = args[0];
-		if (portNumber == null) {
+		if (args.length < 1) {
 			throw new MalformedParametersException("Expected a single parameter (the port number to run on)");
 		}
+		
+		String portNumber = args[0];
 		
 		new Server().run(portNumber);
 	}

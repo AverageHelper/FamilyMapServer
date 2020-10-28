@@ -8,13 +8,23 @@ import com.google.gson.*;
  *
  * This class also includes a static <code>fromJson</code> helper to instantiate objects of arbitrary types from JSON data.
  */
-public class JSONSerialization {
+public class JSONSerialization implements HTTPSerialization {
 	/**
 	 * @return A JSON string representing the object.
 	 */
 	public @NotNull String toJson() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
+	}
+	
+	@Override
+	public @NotNull String serialize() {
+		return toJson();
+	}
+	
+	@Override
+	public @NotNull String contentType() {
+		return "application/json; charset=UTF-8";
 	}
 	
 	/**
@@ -25,7 +35,10 @@ public class JSONSerialization {
 	 * @param <T> The type of object that will be instantiated.
 	 * @return A new instance of the given object type initialized with the values specified by the JSON fields.
 	 */
-	public static <T> @NotNull T fromJson(@NotNull String jsonString, @NotNull Class<T> typeOfT) throws JsonSyntaxException {
+	public static <T extends JSONSerialization> @NotNull T fromJson(
+		@NotNull String jsonString,
+		@NotNull Class<T> typeOfT
+	) throws JsonSyntaxException {
 		Gson gson = new Gson();
 		return gson.fromJson(jsonString, typeOfT);
 	}

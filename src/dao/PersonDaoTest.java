@@ -34,7 +34,7 @@ class PersonDaoTest {
 		);
 		testPersonA = new Person(
 			"person_a",
-			testUser.getUsername(),
+			testUser.getUserName(),
 			"John",
 			"Cena",
 			Gender.MALE,
@@ -44,12 +44,12 @@ class PersonDaoTest {
 		);
 		testPersonB = new Person(
 			"person_b",
-			testUser.getUsername(),
+			testUser.getUserName(),
 			"Karen",
 			testPersonA.getLastName(),
 			Gender.FEMALE,
-			testPersonA.getFatherId(),
-			testPersonA.getMotherId(),
+			testPersonA.getFatherID(),
+			testPersonA.getMotherID(),
 			"somebody"
 		);
 		
@@ -124,7 +124,7 @@ class PersonDaoTest {
 	
 	@Test
 	void testFindForUser_returnsNoPersons() throws DataAccessException {
-		List<Person> events = personDao.findForUser(testUser.getUsername());
+		List<Person> events = personDao.findForUser(testUser.getUserName());
 		assertNotNull(events);
 		assertTrue(events.isEmpty());
 	}
@@ -133,7 +133,7 @@ class PersonDaoTest {
 	void testFindForUser_returnsOnePersonForUser() throws DataAccessException {
 		userDao.insert(testUser);
 		personDao.insert(testPersonA);
-		List<Person> events = personDao.findForUser(testUser.getUsername());
+		List<Person> events = personDao.findForUser(testUser.getUserName());
 		assertNotNull(events);
 		assertFalse(events.isEmpty());
 		assertEquals(1, events.size());
@@ -145,7 +145,7 @@ class PersonDaoTest {
 		userDao.insert(testUser);
 		personDao.insert(testPersonA);
 		personDao.insert(testPersonB);
-		List<Person> events = personDao.findForUser(testUser.getUsername());
+		List<Person> events = personDao.findForUser(testUser.getUserName());
 		assertNotNull(events);
 		assertFalse(events.isEmpty());
 		assertEquals(2, events.size());

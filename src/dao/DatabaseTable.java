@@ -7,7 +7,7 @@ public enum DatabaseTable {
 	AUTH_TOKEN("AuthToken", "id"),
 	EVENT("Event", "id"),
 	PERSON("Person", "id"),
-	USER("User", "username");
+	USER("User", "userName");
 	
 	private final @NotNull String name;
 	private final @NotNull String primaryKey;

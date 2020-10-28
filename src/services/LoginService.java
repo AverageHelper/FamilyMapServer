@@ -8,7 +8,7 @@ import handlers.LoginRequest;
 import model.AuthToken;
 import model.User;
 import org.jetbrains.annotations.NotNull;
-import server.Server;
+import utilities.NameGenerator;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,7 +37,7 @@ public class LoginService {
 			UserDao userDao = new UserDao(conn);
 			AuthTokenDao authTokenDao = new AuthTokenDao(conn);
 			
-			User user = userDao.find(request.getUsername());
+			User user = userDao.find(request.getUserName());
 			if (user == null) {
 				result.set(new LoginResult(LoginFailureReason.USER_NOT_FOUND));
 				return false;
@@ -49,13 +49,13 @@ public class LoginService {
 			}
 			
 			AuthToken newToken = new AuthToken(
-				Server.newObjectIdentifier(),
+				NameGenerator.newObjectIdentifier(),
 				user.getId(),
 				new Date(),
 				true
 			);
 			authTokenDao.insert(newToken);
-			result.set(new LoginResult(newToken));
+			result.set(new LoginResult(newToken, user.getPersonID()));
 			return true;
 		});
 		

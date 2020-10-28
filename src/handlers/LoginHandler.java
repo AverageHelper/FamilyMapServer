@@ -1,24 +1,49 @@
 package handlers;
 
-import com.sun.net.httpserver.HttpExchange;
 import dao.DataAccessException;
+import dao.Database;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
-import services.LoginFailureException;
-import services.LoginFailureReason;
+import org.jetbrains.annotations.Nullable;
 import services.LoginResult;
 import services.LoginService;
-
-import java.io.IOException;
+import utilities.Pair;
 
 /**
  * An object that handles user login requests.
  */
-public class LoginHandler extends Handler {
+public class LoginHandler extends Handler<LoginResponse> {
+	
+	public LoginHandler() {
+		super();
+	}
+	
+	public LoginHandler(@NotNull Database database) {
+		super(database);
+	}
 	
 	@Override
-	public void handle(HttpExchange exchange) throws IOException {
-		// Construct and return the HTTP response
+	public @NotNull String expectedHTTPMethod() {
+		return "POST";
+	}
+	
+	@Override
+	public boolean requiresAuthToken() {
+		return false;
+	}
+	
+	@Override
+	public @NotNull LoginResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException {
+		LoginRequest loginRequest = JSONSerialization.fromJson(req, LoginRequest.class);
+		
+		Pair<AuthToken, String> results = login(
+			loginRequest.getUserName(),
+			loginRequest.getPassword()
+		);
+		
+		AuthToken authToken = results.getFirst();
+		String personID = results.getSecond();
+		return new LoginResponse(authToken.getId(), authToken.getAssociatedUsername(), personID);
 	}
 	
 	/**
@@ -26,27 +51,23 @@ public class LoginHandler extends Handler {
 	 * @param username The user's identifying name.
 	 * @param password The user's password.
 	 *
-	 * @return A new auth token.
-	 * @throws LoginFailureException If the login failed.
+	 * @return A new auth token and the user's associated <code>Person</code> ID.
+	 * @throws HandlingFailureException If the login failed.
+	 * @throws DataAccessException If there was a problem accessing the database.
 	 */
-	public @NotNull AuthToken login(
+	public @NotNull Pair<@NotNull AuthToken, @NotNull String> login(
 		@NotNull String username,
 		@NotNull String password
-	) throws Exception {
+	) throws HandlingFailureException, DataAccessException {
 		LoginRequest req = new LoginRequest(username, password);
 		LoginService service = new LoginService(database);
-		LoginResult result;
-		try {
-			result = service.login(req);
-		} catch (DataAccessException e) {
-			throw new LoginFailureException(LoginFailureReason.DATABASE, e);
-		}
+		LoginResult result = service.login(req);
 		
 		if (result.getFailureReason() != null) {
-			throw new LoginFailureException(result.getFailureReason(), null);
+			throw new HandlingFailureException(result.getFailureReason());
 		}
-		if (result.getToken() != null) {
-			return result.getToken();
+		if (result.getToken() != null && result.getPersonID() != null) {
+			return new Pair<>(result.getToken(), result.getPersonID());
 		}
 		
 		throw new IllegalStateException("There is no case where a fetch result has neither value nor error");

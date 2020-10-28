@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  * Data formatted to request the creation of a new user in the database and a new authorization token.
  */
 public class RegisterRequest extends JSONSerialization {
-	private final @NotNull String username;
+	private final @NotNull String userName;
 	private final @NotNull String password;
 	private final @NotNull String email;
 	private final @NotNull String firstName;
@@ -16,7 +16,7 @@ public class RegisterRequest extends JSONSerialization {
 	
 	/**
 	 * Creates a <code>RegisterRequest</code> object.
-	 * @param username The user's unique username.
+	 * @param userName The user's unique username.
 	 * @param password The user's password.
 	 * @param email The user's password.
 	 * @param firstName The user's first name.
@@ -24,14 +24,14 @@ public class RegisterRequest extends JSONSerialization {
 	 * @param gender The user's gender.
 	 */
 	public RegisterRequest(
-		@NotNull String username,
+		@NotNull String userName,
 		@NotNull String password,
 		@NotNull String email,
 		@NotNull String firstName,
 		@NotNull String lastName,
 		@NotNull Gender gender
 	) {
-		this.username = username;
+		this.userName = userName;
 		this.password = password;
 		this.email = email;
 		this.firstName = firstName;
@@ -39,8 +39,8 @@ public class RegisterRequest extends JSONSerialization {
 		this.gender = gender;
 	}
 	
-	public @NotNull String getUsername() {
-		return username;
+	public @NotNull String getUserName() {
+		return userName;
 	}
 	
 	public @NotNull String getPassword() {

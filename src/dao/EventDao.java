@@ -3,6 +3,7 @@ package dao;
 import model.Event;
 import model.EventType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.List;
@@ -33,7 +34,7 @@ public class EventDao extends Dao<Event> {
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setString(1, record.getId());
 			stmt.setString(2, record.getAssociatedUsername());
-			stmt.setString(3, record.getPersonId());
+			stmt.setString(3, record.getPersonID());
 			
 			if (record.getLatitude() == null) {
 				stmt.setNull(4, Types.REAL);
@@ -88,5 +89,17 @@ public class EventDao extends Dao<Event> {
 	 */
 	public @NotNull List<Event> findForUser(@NotNull String username) throws DataAccessException {
 		return findMultiple("associated_username", username);
+	}
+	
+	/**
+	 * Attempts to fetch from the database a list of events associated with a <code>Person</code>
+	 * with the given <code>id</code>.
+	 *
+	 * @param id The username of the user to which Event records should be associated to match the filter.
+	 * @return A list of fully realized <code>Event</code> objects.
+	 * @throws DataAccessException An exception if the read fails, or any of the objects could not be deserialized from the returned data.
+	 */
+	public @NotNull List<Event> findForPerson(@NotNull String id) throws DataAccessException {
+		return findMultiple("person_id", id);
 	}
 }

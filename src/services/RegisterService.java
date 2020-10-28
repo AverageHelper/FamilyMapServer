@@ -1,18 +1,14 @@
 package services;
 
-import dao.AuthTokenDao;
-import dao.DataAccessException;
-import dao.Database;
-import dao.UserDao;
+import dao.*;
 import handlers.RegisterRequest;
 import model.AuthToken;
+import model.Person;
 import model.User;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteErrorCode;
-import org.sqlite.SQLiteException;
-import server.Server;
+import utilities.NameGenerator;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -34,18 +30,28 @@ public class RegisterService {
 	 * @return The result of the request.
 	 */
 	public @NotNull RegisterResult register(RegisterRequest request) throws DataAccessException {
+		Person newPerson = new Person(
+			NameGenerator.newObjectIdentifier(),
+			request.getUserName(),
+			request.getFirstName(),
+			request.getLastName(),
+			request.getGender(),
+			null,
+			null,
+			null
+		);
 		User newUser = new User(
-			request.getUsername(),
+			request.getUserName(),
 			request.getPassword(),
 			request.getEmail(),
 			request.getFirstName(),
 			request.getLastName(),
 			request.getGender(),
-			null
+			newPerson.getId()
 		);
 		AuthToken newToken = new AuthToken(
-			Server.newObjectIdentifier(),
-			request.getUsername(),
+			NameGenerator.newObjectIdentifier(),
+			request.getUserName(),
 			new Date(),
 			true
 		);
@@ -55,12 +61,16 @@ public class RegisterService {
 		try {
 			db.runTransaction(conn -> {
 				UserDao userDao = new UserDao(conn);
+				PersonDao personDao = new PersonDao(conn);
 				AuthTokenDao authTokenDao = new AuthTokenDao(conn);
 				
 				userDao.insert(newUser);
+				personDao.insert(newPerson);
 				authTokenDao.insert(newToken);
 				
-				result.set(new RegisterResult(newToken));
+				// TODO: Generate 4 generations of ancestor data for this person
+				
+				result.set(new RegisterResult(newToken, newPerson.getId()));
 				return true;
 			});
 		} catch (DataAccessException e) {

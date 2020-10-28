@@ -36,7 +36,7 @@ public class UserDao extends Dao<User> {
 			stmt.setString(4, record.getFirstName());
 			stmt.setString(5, record.getLastName());
 			stmt.setString(6, record.getGender().getValue());
-			stmt.setString(7, record.getPersonId());
+			stmt.setString(7, record.getPersonID());
 			
 			stmt.executeUpdate();
 		} catch (SQLException e) {

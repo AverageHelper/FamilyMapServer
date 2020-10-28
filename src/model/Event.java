@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Event implements ModelData {
 	private final @NotNull String id;
 	private final @NotNull String associatedUsername;
-	private final @NotNull String personId;
+	private final @NotNull String personID;
 	private final @Nullable Double latitude;
 	private final @Nullable Double longitude;
 	private final @Nullable String country;
@@ -23,7 +23,7 @@ public class Event implements ModelData {
 	 * Creates an <code>Event</code> object.
 	 * @param id The event's unique ID.
 	 * @param associatedUsername The unique ID of the user who created this event.
-	 * @param personId The unique ID of the person whom this event describes.
+	 * @param personID The unique ID of the person whom this event describes.
 	 * @param latitude The event's latitudinal coordinate.
 	 * @param longitude The event's longitudinal coordinate.
 	 * @param country The country in which the event took place.
@@ -34,7 +34,7 @@ public class Event implements ModelData {
 	public Event(
 		@NotNull String id,
 		@NotNull String associatedUsername,
-		@NotNull String personId,
+		@NotNull String personID,
 		@Nullable Double latitude,
 		@Nullable Double longitude,
 		@Nullable String country,
@@ -44,7 +44,7 @@ public class Event implements ModelData {
 	) {
 		this.id = id;
 		this.associatedUsername = associatedUsername;
-		this.personId = personId;
+		this.personID=personID;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.country = country;
@@ -62,8 +62,8 @@ public class Event implements ModelData {
 		return associatedUsername;
 	}
 	
-	public @NotNull String getPersonId() {
-		return personId;
+	public @NotNull String getPersonID() {
+		return personID;
 	}
 	
 	public @Nullable Double getLatitude() {
@@ -98,7 +98,7 @@ public class Event implements ModelData {
 		return getYear() == event.getYear() &&
 			getId().equals(event.getId()) &&
 			getAssociatedUsername().equals(event.getAssociatedUsername()) &&
-			getPersonId().equals(event.getPersonId()) &&
+			getPersonID().equals(event.getPersonID()) &&
 			Objects.equals(getLatitude(), event.getLatitude()) &&
 			Objects.equals(getLongitude(), event.getLongitude()) &&
 			Objects.equals(getCountry(), event.getCountry()) &&
@@ -108,7 +108,7 @@ public class Event implements ModelData {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getAssociatedUsername(), getPersonId(), getLatitude(), getLongitude(), getCountry(), getCity(), getEventType(), getYear());
+		return Objects.hash(getId(), getAssociatedUsername(), getPersonID(), getLatitude(), getLongitude(), getCountry(), getCity(), getEventType(), getYear());
 	}
 	
 	@Override
@@ -116,7 +116,7 @@ public class Event implements ModelData {
 		return "Event{" +
 			"id='" + id + '\'' +
 			", associatedUsername='" + associatedUsername + '\'' +
-			", personId='" + personId + '\'' +
+			", personId='" + personID + '\'' +
 			", latitude=" + latitude +
 			", longitude=" + longitude +
 			", country='" + country + '\'' +

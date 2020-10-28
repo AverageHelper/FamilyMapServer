@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.sqlite.SQLiteErrorCode;
 import server.Server;
+import utilities.NameGenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,7 +33,7 @@ public class Database {
 		
 		try (Connection conn = DriverManager.getConnection(this.databaseUrl())) {
 			// Create tables if they don't exist
-			String sql = stringFromFile(new File(CREATE_TABLES_FILE).getAbsoluteFile());
+			String sql = NameGenerator.stringFromFile(new File(CREATE_TABLES_FILE).getAbsoluteFile());
 			
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
@@ -44,17 +45,6 @@ public class Database {
 			e.printStackTrace();
 			Server.logger.log(Level.SEVERE, "Error while preparing database tables: " + e.getMessage(), e);
 		}
-	}
-	
-	private static @NotNull String stringFromFile(@NotNull File file) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = bufferedReader.readLine()) != null)
-		{
-			sb.append(line);
-		}
-		return sb.toString();
 	}
 	
 	private @NotNull String databaseUrl() {

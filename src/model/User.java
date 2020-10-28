@@ -9,53 +9,53 @@ import java.util.Objects;
  * A representation of a unique Family Map user.
  */
 public class User implements ModelData {
-	private @NotNull String username;
+	private @NotNull String userName;
 	private @NotNull String password;
 	private @NotNull String email;
 	private @NotNull String firstName;
 	private @NotNull String lastName;
 	private @NotNull Gender gender;
-	private @Nullable String personId;
+	private @Nullable String personID;
 	
 	/**
 	 * Creates a <code>User</code> object.
-	 * @param username The user's unique username.
+	 * @param userName The user's unique username.
 	 * @param password The hash of the user's password.
 	 * @param email The user's email address.
 	 * @param firstName The person's first name.
 	 * @param lastName The person's last name.
 	 * @param gender The person's gender.
-	 * @param personId The user's associated Person entry.
+	 * @param personID The user's associated Person entry.
 	 */
 	public User(
-		@NotNull String username,
+		@NotNull String userName,
 		@NotNull String password,
 		@NotNull String email,
 		@NotNull String firstName,
 		@NotNull String lastName,
 		@NotNull Gender gender,
-		@Nullable String personId
+		@Nullable String personID
 	) {
-		this.username = username;
+		this.userName=userName;
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
-		this.personId = personId;
+		this.personID=personID;
 	}
 	
 	@Override
 	public @NotNull String getId() {
-		return username;
+		return userName;
 	}
 	
-	public @NotNull String getUsername() {
-		return username;
+	public @NotNull String getUserName() {
+		return userName;
 	}
 	
-	public void setUsername(@NotNull String username) {
-		this.username = username;
+	public void setUserName(@NotNull String userName) {
+		this.userName=userName;
 	}
 	
 	public @NotNull String getPassword() {
@@ -98,12 +98,12 @@ public class User implements ModelData {
 		this.gender = gender;
 	}
 	
-	public @Nullable String getPersonId() {
-		return personId;
+	public @Nullable String getPersonID() {
+		return personID;
 	}
 	
-	public void setPersonId(@Nullable String personId) {
-		this.personId = personId;
+	public void setPersonID(@Nullable String personID) {
+		this.personID=personID;
 	}
 	
 	@Override
@@ -111,30 +111,30 @@ public class User implements ModelData {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		User user = (User) o;
-		return getUsername().equals(user.getUsername()) &&
+		return getUserName().equals(user.getUserName()) &&
 			getPassword().equals(user.getPassword()) &&
 			getEmail().equals(user.getEmail()) &&
 			getFirstName().equals(user.getFirstName()) &&
 			getLastName().equals(user.getLastName()) &&
 			getGender() == user.getGender() &&
-			Objects.equals(getPersonId(), user.getPersonId());
+			Objects.equals(getPersonID(), user.getPersonID());
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(getUsername(), getPassword(), getEmail(), getFirstName(), getLastName(), getGender(), getPersonId());
+		return Objects.hash(getUserName(), getPassword(), getEmail(), getFirstName(), getLastName(), getGender(), getPersonID());
 	}
 	
 	@Override
 	public String toString() {
 		return "User{" +
-			"username='" + username + '\'' +
+			"username='" + userName + '\'' +
 			", password='" + password + '\'' +
 			", email='" + email + '\'' +
 			", firstName='" + firstName + '\'' +
 			", lastName='" + lastName + '\'' +
 			", gender=" + gender +
-			", personId='" + personId + '\'' +
+			", personId='" + personID + '\'' +
 			'}';
 	}
 }

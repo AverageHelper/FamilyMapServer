@@ -47,7 +47,7 @@ class ClearServiceTest {
 			
 			Person testPerson = new Person(
 				testPersonId,
-				testUser.getUsername(),
+				testUser.getUserName(),
 				"John",
 				"Cena",
 				Gender.MALE,

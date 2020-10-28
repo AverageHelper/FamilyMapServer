@@ -35,7 +35,7 @@ class EventDaoTest {
 		);
 		testEventA = new Event(
 			"event_a",
-			testUser.getUsername(),
+			testUser.getUserName(),
 			"karen",
 			35.9,
 			140.1,
@@ -46,8 +46,8 @@ class EventDaoTest {
 		);
 		testEventB = new Event(
 			"event_b",
-			testUser.getUsername(),
-			testEventA.getPersonId(),
+			testUser.getUserName(),
+			testEventA.getPersonID(),
 			testEventA.getLatitude(),
 			testEventA.getLongitude(),
 			testEventA.getCountry(),
@@ -127,7 +127,7 @@ class EventDaoTest {
 	
 	@Test
 	void testFindForUser_returnsNoEvents() throws DataAccessException {
-		List<Event> events = eventDao.findForUser(testUser.getUsername());
+		List<Event> events = eventDao.findForUser(testUser.getUserName());
 		assertNotNull(events);
 		assertTrue(events.isEmpty());
 	}
@@ -136,7 +136,7 @@ class EventDaoTest {
 	void testFindForUser_returnsOneEventForUser() throws DataAccessException {
 		userDao.insert(testUser);
 		eventDao.insert(testEventA);
-		List<Event> events = eventDao.findForUser(testUser.getUsername());
+		List<Event> events = eventDao.findForUser(testUser.getUserName());
 		assertNotNull(events);
 		assertFalse(events.isEmpty());
 		assertEquals(1, events.size());
@@ -148,7 +148,7 @@ class EventDaoTest {
 		userDao.insert(testUser);
 		eventDao.insert(testEventA);
 		eventDao.insert(testEventB);
-		List<Event> events = eventDao.findForUser(testUser.getUsername());
+		List<Event> events = eventDao.findForUser(testUser.getUserName());
 		assertNotNull(events);
 		assertFalse(events.isEmpty());
 		assertEquals(2, events.size());

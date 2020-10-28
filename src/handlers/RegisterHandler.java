@@ -1,49 +1,79 @@
 package handlers;
 
-import com.sun.net.httpserver.HttpExchange;
 import dao.DataAccessException;
+import dao.Database;
 import model.AuthToken;
 import model.Gender;
 import org.jetbrains.annotations.NotNull;
-import services.RegisterFailureException;
-import services.RegisterFailureReason;
+import org.jetbrains.annotations.Nullable;
 import services.RegisterResult;
 import services.RegisterService;
-
-import java.io.IOException;
+import utilities.Pair;
 
 /**
  * An object that handles user registration requests.
  */
-public class RegisterHandler extends Handler {
+public class RegisterHandler extends Handler<RegisterResponse> {
+	
+	public RegisterHandler() {
+		super();
+	}
+	
+	public RegisterHandler(@NotNull Database database) {
+		super(database);
+	}
 	
 	@Override
-	public void handle(HttpExchange exchange) throws IOException {
-		// Construct and return the HTTP response
+	public @NotNull String expectedHTTPMethod() {
+		return "POST";
+	}
+	
+	@Override
+	public boolean requiresAuthToken() {
+		return false;
+	}
+	
+	@Override
+	public @NotNull RegisterResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException {
+		RegisterRequest request = JSONSerialization.fromJson(req, RegisterRequest.class);
+		
+		Pair<AuthToken, String> results = register(
+			request.getUserName(),
+			request.getPassword(),
+			request.getEmail(),
+			request.getFirstName(),
+			request.getLastName(),
+			request.getGender()
+		);
+		
+		AuthToken authToken = results.getFirst();
+		String personID = results.getSecond();
+		return new RegisterResponse(authToken.getId(), authToken.getAssociatedUsername(), personID);
 	}
 	
 	/**
 	 * Attempts to create a new user in the database and get an authentication token for the user.
-	 * @param username The user's identifying name. This must be different from all other usernames.
+	 * @param userName The user's identifying name. This must be different from all other usernames.
 	 * @param password The user's password.
 	 * @param email The user's email.
 	 * @param firstName The user's first name.
 	 * @param lastName The user's surname.
 	 * @param gender The user's gender.
 	 *
-	 * @return A new auth token.
-	 * @throws RegisterFailureException If the login failed.
+	 * @return A new auth token and the ID of the user's generated <code>Person</code>.
+	 * @throws HandlingFailureException If the login failed.
+	 * @throws DataAccessException If there was a problem accessing the database.
 	 */
-	public @NotNull AuthToken register(
-		@NotNull String username,
+	public @NotNull Pair<@NotNull AuthToken, @NotNull String> register(
+		@NotNull String userName,
 		@NotNull String password,
 		@NotNull String email,
 		@NotNull String firstName,
 		@NotNull String lastName,
 		@NotNull Gender gender
-	) throws RegisterFailureException {
+	) throws HandlingFailureException, DataAccessException {
 		RegisterRequest req = new RegisterRequest(
-			username,
+			userName,
 			password,
 			email,
 			firstName,
@@ -53,17 +83,13 @@ public class RegisterHandler extends Handler {
 		
 		RegisterService service = new RegisterService(database);
 		RegisterResult result;
-		try {
-			result = service.register(req);
-		} catch (DataAccessException e) {
-			throw new RegisterFailureException(RegisterFailureReason.DATABASE, e);
-		}
+		result = service.register(req);
 		
 		if (result.getFailureReason() != null) {
-			throw new RegisterFailureException(result.getFailureReason(), null);
+			throw new HandlingFailureException(result.getFailureReason());
 		}
-		if (result.getToken() != null) {
-			return result.getToken();
+		if (result.getToken() != null && result.getPersonID() != null) {
+			return new Pair<>(result.getToken(), result.getPersonID());
 		}
 		
 		throw new IllegalStateException("There is no case where a fetch result has neither value nor error");
