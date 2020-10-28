@@ -40,4 +40,18 @@ public class LoginResponse extends JSONSerialization {
 	public boolean isSuccessful() {
 		return success;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.authToken == null) {
+			throw new MissingKeyException("authToken");
+		}
+		if (this.userName == null) {
+			throw new MissingKeyException("userName");
+		}
+		if (this.personID == null) {
+			throw new MissingKeyException("personID");
+		}
+	}
 }

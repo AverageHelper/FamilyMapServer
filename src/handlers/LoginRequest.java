@@ -32,4 +32,15 @@ public class LoginRequest extends JSONSerialization {
 	public @NotNull String getPassword() {
 		return password;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.userName == null) {
+			throw new MissingKeyException("userName");
+		}
+		if (this.password == null) {
+			throw new MissingKeyException("password");
+		}
+	}
 }

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A type of important life event.
  */
-public enum EventType {
+public enum EventType implements ValueType<String> {
 	BIRTH("birth"),
 	BAPTISM("baptism"),
 	CHRISTENING("christening"),

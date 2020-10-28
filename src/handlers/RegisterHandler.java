@@ -35,7 +35,7 @@ public class RegisterHandler extends Handler<RegisterResponse> {
 	
 	@Override
 	public @NotNull RegisterResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException {
-		RegisterRequest request = JSONSerialization.fromJson(req, RegisterRequest.class);
+		RegisterRequest request = parseJSON(req, RegisterRequest.class);
 		
 		Pair<AuthToken, String> results = register(
 			request.getUserName(),
@@ -86,7 +86,7 @@ public class RegisterHandler extends Handler<RegisterResponse> {
 		result = service.register(req);
 		
 		if (result.getFailureReason() != null) {
-			throw new HandlingFailureException(result.getFailureReason());
+			throw HandlingFailureException.from(result.getFailureReason());
 		}
 		if (result.getToken() != null && result.getPersonID() != null) {
 			return new Pair<>(result.getToken(), result.getPersonID());

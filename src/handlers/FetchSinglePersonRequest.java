@@ -71,4 +71,24 @@ public class FetchSinglePersonRequest extends JSONSerialization {
 	public boolean isSuccessful() {
 		return success;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.associatedUsername == null) {
+			throw new MissingKeyException("associatedUsername");
+		}
+		if (this.personID == null) {
+			throw new MissingKeyException("personID");
+		}
+		if (this.firstName == null) {
+			throw new MissingKeyException("firstName");
+		}
+		if (this.lastName == null) {
+			throw new MissingKeyException("lastName");
+		}
+		if (this.gender == null) {
+			throw new MissingKeyException("gender");
+		}
+	}
 }

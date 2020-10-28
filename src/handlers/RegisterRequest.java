@@ -62,4 +62,27 @@ public class RegisterRequest extends JSONSerialization {
 	public @NotNull Gender getGender() {
 		return gender;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.userName == null) {
+			throw new MissingKeyException("userName");
+		}
+		if (this.password == null) {
+			throw new MissingKeyException("password");
+		}
+		if (this.email == null) {
+			throw new MissingKeyException("email");
+		}
+		if (this.firstName == null) {
+			throw new MissingKeyException("firstName");
+		}
+		if (this.lastName == null) {
+			throw new MissingKeyException("lastName");
+		}
+		if (this.gender == null) {
+			throw new MissingKeyException("gender");
+		}
+	}
 }

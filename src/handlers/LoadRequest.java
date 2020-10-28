@@ -110,4 +110,18 @@ public class LoadRequest extends JSONSerialization {
 	public @Nullable Event removeEvent(@NotNull String id) {
 		return removeElement(id, events);
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.users == null) {
+			throw new MissingKeyException("users");
+		}
+		if (this.persons == null) {
+			throw new MissingKeyException("persons");
+		}
+		if (this.events == null) {
+			throw new MissingKeyException("events");
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package handlers;
 
+import model.*;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.*;
 
@@ -8,7 +9,7 @@ import com.google.gson.*;
  *
  * This class also includes a static <code>fromJson</code> helper to instantiate objects of arbitrary types from JSON data.
  */
-public class JSONSerialization implements HTTPSerialization {
+public abstract class JSONSerialization implements HTTPSerialization {
 	/**
 	 * @return A JSON string representing the object.
 	 */
@@ -38,8 +39,25 @@ public class JSONSerialization implements HTTPSerialization {
 	public static <T extends JSONSerialization> @NotNull T fromJson(
 		@NotNull String jsonString,
 		@NotNull Class<T> typeOfT
-	) throws JsonSyntaxException {
-		Gson gson = new Gson();
-		return gson.fromJson(jsonString, typeOfT);
+	) throws JsonParseException, MissingKeyException {
+		if (jsonString.isEmpty()) {
+			throw new JsonSyntaxException("Cannot parse an empty payload");
+		}
+		Gson gson = new GsonBuilder()
+			.registerTypeAdapter(Gender.class, new ValueSerializer())
+			.registerTypeAdapter(Gender.class, new GenderDeserializer())
+			.registerTypeAdapter(EventType.class, new ValueSerializer())
+			.registerTypeAdapter(EventType.class, new EventTypeDeserializer())
+			.create();
+		T result = gson.fromJson(jsonString, typeOfT);
+		result.assertCorrectDeserialization();
+		return result;
 	}
+	
+	/**
+	 * Called by <code>JSONSerialization</code> after the object is initialized by deserializing a
+	 * JSON string. Throw an exception if any of the instance's values are <code>null</code> where
+	 * they should not be.
+	 */
+	public abstract void assertCorrectDeserialization() throws MissingKeyException;
 }

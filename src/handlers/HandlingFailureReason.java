@@ -24,5 +24,10 @@ public enum HandlingFailureReason {
 	/**
 	 * One of the path arguments was not the right type.
 	 */
-	MISTYPED_PATH_COMPONENT;
+	MISTYPED_PATH_COMPONENT,
+	
+	/**
+	 * An error occurred while parsing a JSON payload.
+	 */
+	JSON_PARSE;
 }

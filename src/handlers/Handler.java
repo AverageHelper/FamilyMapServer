@@ -1,5 +1,6 @@
 package handlers;
 
+import com.google.gson.JsonParseException;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -64,6 +65,22 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 	 * @throws DataAccessException An exception if there was a problem accessing the database.
 	 */
 	public abstract @NotNull Response run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException, IOException;
+	
+	
+	
+	
+	public <T extends JSONSerialization> @NotNull T parseJSON(
+		@NotNull String json,
+		@NotNull Class<T> typeOfT
+	) throws HandlingFailureException {
+		try {
+			return JSONSerialization.fromJson(json, typeOfT);
+		} catch (JsonParseException e) {
+			throw new HandlingFailureException(e);
+		} catch (MissingKeyException e) {
+			throw new HandlingFailureException(HandlingFailureReason.JSON_PARSE, e);
+		}
+	}
 	
 	
 	

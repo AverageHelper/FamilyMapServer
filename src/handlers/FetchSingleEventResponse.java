@@ -77,4 +77,33 @@ public class FetchSingleEventResponse extends JSONSerialization {
 	public boolean isSuccessful() {
 		return success;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.associatedUsername == null) {
+			throw new MissingKeyException("associatedUsername");
+		}
+		if (this.eventID == null) {
+			throw new MissingKeyException("eventID");
+		}
+		if (this.personID == null) {
+			throw new MissingKeyException("personID");
+		}
+		if (this.latitude == null) {
+			throw new MissingKeyException("latitude");
+		}
+		if (this.longitude == null) {
+			throw new MissingKeyException("longitude");
+		}
+		if (this.country == null) {
+			throw new MissingKeyException("country");
+		}
+		if (this.city == null) {
+			throw new MissingKeyException("city");
+		}
+		if (this.eventType == null) {
+			throw new MissingKeyException("eventType");
+		}
+	}
 }

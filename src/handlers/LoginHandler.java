@@ -34,7 +34,7 @@ public class LoginHandler extends Handler<LoginResponse> {
 	
 	@Override
 	public @NotNull LoginResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException {
-		LoginRequest loginRequest = JSONSerialization.fromJson(req, LoginRequest.class);
+		LoginRequest loginRequest = parseJSON(req, LoginRequest.class);
 		
 		Pair<AuthToken, String> results = login(
 			loginRequest.getUserName(),
@@ -64,7 +64,7 @@ public class LoginHandler extends Handler<LoginResponse> {
 		LoginResult result = service.login(req);
 		
 		if (result.getFailureReason() != null) {
-			throw new HandlingFailureException(result.getFailureReason());
+			throw HandlingFailureException.from(result.getFailureReason());
 		}
 		if (result.getToken() != null && result.getPersonID() != null) {
 			return new Pair<>(result.getToken(), result.getPersonID());

@@ -31,7 +31,7 @@ public class LoadHandler extends Handler<LoadResponse> {
 	
 	@Override
 	public @NotNull LoadResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException {
-		LoadRequest loadRequest = JSONSerialization.fromJson(req, LoadRequest.class);
+		LoadRequest loadRequest = parseJSON(req, LoadRequest.class);
 		
 		database.clearTables();
 		

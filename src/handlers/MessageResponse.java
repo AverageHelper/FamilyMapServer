@@ -23,4 +23,12 @@ public class MessageResponse extends JSONSerialization {
 	public boolean isSuccessful() {
 		return success;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.message == null) {
+			throw new MissingKeyException("message");
+		}
+	}
 }

@@ -40,4 +40,12 @@ public class FetchDataRequest extends JSONSerialization {
 	public void setId(@Nullable String id) {
 		this.id = id;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.databaseTable == null) {
+			throw new MissingKeyException("databaseTable");
+		}
+	}
 }

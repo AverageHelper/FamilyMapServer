@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A person's gender.
  */
-public enum Gender {
+public enum Gender implements ValueType<String> {
 	MALE("m"),
 	FEMALE("f");
 	

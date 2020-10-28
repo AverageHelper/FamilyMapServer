@@ -51,7 +51,7 @@ public class Server {
 	private void run(String portNumber) {
 		logger.info("Starting FamilyMap");
 		
-		logger.info("Initializing HTTP Server...");
+		logger.info("Initializing HTTP Server on port " + portNumber);
 		HttpServer server;
 		try {
 			server = HttpServer.create(

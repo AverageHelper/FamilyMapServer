@@ -21,4 +21,12 @@ public class FetchMultipleItemsRequest<T extends ModelData> extends JSONSerializ
 	public boolean isSuccessful() {
 		return success;
 	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (this.data == null) {
+			throw new MissingKeyException("data");
+		}
+	}
 }
