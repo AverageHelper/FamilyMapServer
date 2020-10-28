@@ -73,11 +73,11 @@ public class RegisterHandler extends Handler<RegisterResponse> {
 		@NotNull Gender gender
 	) throws HandlingFailureException, DataAccessException {
 		RegisterRequest req = new RegisterRequest(
-			userName,
-			password,
-			email,
-			firstName,
-			lastName,
+			notEmptyValue("userName", userName),
+			notEmptyValue("password", password),
+			notEmptyValue("email", email),
+			notEmptyValue("firstName", firstName),
+			notEmptyValue("lastName", lastName),
 			gender
 		);
 		

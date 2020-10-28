@@ -69,6 +69,18 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 	
 	
 	
+	
+	
+	
+	/**
+	 * Tries to parse an object of a given type from a JSON string.
+	 *
+	 * @param json The JSON payload to parse.
+	 * @param typeOfT The type of object to parse. Must implement <code>JSONSerialization</code>.
+	 * @param <T> The type of object to parse.
+	 * @return The fully-realized object.
+	 * @throws HandlingFailureException An exception if there was a problem parsing the JSON.
+	 */
 	public <T extends JSONSerialization> @NotNull T parseJSON(
 		@NotNull String json,
 		@NotNull Class<T> typeOfT
@@ -78,8 +90,28 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 		} catch (JsonParseException e) {
 			throw new HandlingFailureException(e);
 		} catch (MissingKeyException e) {
-			throw new HandlingFailureException(HandlingFailureReason.JSON_PARSE, e);
+			throw new HandlingFailureException(HandlingFailureReason.BAD_INPUT, e);
 		}
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Checks that the given <code>value</code> is not <code>null</code> or an empty string. Throws an exception if it is, and returns the value otherwise.
+	 *
+	 * @param key The name of the key where the value is stored (for error reporting).
+	 * @param value The value to check.
+	 * @return The given value if it is neither <code>null</code> nor an empty string.
+	 * @throws HandlingFailureException An exception if the value is <code>null</code> or empty.
+	 */
+	public @NotNull String notEmptyValue(@NotNull String key, @Nullable String value) throws HandlingFailureException {
+		if (value == null || value.isEmpty()) {
+			EmptyValueException e = new EmptyValueException(key);
+			throw new HandlingFailureException(HandlingFailureReason.BAD_INPUT, e);
+		}
+		return value;
 	}
 	
 	

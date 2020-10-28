@@ -2,4 +2,4 @@
 /docs/**
 /out/
 /*.sqlite
-/log.txt
+/log.txt*

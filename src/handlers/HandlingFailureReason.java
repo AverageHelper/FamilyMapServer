@@ -27,7 +27,7 @@ public enum HandlingFailureReason {
 	MISTYPED_PATH_COMPONENT,
 	
 	/**
-	 * An error occurred while parsing a JSON payload.
+	 * The given input was incorrect.
 	 */
-	JSON_PARSE;
+	BAD_INPUT;
 }

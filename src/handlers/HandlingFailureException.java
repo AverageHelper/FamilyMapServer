@@ -30,7 +30,7 @@ public class HandlingFailureException extends Exception {
 	
 	public HandlingFailureException(@NotNull JsonParseException exception) {
 		super("Failed to parse JSON: " + exception.getMessage(), exception);
-		this.reason = HandlingFailureReason.JSON_PARSE;
+		this.reason = HandlingFailureReason.BAD_INPUT;
 	}
 	
 	public static @NotNull HandlingFailureException from(@NotNull RegisterFailureReason reason) {

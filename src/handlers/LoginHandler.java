@@ -59,7 +59,10 @@ public class LoginHandler extends Handler<LoginResponse> {
 		@NotNull String username,
 		@NotNull String password
 	) throws HandlingFailureException, DataAccessException {
-		LoginRequest req = new LoginRequest(username, password);
+		LoginRequest req = new LoginRequest(
+			notEmptyValue("username", username),
+			notEmptyValue("password", password)
+		);
 		LoginService service = new LoginService(database);
 		LoginResult result = service.login(req);
 		

@@ -60,10 +60,7 @@ public class FillHandler extends Handler<FillResponse> {
 				}
 				
 			} catch (NumberFormatException e) {
-				HandlingFailureException exception =
-					new HandlingFailureException(HandlingFailureReason.MISTYPED_PATH_COMPONENT);
-				exception.initCause(e);
-				throw exception;
+				throw new HandlingFailureException(HandlingFailureReason.MISTYPED_PATH_COMPONENT, e);
 			}
 		}
 		
