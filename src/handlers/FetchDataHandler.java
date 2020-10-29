@@ -74,7 +74,7 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 			
 			if (id != null) {
 				// Fetch single person
-				Person person = getPersonWithId(id);
+				Person person = getPersonWithId(id, userName);
 				if (person != null) {
 					// Person found!
 					return new FetchSinglePersonResponse(
@@ -107,7 +107,7 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 			
 			if (id != null) {
 				// Fetch single event
-				Event event = getEventWithId(id);
+				Event event = getEventWithId(id, userName);
 				if (event != null) {
 					// Event found!
 					return new FetchSingleEventResponse(
@@ -182,9 +182,9 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 */
 	public @NotNull List<Person> listAllPeople(@NotNull String userName) throws HandlingFailureException, DataAccessException {
 		FetchDataRequest request = new FetchDataRequest(
-			DatabaseTable.PERSON
+			DatabaseTable.PERSON,
+			userName
 		);
-		request.setUserName(userName);
 		
 		return performFetch(request);
 	}
@@ -198,9 +198,9 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 */
 	public @NotNull List<Event> listAllEvents(@NotNull String userName) throws HandlingFailureException, DataAccessException {
 		FetchDataRequest request = new FetchDataRequest(
-			DatabaseTable.EVENT
+			DatabaseTable.EVENT,
+			userName
 		);
-		request.setUserName(userName);
 		
 		return performFetch(request);
 	}
@@ -212,9 +212,13 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 * @return The resolved <code>Person</code> object, or <code>null</code> if the person is not found.
 	 * @throws HandlingFailureException If the fetch fails.
 	 */
-	public @Nullable Person getPersonWithId(@NotNull String id) throws HandlingFailureException, DataAccessException {
+	public @Nullable Person getPersonWithId(
+		@NotNull String id,
+		@NotNull String callerUserName
+	) throws HandlingFailureException, DataAccessException {
 		FetchDataRequest request = new FetchDataRequest(
-			DatabaseTable.PERSON
+			DatabaseTable.PERSON,
+			callerUserName
 		);
 		request.setId(id);
 		
@@ -228,9 +232,13 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 * @return The resolved <code>Event</code> object, or <code>null</code> if the person is not found.
 	 * @throws HandlingFailureException If the fetch fails.
 	 */
-	public @Nullable Event getEventWithId(@NotNull String id) throws HandlingFailureException, DataAccessException {
+	public @Nullable Event getEventWithId(
+		@NotNull String id,
+		@NotNull String callerUserName
+	) throws HandlingFailureException, DataAccessException {
 		FetchDataRequest request = new FetchDataRequest(
-			DatabaseTable.EVENT
+			DatabaseTable.EVENT,
+			callerUserName
 		);
 		request.setId(id);
 		

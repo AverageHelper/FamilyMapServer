@@ -60,6 +60,8 @@ public class HandlingFailureException extends Exception {
 		switch (reason) {
 			case NOT_FOUND:
 				return new HandlingFailureException(HandlingFailureReason.OBJECT_NOT_FOUND);
+			case UNAUTHORIZED:
+				return new HandlingFailureException(HandlingFailureReason.UNAUTHORIZED);
 			default:
 				throw unknownFailureReason("fetch", reason);
 		}

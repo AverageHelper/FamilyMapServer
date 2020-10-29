@@ -39,5 +39,10 @@ public enum HandlingFailureReason {
 	/**
 	 * The given input was incorrect.
 	 */
-	BAD_INPUT;
+	BAD_INPUT,
+	
+	/**
+	 * The calling user doesn't have access to the requested resource.
+	 */
+	UNAUTHORIZED;
 }

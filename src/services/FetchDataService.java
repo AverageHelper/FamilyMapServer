@@ -2,7 +2,10 @@ package services;
 
 import dao.*;
 import handlers.FetchDataRequest;
+import model.AuthToken;
+import model.Event;
 import model.ModelData;
+import model.Person;
 import org.jetbrains.annotations.NotNull;
 import server.Server;
 
@@ -27,7 +30,7 @@ public class FetchDataService {
 	 * @param <T> The model type of the data to fetch.
 	 * @return The result of the fetch operation.
 	 */
-	public <T extends ModelData> FetchDataResult<T> fetch(
+	public <T extends ModelData> @NotNull FetchDataResult<T> fetch(
 		FetchDataRequest request
 	) throws DataAccessException {
 		AtomicReference<FetchDataResult<T>> result = new AtomicReference<>(null);
@@ -39,8 +42,17 @@ public class FetchDataService {
 				case PERSON:
 					PersonDao personDao = new PersonDao(conn);
 					if (request.getId() != null) {
-						data.add((T) personDao.find(request.getId()));
-					} else if (request.getUserName() != null) {
+						Person person = personDao.find(request.getId());
+						if (person == null) {
+							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
+							return false;
+						}
+						if (!person.getAssociatedUsername().equals(request.getUserName())) {
+							result.set(new FetchDataResult<T>(FetchDataFailureReason.UNAUTHORIZED));
+							return false;
+						}
+						data.add((T) person);
+					} else {
 						data = (List<T>) personDao.findForUser(request.getUserName());
 					}
 					break;
@@ -48,8 +60,17 @@ public class FetchDataService {
 				case EVENT:
 					EventDao eventDao = new EventDao(conn);
 					if (request.getId() != null) {
-						data.add((T) eventDao.find(request.getId()));
-					} else if (request.getUserName() != null) {
+						Event event = eventDao.find(request.getId());
+						if (event != null) {
+							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
+							return false;
+						}
+						if (!event.getAssociatedUsername().equals(request.getUserName())) {
+							result.set(new FetchDataResult<T>(FetchDataFailureReason.UNAUTHORIZED));
+							return false;
+						}
+						data.add((T) event);
+					} else {
 						data = (List<T>) eventDao.findForUser(request.getUserName());
 					}
 					break;
@@ -58,7 +79,7 @@ public class FetchDataService {
 					UserDao userDao = new UserDao(conn);
 					if (request.getId() != null) {
 						data.add((T) userDao.find(request.getId()));
-					} else if (request.getUserName() != null) {
+					} else {
 						data.add((T) userDao.find(request.getUserName()));
 					}
 					break;
@@ -66,8 +87,17 @@ public class FetchDataService {
 				case AUTH_TOKEN:
 					AuthTokenDao authTokenDao = new AuthTokenDao(conn);
 					if (request.getId() != null) {
-						data.add((T) authTokenDao.find(request.getId()));
-					} else if (request.getUserName() != null) {
+						AuthToken token = authTokenDao.find(request.getId());
+						if (token != null) {
+							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
+							return false;
+						}
+						if (!token.getAssociatedUsername().equals(request.getUserName())) {
+							result.set(new FetchDataResult<T>(FetchDataFailureReason.UNAUTHORIZED));
+							return false;
+						}
+						data.add((T) token);
+					} else {
 						data = (List<T>) authTokenDao.findForUser(request.getUserName());
 					}
 					break;
