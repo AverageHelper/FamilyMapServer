@@ -1,9 +1,7 @@
 package dao;
 
 import model.Event;
-import model.EventType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
 import java.util.List;
@@ -50,7 +48,7 @@ public class EventDao extends Dao<Event> {
 			
 			stmt.setString(6, record.getCountry());
 			stmt.setString(7, record.getCity());
-			stmt.setString(8, record.getEventType().getValue());
+			stmt.setString(8, record.getEventType());
 			stmt.setInt(9, record.getYear());
 			
 			stmt.executeUpdate();
@@ -60,11 +58,11 @@ public class EventDao extends Dao<Event> {
 	}
 	
 	protected @NotNull Event recordFromQueryResult(ResultSet rs) throws SQLException {
-		String eventTypeName = getNotNullString(rs, "event_type");
-		EventType eventType = EventType.fromValue(eventTypeName);
-		if (eventType == null) {
-			throw new SQLIntegrityConstraintViolationException("No valid event_type found");
-		}
+//		String eventTypeName = getNotNullString(rs, "event_type");
+//		EventType eventType = EventType.fromValue(eventTypeName);
+//		if (eventType == null) {
+//			throw new SQLIntegrityConstraintViolationException("No valid event_type found");
+//		}
 		
 		return new Event(
 			getNotNullString(rs, "id"),
@@ -74,7 +72,8 @@ public class EventDao extends Dao<Event> {
 			rs.getDouble("longitude"),
 			rs.getString("country"),
 			rs.getString("city"),
-			eventType,
+//			eventType,
+			getNotNullString(rs, "event_type"),
 			rs.getInt("year")
 		);
 	}

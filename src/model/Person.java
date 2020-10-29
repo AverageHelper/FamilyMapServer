@@ -1,5 +1,7 @@
 package model;
 
+import handlers.JSONSerialization;
+import handlers.MissingKeyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,8 +10,8 @@ import java.util.Objects;
 /**
  * A representation of a person connected to a user and a life event.
  */
-public class Person implements ModelData {
-	private @NotNull String id;
+public class Person extends JSONSerialization implements ModelData {
+	private @NotNull String personID;
 	private @NotNull String associatedUsername;
 	private @NotNull String firstName;
 	private @NotNull String lastName;
@@ -20,7 +22,7 @@ public class Person implements ModelData {
 	
 	/**
 	 * Creates a <code>Person</code> object.
-	 * @param id The person's unique ID.
+	 * @param personID The person's unique ID.
 	 * @param associatedUsername The unique ID of the user who created this person.
 	 * @param firstName The person's first name.
 	 * @param lastName The person's last name.
@@ -30,7 +32,7 @@ public class Person implements ModelData {
 	 * @param spouseID The ID of the person's spouse.
 	 */
 	public Person(
-		@NotNull String id,
+		@NotNull String personID,
 		@NotNull String associatedUsername,
 		@NotNull String firstName,
 		@NotNull String lastName,
@@ -39,23 +41,27 @@ public class Person implements ModelData {
 		@Nullable String motherID,
 		@Nullable String spouseID
 	) {
-		this.id = id;
+		this.personID = personID;
 		this.associatedUsername = associatedUsername;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
-		this.fatherID=fatherID;
-		this.motherID=motherID;
-		this.spouseID=spouseID;
+		this.fatherID = fatherID;
+		this.motherID = motherID;
+		this.spouseID = spouseID;
 	}
 	
 	@Override
 	public @NotNull String getId() {
-		return id;
+		return personID;
 	}
 	
-	public void setId(@NotNull String id) {
-		this.id = id;
+	public @NotNull String getPersonID() {
+		return personID;
+	}
+	
+	public void setPersonID(@NotNull String personID) {
+		this.personID=personID;
 	}
 	
 	public @NotNull String getAssociatedUsername() {
@@ -119,7 +125,7 @@ public class Person implements ModelData {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Person person = (Person) o;
-		return getId().equals(person.getId()) &&
+		return getPersonID().equals(person.getPersonID()) &&
 			getAssociatedUsername().equals(person.getAssociatedUsername()) &&
 			getFirstName().equals(person.getFirstName()) &&
 			getLastName().equals(person.getLastName()) &&
@@ -131,13 +137,13 @@ public class Person implements ModelData {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getAssociatedUsername(), getFirstName(), getLastName(), getGender(), getFatherID(), getMotherID(), getSpouseID());
+		return Objects.hash(getPersonID(), getAssociatedUsername(), getFirstName(), getLastName(), getGender(), getFatherID(), getMotherID(), getSpouseID());
 	}
 	
 	@Override
 	public String toString() {
 		return "Person{" +
-			"id='" + id + '\'' +
+			"id='" + personID + '\'' +
 			", associatedUsername='" + associatedUsername + '\'' +
 			", firstName='" + firstName + '\'' +
 			", lastName='" + lastName + '\'' +
@@ -146,5 +152,25 @@ public class Person implements ModelData {
 			", motherId='" + motherID + '\'' +
 			", spouseId='" + spouseID + '\'' +
 			'}';
+	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (personID == null) {
+			throw new MissingKeyException("personID");
+		}
+		if (associatedUsername == null) {
+			throw new MissingKeyException("associatedUsername");
+		}
+		if (firstName == null) {
+			throw new MissingKeyException("firstName");
+		}
+		if (lastName == null) {
+			throw new MissingKeyException("lastName");
+		}
+		if (gender == null) {
+			throw new MissingKeyException("gender");
+		}
 	}
 }

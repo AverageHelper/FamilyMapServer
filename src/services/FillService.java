@@ -63,18 +63,17 @@ public class FillService {
 			// If the user's Person has generations, remove them
 			for (Person person : userPersons) {
 				// Delete the person's events
-				List<Event> personEvents=eventDao.findForPerson(person.getId());
+				List<Event> personEvents = eventDao.findForPerson(person.getId());
 				for (Event event : personEvents) {
 					eventDao.delete(event.getId());
 				}
 				
 				personDao.delete(person.getId());
 			}
-			userPersons.clear();
 			
 			// Make sure the user has a Person entry
 			if (userPerson.get() == null) {
-				userPerson.set(new Person(
+				Person newUserPerson = new Person(
 					NameGenerator.newObjectIdentifier(),
 					userName,
 					user.getFirstName(),
@@ -83,7 +82,9 @@ public class FillService {
 					null,
 					null,
 					null
-				));
+				);
+				personDao.insert(newUserPerson);
+				userPerson.set(newUserPerson);
 			}
 			
 			return true;
@@ -94,23 +95,33 @@ public class FillService {
 			generationsFromChild(generations, userPerson.get(), userName);
 		
 		// Write them in
-		db.runTransaction(conn -> {
-			PersonDao personDao = new PersonDao(conn);
-			EventDao eventDao = new EventDao(conn);
-			
-			List<Person> userPersons = newEntries.getFirst();
-			List<Event> userEvents = newEntries.getSecond();
-			
-			for (Person person : userPersons) {
-				personDao.insert(person);
+		try {
+			db.runTransaction(conn -> {
+				PersonDao personDao = new PersonDao(conn);
+				EventDao eventDao = new EventDao(conn);
+				
+				List<Person> userPersons = newEntries.getFirst();
+				List<Event> userEvents = newEntries.getSecond();
+				
+				for (Person person : userPersons) {
+					personDao.insert(person);
+				}
+				for (Event event : userEvents) {
+					eventDao.insert(event);
+				}
+				
+				result.set(new FillResult(userPersons.size(), userEvents.size()));
+				return true;
+			});
+		} catch (DataAccessException e) {
+			SQLiteErrorCode code = e.getErrorCode();
+			String message = e.getMessage();
+			if (code != SQLiteErrorCode.SQLITE_CONSTRAINT || !message.contains(".id")) {
+				throw e;
 			}
-			for (Event event : userEvents) {
-				eventDao.insert(event);
-			}
-			
-			result.set(new FillResult(userPersons.size(), userEvents.size()));
-			return true;
-		});
+			// Duplicate object
+			result.set(new FillResult(FillFailureReason.DUPLICATE_OBJECT_ID));
+		}
 		
 		return result.get();
 	}
@@ -157,10 +168,10 @@ public class FillService {
 			
 			// Create events for them
 			// Birth
-			Event dadBirth = newEvent(userName, father, EventType.BIRTH);
-			Event momBirth = newEvent(userName, mother, EventType.BIRTH);
-			Event dadMarriage = newEvent(userName, father, EventType.MARRIAGE);
-			Event momMarriage = newEvent(userName, mother, EventType.MARRIAGE);
+			Event dadBirth = newEvent(userName, father, "Birth");
+			Event momBirth = newEvent(userName, mother, "Birth");
+			Event dadMarriage = newEvent(userName, father, "Marriage");
+			Event momMarriage = newEvent(userName, mother, "Marriage");
 			events.add(dadBirth);
 			events.add(momBirth);
 			events.add(dadMarriage);
@@ -170,7 +181,7 @@ public class FillService {
 		return new Pair<>(people, events);
 	}
 	
-	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull EventType type) {
+	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull String type) {
 		// TODO: Add location info
 		return new Event(
 			NameGenerator.newObjectIdentifier(),

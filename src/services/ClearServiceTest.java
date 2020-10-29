@@ -29,7 +29,7 @@ class ClearServiceTest {
 				null,
 				null,
 				null,
-				EventType.BIRTH,
+				"Birth",
 				2020
 			);
 			eventDao.insert(testEvent);
@@ -88,6 +88,12 @@ class ClearServiceTest {
 	@Test
 	void testClear_clearsDataFromAllTables() throws DataAccessException {
 		preloadDatabase();
+		assertTrue(service.clear());
+		assertDatabaseEmpty();
+	}
+	
+	@Test
+	void testClear_clearsEmptyDatabase() throws DataAccessException {
 		assertTrue(service.clear());
 		assertDatabaseEmpty();
 	}

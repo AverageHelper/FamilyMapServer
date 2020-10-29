@@ -1,5 +1,7 @@
 package model;
 
+import handlers.JSONSerialization;
+import handlers.MissingKeyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,7 +10,7 @@ import java.util.Objects;
 /**
  * A representation of a unique Family Map user.
  */
-public class User implements ModelData {
+public class User extends JSONSerialization implements ModelData {
 	private @NotNull String userName;
 	private @NotNull String password;
 	private @NotNull String email;
@@ -36,13 +38,13 @@ public class User implements ModelData {
 		@NotNull Gender gender,
 		@Nullable String personID
 	) {
-		this.userName=userName;
+		this.userName = userName;
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.gender = gender;
-		this.personID=personID;
+		this.personID = personID;
 	}
 	
 	@Override
@@ -136,5 +138,28 @@ public class User implements ModelData {
 			", gender=" + gender +
 			", personId='" + personID + '\'' +
 			'}';
+	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (userName == null) {
+			throw new MissingKeyException("userName");
+		}
+		if (password == null) {
+			throw new MissingKeyException("password");
+		}
+		if (email == null) {
+			throw new MissingKeyException("email");
+		}
+		if (firstName == null) {
+			throw new MissingKeyException("firstName");
+		}
+		if (lastName == null) {
+			throw new MissingKeyException("lastName");
+		}
+		if (gender == null) {
+			throw new MissingKeyException("gender");
+		}
 	}
 }

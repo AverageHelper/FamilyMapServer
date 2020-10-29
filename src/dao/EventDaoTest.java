@@ -41,7 +41,7 @@ class EventDaoTest {
 			140.1,
 			"United States",
 			"Provo",
-			EventType.BIRTH,
+			"Death",
 			1987
 		);
 		testEventB = new Event(
@@ -52,7 +52,7 @@ class EventDaoTest {
 			testEventA.getLongitude(),
 			testEventA.getCountry(),
 			testEventA.getCity(),
-			EventType.DEATH,
+			"Death",
 			2020
 		);
 		

@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ErrorResponse extends MessageResponse {
 	public ErrorResponse(@NotNull String message) {
-		super(message, false);
+		super("Error: " + message, false);
 	}
 }

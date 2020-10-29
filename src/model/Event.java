@@ -1,5 +1,7 @@
 package model;
 
+import handlers.JSONSerialization;
+import handlers.MissingKeyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,20 +10,21 @@ import java.util.Objects;
 /**
  * A representation of a life event.
  */
-public class Event implements ModelData {
-	private final @NotNull String id;
+public class Event extends JSONSerialization implements ModelData {
+	private final @NotNull String eventID;
 	private final @NotNull String associatedUsername;
 	private final @NotNull String personID;
 	private final @Nullable Double latitude;
 	private final @Nullable Double longitude;
 	private final @Nullable String country;
 	private final @Nullable String city;
-	private final @NotNull EventType eventType;
+//	private @NotNull EventType eventType;
+	private @NotNull String eventType;
 	private final int year;
 	
 	/**
 	 * Creates an <code>Event</code> object.
-	 * @param id The event's unique ID.
+	 * @param eventID The event's unique ID.
 	 * @param associatedUsername The unique ID of the user who created this event.
 	 * @param personID The unique ID of the person whom this event describes.
 	 * @param latitude The event's latitudinal coordinate.
@@ -32,19 +35,19 @@ public class Event implements ModelData {
 	 * @param year The year on the Gregorian calendar in which this event took place.
 	 */
 	public Event(
-		@NotNull String id,
+		@NotNull String eventID,
 		@NotNull String associatedUsername,
 		@NotNull String personID,
 		@Nullable Double latitude,
 		@Nullable Double longitude,
 		@Nullable String country,
 		@Nullable String city,
-		@NotNull EventType eventType,
+		@NotNull String eventType,
 		int year
 	) {
-		this.id = id;
+		this.eventID = eventID;
 		this.associatedUsername = associatedUsername;
-		this.personID=personID;
+		this.personID = personID;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.country = country;
@@ -55,7 +58,11 @@ public class Event implements ModelData {
 	
 	@Override
 	public @NotNull String getId() {
-		return id;
+		return eventID;
+	}
+	
+	public @NotNull String getEventID() {
+		return eventID;
 	}
 	
 	public @NotNull String getAssociatedUsername() {
@@ -82,7 +89,7 @@ public class Event implements ModelData {
 		return city;
 	}
 	
-	public @NotNull EventType getEventType() {
+	public @NotNull String getEventType() {
 		return eventType;
 	}
 	
@@ -96,25 +103,25 @@ public class Event implements ModelData {
 		if (o == null || getClass() != o.getClass()) return false;
 		Event event = (Event) o;
 		return getYear() == event.getYear() &&
-			getId().equals(event.getId()) &&
+			getEventID().equals(event.getEventID()) &&
 			getAssociatedUsername().equals(event.getAssociatedUsername()) &&
 			getPersonID().equals(event.getPersonID()) &&
 			Objects.equals(getLatitude(), event.getLatitude()) &&
 			Objects.equals(getLongitude(), event.getLongitude()) &&
 			Objects.equals(getCountry(), event.getCountry()) &&
 			Objects.equals(getCity(), event.getCity()) &&
-			getEventType() == event.getEventType();
+			getEventType().equals(event.getEventType());
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(), getAssociatedUsername(), getPersonID(), getLatitude(), getLongitude(), getCountry(), getCity(), getEventType(), getYear());
+		return Objects.hash(getPersonID(), getAssociatedUsername(), getPersonID(), getLatitude(), getLongitude(), getCountry(), getCity(), getEventType(), getYear());
 	}
 	
 	@Override
 	public String toString() {
 		return "Event{" +
-			"id='" + id + '\'' +
+			"id='" + eventID + '\'' +
 			", associatedUsername='" + associatedUsername + '\'' +
 			", personId='" + personID + '\'' +
 			", latitude=" + latitude +
@@ -124,5 +131,23 @@ public class Event implements ModelData {
 			", eventType=" + eventType +
 			", year=" + year +
 			'}';
+	}
+	
+	@SuppressWarnings("ConstantConditions")
+	@Override
+	public void assertCorrectDeserialization() throws MissingKeyException {
+		if (eventID == null) {
+			throw new MissingKeyException("eventID");
+		}
+		if (associatedUsername == null) {
+			throw new MissingKeyException("associatedUsername");
+		}
+		if (personID == null) {
+			throw new MissingKeyException("personID");
+		}
+		if (eventType == null) {
+			throw new MissingKeyException("eventType");
+//			eventType = EventType.BIRTH;
+		}
 	}
 }

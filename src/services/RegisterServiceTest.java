@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utilities.NameGenerator;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterServiceTest {
@@ -25,7 +27,7 @@ class RegisterServiceTest {
 	}
 	
 	@Test
-	void testRegister_succeedsWithNewUser() throws DataAccessException {
+	void testRegister_succeedsWithNewUser() throws DataAccessException, IOException {
 		RegisterRequest req = new RegisterRequest(
 			testUsername,
 			"Pa$$w0rd",
@@ -57,7 +59,7 @@ class RegisterServiceTest {
 	}
 	
 	@Test
-	void testRegister_failsWithDuplicateUsername() throws DataAccessException {
+	void testRegister_failsWithDuplicateUsername() throws DataAccessException, IOException {
 		RegisterRequest req = new RegisterRequest(
 			testUsername,
 			"Pa$$w0rd",

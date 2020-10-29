@@ -81,9 +81,9 @@ public class Server {
 		server.createContext("/load", new LoadHandler());
 		
 		// Fetch entries
-		server.createContext("/person/[personId]", new FetchDataHandler());
+//		server.createContext("/person/[personId]", new FetchDataHandler());
 		server.createContext("/person", new FetchDataHandler());
-		server.createContext("/event/[eventId]", new FetchDataHandler());
+//		server.createContext("/event/[eventId]", new FetchDataHandler());
 		server.createContext("/event", new FetchDataHandler());
 		
 		// Normal file requests

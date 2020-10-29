@@ -160,6 +160,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 		int code
 	) throws IOException {
 		String payload = res.serialize();
+		Server.logger.fine("Closing with code " + code + ": " + payload);
 		Headers responseHeaders = exchange.getResponseHeaders();
 		responseHeaders.set("Content-Type", res.contentType());
 		exchange.sendResponseHeaders(code, payload.length());
@@ -184,7 +185,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 		@NotNull HttpExchange exchange,
 		@NotNull T res
 	) throws IOException {
-		this.closeWithResponse(exchange, res, HttpURLConnection.HTTP_OK);
+		this.closeWithResponse(exchange, res, res.httpResultCode());
 	}
 	
 	
@@ -282,6 +283,12 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 				String path = exchange.getRequestURI().getPath();
 				String json = getContent(exchange);
 				
+				Server.logger.fine("Handling " +
+					exchange.getRequestMethod().toUpperCase() + " request at path " +
+					path + ": " +
+					json
+				);
+				
 				if (requiresAuthToken()) {
 					// Check that the requester is signed in.
 					
@@ -290,8 +297,8 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 					
 					// Ensure "Authorization" header is present
 					if (!reqHeaders.containsKey(HEADER_KEY_AUTHORIZATION)) {
-						this.closeWithError(exchange, HttpURLConnection.HTTP_UNAUTHORIZED,
-							"You are not permitted to access this resource."
+						this.closeWithError(exchange, HttpURLConnection.HTTP_BAD_REQUEST,
+							"You must provide an auth token to access this resource."
 						);
 						return;
 					}
@@ -300,7 +307,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 					String authToken = reqHeaders.getFirst(HEADER_KEY_AUTHORIZATION);
 					String userName = usernameForAuthToken(authToken);
 					if (userName == null) {
-						this.closeWithError(exchange, HttpURLConnection.HTTP_UNAUTHORIZED,
+						this.closeWithError(exchange, HttpURLConnection.HTTP_BAD_REQUEST,
 							"You are not permitted to access this resource."
 						);
 						return;
@@ -314,20 +321,26 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 				}
 				
 			} catch (DataAccessException e) {
-				Server.logger.severe(e.getMessage());
+				Server.logger.warning("DataAccessException: " + e.getMessage());
 				e.printStackTrace();
 				this.closeWithInternalError(exchange);
 				return;
 				
 			} catch (HandlingFailureException e) {
-				Server.logger.severe(e.getMessage());
+				Server.logger.warning(
+					"HandlingFailureException: " +
+						e.getReason().name() +
+						": " +
+						e.getMessage()
+				);
 				this.closeWithError(exchange, HttpURLConnection.HTTP_BAD_REQUEST, e.getMessage());
 				return;
 			}
 			
 			// Respond with success
 			this.closeWithResponse(exchange, resp);
-		} catch (IOException e) {
+			
+		} catch (Exception e) {
 			Server.logger.severe(e.getMessage());
 			e.printStackTrace();
 			this.closeWithInternalError(exchange);

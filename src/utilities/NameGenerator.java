@@ -57,7 +57,8 @@ public class NameGenerator {
 	}
 	
 	public static @NotNull String randomStringFromFile(@NotNull String filename) throws IOException {
-		List<String> names = stringsFromFile(new File(filename).getAbsoluteFile());
+		final String UTILS_ROOT = "src/utilities/";
+		List<String> names = stringsFromFile(new File(UTILS_ROOT + filename).getAbsoluteFile());
 		Random random = new Random();
 		return names.get(
 			random.nextInt(names.size())

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteErrorCode;
 import utilities.NameGenerator;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,7 +30,7 @@ public class RegisterService {
 	 * @throws DataAccessException An exception if there was a problem accessing the database.
 	 * @return The result of the request.
 	 */
-	public @NotNull RegisterResult register(RegisterRequest request) throws DataAccessException {
+	public @NotNull RegisterResult register(RegisterRequest request) throws DataAccessException, IOException {
 		Person newPerson = new Person(
 			NameGenerator.newObjectIdentifier(),
 			request.getUserName(),
@@ -68,15 +69,19 @@ public class RegisterService {
 				personDao.insert(newPerson);
 				authTokenDao.insert(newToken);
 				
-				// TODO: Generate 4 generations of ancestor data for this person
-				
 				result.set(new RegisterResult(newToken, newPerson.getId()));
 				return true;
 			});
+			
+			// FIXME: Fill 4 generations for each new user
+			FillService fillService = new FillService(db);
+			fillService.fill(request.getUserName(), 4);
+		
 		} catch (DataAccessException e) {
 			SQLiteErrorCode code = e.getErrorCode();
 			String message = e.getMessage();
-			if (code != SQLiteErrorCode.SQLITE_CONSTRAINT || !message.contains("User.username")) {
+			if (code != SQLiteErrorCode.SQLITE_CONSTRAINT ||
+				!message.contains("." + DatabaseTable.USER.getPrimaryKey())) {
 				throw e;
 			}
 			// Duplicate username

@@ -8,6 +8,7 @@ import services.FillResult;
 import services.FillService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -39,9 +40,11 @@ public class FillHandler extends Handler<FillResponse> {
 	public @NotNull FillResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException, IOException {
 		// Path: /fill/[username]/{generations}
 		// Parse the path for the username and generation count
-		List<String> components = Arrays.asList(path.split(Pattern.quote("/")));
+		List<String> components = new ArrayList<>(Arrays.asList(path.split(Pattern.quote("/"))));
 		
-		// Strip /fill
+		// Strip "/"
+		components.remove(0);
+		// Strip "fill"
 		components.remove(0);
 		if (components.size() < 1) {
 			throw new HandlingFailureException(HandlingFailureReason.TOO_FEW_PATH_COMPONENTS);
@@ -80,7 +83,7 @@ public class FillHandler extends Handler<FillResponse> {
 	 * @return The result of the fill operation
 	 * @throws DataAccessException An exception if there is an error accessing the database.
 	 */
-	public @NotNull FillResponse fill(@NotNull String username, @Nullable Integer generations) throws DataAccessException, IOException {
+	public @NotNull FillResponse fill(@NotNull String username, @Nullable Integer generations) throws HandlingFailureException, DataAccessException, IOException {
 		int generationCount = 4;
 		if (generations != null) {
 			generationCount = generations;
@@ -89,10 +92,18 @@ public class FillHandler extends Handler<FillResponse> {
 		assert !username.isEmpty();
 		
 		FillService service = new FillService(database);
-		FillResult res = service.fill(username, generationCount);
-		return new FillResponse(
-			res.getPersonCount(),
-			res.getEventCount()
-		);
+		FillResult result = service.fill(username, generationCount);
+		
+		if (result.getFailureReason() != null) {
+			throw HandlingFailureException.from(result.getFailureReason());
+		}
+		if (result.getPersonCount() != null && result.getEventCount() != null) {
+			return new FillResponse(
+				result.getPersonCount(),
+				result.getEventCount()
+			);
+		}
+		
+		throw new IllegalStateException("There is no case where a fetch result has neither value nor error");
 	}
 }

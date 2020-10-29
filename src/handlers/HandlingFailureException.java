@@ -2,6 +2,9 @@ package handlers;
 
 import com.google.gson.JsonParseException;
 import org.jetbrains.annotations.NotNull;
+import server.Server;
+import services.FetchDataFailureReason;
+import services.FillFailureReason;
 import services.LoginFailureReason;
 import services.RegisterFailureReason;
 
@@ -38,7 +41,7 @@ public class HandlingFailureException extends Exception {
 			case DUPLICATE_USERNAME:
 				return new HandlingFailureException(HandlingFailureReason.DUPLICATE_USERNAME);
 			default:
-				throw new IllegalStateException("Unknown failure reason " + reason.toString());
+				throw unknownFailureReason("registration", reason);
 		}
 	}
 	
@@ -49,8 +52,38 @@ public class HandlingFailureException extends Exception {
 			case USER_NOT_FOUND:
 				return new HandlingFailureException(HandlingFailureReason.USER_NOT_FOUND);
 			default:
-				throw new IllegalStateException("Unknown failure reason " + reason.toString());
+				throw unknownFailureReason("login", reason);
 		}
+	}
+	
+	public static @NotNull HandlingFailureException from(@NotNull FetchDataFailureReason reason) {
+		switch (reason) {
+			case NOT_FOUND:
+				return new HandlingFailureException(HandlingFailureReason.OBJECT_NOT_FOUND);
+			default:
+				throw unknownFailureReason("fetch", reason);
+		}
+	}
+	
+	public static HandlingFailureException from(@NotNull FillFailureReason reason) {
+		switch (reason) {
+			case DUPLICATE_OBJECT_ID:
+				return new HandlingFailureException(HandlingFailureReason.DUPLICATE_OBJECT_ID);
+			default:
+				throw unknownFailureReason("fill", reason);
+		}
+	}
+	
+	private static <T extends Enum<T>> IllegalStateException unknownFailureReason(
+		@NotNull String type,
+		T reason
+	) {
+		IllegalStateException e = new IllegalStateException(
+			"Unknown " + type + " failure reason " + reason.name()
+		);
+		e.printStackTrace();
+		Server.logger.severe(e.getMessage());
+		return e;
 	}
 	
 	public @NotNull HandlingFailureReason getReason() {

@@ -2,6 +2,8 @@ package handlers;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.net.HttpURLConnection;
+
 /**
  * Objects that inherit from this type can be easily converted into a transportable string.
  */
@@ -15,4 +17,8 @@ public interface HTTPSerialization {
 	 * @return The HTTP content type of the payload.
 	 */
 	public @NotNull String contentType();
+	
+	public default int httpResultCode() {
+		return HttpURLConnection.HTTP_OK;
+	}
 }

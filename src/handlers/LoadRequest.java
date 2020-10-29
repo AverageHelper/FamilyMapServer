@@ -123,5 +123,14 @@ public class LoadRequest extends JSONSerialization {
 		if (this.events == null) {
 			throw new MissingKeyException("events");
 		}
+		for (User user : users) {
+			user.assertCorrectDeserialization();
+		}
+		for (Person person : persons) {
+			person.assertCorrectDeserialization();
+		}
+		for (Event event : events) {
+			event.assertCorrectDeserialization();
+		}
 	}
 }

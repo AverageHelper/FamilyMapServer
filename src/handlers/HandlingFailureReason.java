@@ -7,9 +7,19 @@ public enum HandlingFailureReason {
 	DUPLICATE_USERNAME,
 	
 	/**
+	 * There is already an object in the database with that ID.
+	 */
+	DUPLICATE_OBJECT_ID,
+	
+	/**
 	 * The provided username is not one we know.
 	 */
 	USER_NOT_FOUND,
+	
+	/**
+	 * The requested object was not found.
+	 */
+	OBJECT_NOT_FOUND,
 	
 	/**
 	 * The provided password was incorrect.

@@ -1,29 +1,28 @@
 package handlers;
 
-import model.EventType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class FetchSingleEventResponse extends JSONSerialization {
+public class FetchSingleEventResponse extends FetchDataResponse {
 	private final @NotNull String associatedUsername;
 	private final @NotNull String eventID;
 	private final @NotNull String personID;
-	private final @NotNull Double latitude;
-	private final @NotNull Double longitude;
-	private final @NotNull String country;
-	private final @NotNull String city;
-	private final @NotNull EventType eventType;
+	private final @Nullable Double latitude;
+	private final @Nullable Double longitude;
+	private final @Nullable String country;
+	private final @Nullable String city;
+	private final @NotNull String eventType;
 	private final int year;
-	private final boolean success;
 	
 	public FetchSingleEventResponse(
 		@NotNull String associatedUsername,
 		@NotNull String eventID,
 		@NotNull String personID,
-		@NotNull Double latitude,
-		@NotNull Double longitude,
-		@NotNull String country,
-		@NotNull String city,
-		@NotNull EventType eventType,
+		@Nullable Double latitude,
+		@Nullable Double longitude,
+		@Nullable String country,
+		@Nullable String city,
+		@NotNull String eventType,
 		int year
 	) {
 		this.associatedUsername = associatedUsername;
@@ -35,7 +34,6 @@ public class FetchSingleEventResponse extends JSONSerialization {
 		this.city = city;
 		this.eventType = eventType;
 		this.year = year;
-		this.success = true;
 	}
 	
 	public @NotNull String getAssociatedUsername() {
@@ -50,32 +48,28 @@ public class FetchSingleEventResponse extends JSONSerialization {
 		return personID;
 	}
 	
-	public @NotNull Double getLatitude() {
+	public @Nullable Double getLatitude() {
 		return latitude;
 	}
 	
-	public @NotNull Double getLongitude() {
+	public @Nullable Double getLongitude() {
 		return longitude;
 	}
 	
-	public @NotNull String getCountry() {
+	public @Nullable String getCountry() {
 		return country;
 	}
 	
-	public @NotNull String getCity() {
+	public @Nullable String getCity() {
 		return city;
 	}
 	
-	public @NotNull EventType getEventType() {
+	public @NotNull String getEventType() {
 		return eventType;
 	}
 	
 	public int getYear() {
 		return year;
-	}
-	
-	public boolean isSuccessful() {
-		return success;
 	}
 	
 	@SuppressWarnings("ConstantConditions")
@@ -89,18 +83,6 @@ public class FetchSingleEventResponse extends JSONSerialization {
 		}
 		if (this.personID == null) {
 			throw new MissingKeyException("personID");
-		}
-		if (this.latitude == null) {
-			throw new MissingKeyException("latitude");
-		}
-		if (this.longitude == null) {
-			throw new MissingKeyException("longitude");
-		}
-		if (this.country == null) {
-			throw new MissingKeyException("country");
-		}
-		if (this.city == null) {
-			throw new MissingKeyException("city");
 		}
 		if (this.eventType == null) {
 			throw new MissingKeyException("eventType");

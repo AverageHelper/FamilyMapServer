@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class FetchDataRequest extends JSONSerialization {
 	private final @NotNull DatabaseTable databaseTable;
 	private @Nullable String id;
+	private @Nullable String userName;
 	
 	/**
 	 * Creates a <code>FetchDataRequest</code> object.
@@ -39,6 +40,17 @@ public class FetchDataRequest extends JSONSerialization {
 	 */
 	public void setId(@Nullable String id) {
 		this.id = id;
+	}
+	
+	/**
+	 * @return The ID of the user that owns the records to be returned.
+	 */
+	public @Nullable String getUserName() {
+		return userName;
+	}
+	
+	public void setUserName(@Nullable String userName) {
+		this.userName = userName;
 	}
 	
 	@SuppressWarnings("ConstantConditions")

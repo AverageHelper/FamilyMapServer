@@ -3,3 +3,4 @@
 /out/
 /*.sqlite
 /log.txt*
+*.log

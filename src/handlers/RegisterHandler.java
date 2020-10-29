@@ -10,6 +10,8 @@ import services.RegisterResult;
 import services.RegisterService;
 import utilities.Pair;
 
+import java.io.IOException;
+
 /**
  * An object that handles user registration requests.
  */
@@ -34,7 +36,7 @@ public class RegisterHandler extends Handler<RegisterResponse> {
 	}
 	
 	@Override
-	public @NotNull RegisterResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException {
+	public @NotNull RegisterResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException, IOException {
 		RegisterRequest request = parseJSON(req, RegisterRequest.class);
 		
 		Pair<AuthToken, String> results = register(
@@ -71,7 +73,7 @@ public class RegisterHandler extends Handler<RegisterResponse> {
 		@NotNull String firstName,
 		@NotNull String lastName,
 		@NotNull Gender gender
-	) throws HandlingFailureException, DataAccessException {
+	) throws HandlingFailureException, DataAccessException, IOException {
 		RegisterRequest req = new RegisterRequest(
 			notEmptyValue("userName", userName),
 			notEmptyValue("password", password),

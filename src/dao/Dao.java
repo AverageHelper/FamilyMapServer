@@ -33,12 +33,39 @@ public abstract class Dao<T extends ModelData> {
 	
 	
 	/**
-	 * Attempts to add a new record to the database.
+	 * Adds a new record to the database.
 	 *
 	 * @param record The data to write.
 	 * @throws DataAccessException An exception if the write fails.
 	 */
 	public abstract void insert(@NotNull T record) throws DataAccessException;
+	
+	
+	
+	
+	
+	
+	/**
+	 * Attempts to add a new record to the database. If SQL reports that the new record would
+	 * duplicate another record's ID, then nothing changes.
+	 *
+	 * @param record The data to write.
+	 * @throws DataAccessException An exception if the write fails.
+	 */
+	public void insertIfNotExists(@NotNull T record) throws DataAccessException {
+		try {
+			insert(record);
+		} catch (DataAccessException e) {
+			SQLiteErrorCode code = e.getErrorCode();
+			String message = e.getMessage();
+			
+			if (code != SQLiteErrorCode.SQLITE_CONSTRAINT ||
+				!message.contains("." + table().getPrimaryKey())
+			) {
+				throw e;
+			}
+		}
+	}
 	
 	
 	

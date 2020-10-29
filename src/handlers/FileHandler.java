@@ -2,10 +2,13 @@ package handlers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import server.Server;
 import utilities.NameGenerator;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 
 /**
  * An object that handles file requests.
@@ -31,13 +34,28 @@ public class FileHandler extends Handler<FileResponse> {
 		@Nullable String userName,
 		@NotNull String req
 	) throws IOException {
-		String content = read(path);
-		return new FileResponse(content);
+		return read(path);
 	}
 	
-	public @NotNull String read(@NotNull String path) throws IOException {
+	public @NotNull FileResponse read(@NotNull String path) throws IOException {
+		if (path.equals("/")) {
+			path = "index.html";
+		}
+		
 		// Read the file at the given path relative to /web
-		File file = new File("/web" + path).getAbsoluteFile();
-		return NameGenerator.stringFromFile(file);
+		File htmlRoot = new File("web/").getAbsoluteFile();
+		File file = new File(htmlRoot, path).getAbsoluteFile();
+		
+		try {
+			Server.logger.finer("Filling web request at path '" + file.getPath() + "'");
+			String content = NameGenerator.stringFromFile(file);
+			return new FileResponse(content);
+			
+		} catch (FileNotFoundException e) {
+			Server.logger.finer("File not found.");
+			file = new File(htmlRoot, "HTML/404.html").getAbsoluteFile();
+			String content = NameGenerator.stringFromFile(file);
+			return new FileResponse(content, HttpURLConnection.HTTP_NOT_FOUND);
+		}
 	}
 }

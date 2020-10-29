@@ -8,6 +8,8 @@ import model.Gender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoginServiceTest {
@@ -23,7 +25,7 @@ class LoginServiceTest {
 		db.clearTables();
 	}
 	
-	private void registerTestUser() throws DataAccessException {
+	private void registerTestUser() throws DataAccessException, IOException {
 		RegisterRequest req = new RegisterRequest(
 			testUsername,
 			testPassword,
@@ -46,7 +48,7 @@ class LoginServiceTest {
 	}
 	
 	@Test
-	void testLogin_failsWithWrongPassword() throws DataAccessException {
+	void testLogin_failsWithWrongPassword() throws DataAccessException, IOException {
 		registerTestUser();
 		LoginRequest req = new LoginRequest(testUsername, "this should fail");
 		LoginResult res = service.login(req);
@@ -56,7 +58,7 @@ class LoginServiceTest {
 	}
 	
 	@Test
-	void testLogin_succeedsWithCorrectCredentials() throws DataAccessException {
+	void testLogin_succeedsWithCorrectCredentials() throws DataAccessException, IOException {
 		registerTestUser();
 		LoginRequest req = new LoginRequest(testUsername, testPassword);
 		LoginResult res = service.login(req);
