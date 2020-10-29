@@ -32,7 +32,7 @@ public abstract class JSONSerialization implements HTTPSerialization {
 	
 	@Override
 	public @NotNull String contentType() {
-		return "application/json; charset=UTF-8";
+		return "application/json";
 	}
 	
 	/**

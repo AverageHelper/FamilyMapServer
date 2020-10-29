@@ -3,6 +3,7 @@ package server;
 import com.sun.net.httpserver.HttpServer;
 import handlers.*;
 import handlers.FileHandler;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.MalformedParametersException;
@@ -17,18 +18,11 @@ public class Server {
 	private static final int MAX_WAITING_CONNECTIONS = 12;
 	public static Logger logger;
 	
-	static {
-		try {
-			initLog();
-		} catch (IOException e) {
-			System.out.println("Could not initialize log: " + e.getMessage());
-			e.printStackTrace();
+	private static void initLog(@Nullable Level logLevel) throws IOException {
+		if (logLevel == null) {
+			logLevel = Level.INFO;
 		}
-	}
-	
-	private static void initLog() throws IOException {
-		// TODO: Get this value from the command line. Default to INFO.
-		Level logLevel = Level.FINEST;
+		System.out.println("Logging with level " + logLevel.getName());
 		
 		logger = Logger.getLogger("self.familymap");
 		logger.setLevel(logLevel);
@@ -46,6 +40,32 @@ public class Server {
 		fileHandler.setLevel(logLevel);
 		fileHandler.setFormatter(new SimpleFormatter());
 		logger.addHandler(fileHandler);
+	}
+	
+	public static void main(String[] args) {
+		if (args.length < 1) {
+			throw new MalformedParametersException("Usage: java -jar Server.jar <port> [log level]");
+		}
+		
+		Level logLevel = null;
+		if (args.length > 1) {
+			String levelString = args[1].toUpperCase();
+			try {
+				logLevel = Level.parse(levelString);
+			} catch (Exception e) {
+				System.out.println("Could not parse log level '" + levelString + "': " + e.getMessage());
+			}
+		}
+		try {
+			initLog(logLevel);
+		} catch (IOException e) {
+			System.out.println("Could not initialize log: " + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		String portNumber = args[0];
+		
+		new Server().run(portNumber);
 	}
 	
 	private void run(String portNumber) {
@@ -93,15 +113,5 @@ public class Server {
 		server.start();
 		
 		logger.info("Server started");
-	}
-	
-	public static void main(String[] args) {
-		if (args.length < 1) {
-			throw new MalformedParametersException("Expected a single parameter (the port number to run on)");
-		}
-		
-		String portNumber = args[0];
-		
-		new Server().run(portNumber);
 	}
 }

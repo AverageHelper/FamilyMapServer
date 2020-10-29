@@ -162,7 +162,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 		String payload = res.serialize();
 		Server.logger.fine("Closing with code " + code + ": " + payload);
 		Headers responseHeaders = exchange.getResponseHeaders();
-		responseHeaders.set("Content-Type", res.contentType());
+		responseHeaders.set("Content-Type", res.contentType() + "; charset=UTF-8");
 		exchange.sendResponseHeaders(code, payload.length());
 		
 		exchange.getResponseBody().write(payload.getBytes(StandardCharsets.UTF_8));

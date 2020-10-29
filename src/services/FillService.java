@@ -8,9 +8,7 @@ import server.Server;
 import utilities.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -138,7 +136,10 @@ public class FillService {
 				userDao.update(user);
 				personDao.update(newUserPerson.get());
 			} else {
-				// TODO: Fatal error here
+				throw new DataAccessException(
+					SQLiteErrorCode.SQLITE_NOTFOUND,
+					"There was no user found with the username '" + userName + "'"
+				);
 			}
 			
 			return true;
@@ -193,9 +194,14 @@ public class FillService {
 		// Iteratively create parents from the child, and add the new people to the array.
 		// For each generation...
 		
+		int thisYear = new GregorianCalendar().get(Calendar.YEAR);
+		int daddyAge = 26;
+		int currentChildAge = 23;
+		int fathersBirthYear = thisYear - currentChildAge - daddyAge;
+		
 		// Add first generation
 		Pair<List<Person>, List<Event>> firstGeneration =
-			generationFrom(Collections.singletonList(child), userName);
+			generationFrom(Collections.singletonList(child), userName, fathersBirthYear);
 		
 		List<Person> generation = new ArrayList<>(firstGeneration.getFirst());
 		List<Event> allNewEvents = new ArrayList<>(firstGeneration.getSecond());
@@ -205,7 +211,8 @@ public class FillService {
 		
 		for (int idx = 0; idx < generations; idx++) {
 			// Add the generation to the results
-			Pair<List<Person>, List<Event>> newGeneration = generationFrom(generation, userName);
+			Pair<List<Person>, List<Event>> newGeneration =
+				generationFrom(generation, userName, fathersBirthYear - daddyAge);
 			generation = newGeneration.getFirst();
 			
 			allNewEvents.addAll(newGeneration.getSecond());
@@ -217,7 +224,8 @@ public class FillService {
 	
 	private @NotNull Pair<List<Person>, List<Event>> generationFrom(
 		@NotNull List<Person> oldGeneration,
-		@NotNull String userName
+		@NotNull String userName,
+		int fathersBirthYear
 	) throws IOException {
 		List<Person> people = new ArrayList<>();
 		List<Event> events = new ArrayList<>();
@@ -236,10 +244,19 @@ public class FillService {
 			
 			// Create events for them
 			// Birth
-			Event dadBirth = newEvent(userName, father, "Birth");
-			Event momBirth = newEvent(userName, mother, "Birth");
-			Event dadMarriage = newEvent(userName, father, "Marriage");
-			Event momMarriage = newEvent(userName, mother, "Marriage");
+			int birthYear2 = NumberHelpers.randomNumberAround(fathersBirthYear, 5);
+			Event dadBirth = newEvent(userName, father,
+				"Birth", fathersBirthYear);
+			Event momBirth = newEvent(userName, mother,
+				"Birth", birthYear2);
+			
+			// Marriage
+			int marriageAge = 24;
+			Event dadMarriage = newEvent(userName, father,
+				"Marriage", fathersBirthYear + marriageAge);
+			Event momMarriage = newEvent(userName, mother,
+				"Marriage", birthYear2 + marriageAge);
+			
 			events.add(dadBirth);
 			events.add(momBirth);
 			events.add(dadMarriage);
@@ -249,7 +266,7 @@ public class FillService {
 		return new Pair<>(people, events);
 	}
 	
-	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull String type) throws IOException {
+	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull String type, int year) throws IOException {
 		Location loc = LocationGenerator.randomLocation();
 		
 		return new Event(
@@ -261,7 +278,7 @@ public class FillService {
 			loc.getCountry(),
 			loc.getCity(),
 			type,
-			2020
+			year
 		);
 	}
 	
