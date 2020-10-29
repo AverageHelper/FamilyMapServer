@@ -48,6 +48,9 @@ public class FileHandler extends Handler<FileResponse> {
 		
 		try {
 			Server.logger.finer("Filling web request at path '" + file.getPath() + "'");
+			if (!fileIsDescendantOfOther(htmlRoot, file)) {
+				throw new FileNotFoundException("Callers cannot access files outside of the HTML root");
+			}
 			String content = NameGenerator.stringFromFile(file);
 			return new FileResponse(content);
 			
@@ -57,5 +60,10 @@ public class FileHandler extends Handler<FileResponse> {
 			String content = NameGenerator.stringFromFile(file);
 			return new FileResponse(content, HttpURLConnection.HTTP_NOT_FOUND);
 		}
+	}
+	
+	private boolean fileIsDescendantOfOther(@NotNull File parent, @NotNull File child) {
+		// Child must start with the parent path.
+		return child.getPath().startsWith(parent.getPath());
 	}
 }
