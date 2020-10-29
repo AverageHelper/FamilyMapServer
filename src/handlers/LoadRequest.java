@@ -1,7 +1,7 @@
 package handlers;
 
 import model.Event;
-import model.Identifiable;
+import utilities.Identifiable;
 import model.Person;
 import model.User;
 import org.jetbrains.annotations.NotNull;

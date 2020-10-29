@@ -5,6 +5,7 @@ import model.*;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteErrorCode;
 import server.Server;
+import utilities.ArrayHelpers;
 import utilities.NameGenerator;
 import utilities.Pair;
 
@@ -119,8 +120,14 @@ public class FillService {
 			User user = userDao.find(userName);
 			
 			if (user != null) {
+				String newPersonID;
+				if (user.getPersonID() != null) {
+					newPersonID = user.getPersonID();
+				} else {
+					newPersonID = NameGenerator.newObjectIdentifier();
+				}
 				newUserPerson.set(new Person(
-					NameGenerator.newObjectIdentifier(),
+					newPersonID,
 					userName,
 					user.getFirstName(),
 					user.getLastName(),
@@ -131,7 +138,9 @@ public class FillService {
 				));
 				user.setPersonID(newUserPerson.get().getId());
 				userDao.update(user);
-				personDao.insert(newUserPerson.get());
+				personDao.update(newUserPerson.get());
+			} else {
+				// TODO: Fatal error here
 			}
 			
 			return true;
@@ -221,6 +230,9 @@ public class FillService {
 			Pair<Person, Person> parents = randomParents(person);
 			Person father = parents.getFirst();
 			Person mother = parents.getSecond();
+			if (!ArrayHelpers.containsObjectWithSameId(people, person)) {
+				people.add(person);
+			}
 			people.add(father);
 			people.add(mother);
 			
@@ -276,6 +288,8 @@ public class FillService {
 		
 		return result;
 	}
+	
+	
 	
 	private @NotNull Person randomPerson(
 		@NotNull Gender gender,

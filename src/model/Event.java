@@ -18,8 +18,7 @@ public class Event extends JSONSerialization implements ModelData {
 	private final @Nullable Double longitude;
 	private final @Nullable String country;
 	private final @Nullable String city;
-//	private @NotNull EventType eventType;
-	private @NotNull String eventType;
+	private final @NotNull String eventType;
 	private final int year;
 	
 	/**
@@ -147,7 +146,6 @@ public class Event extends JSONSerialization implements ModelData {
 		}
 		if (eventType == null) {
 			throw new MissingKeyException("eventType");
-//			eventType = EventType.BIRTH;
 		}
 	}
 }

@@ -2,10 +2,10 @@ package services;
 
 import dao.*;
 import model.Event;
-import model.Identifiable;
 import model.Person;
 import model.User;
 import org.jetbrains.annotations.NotNull;
+import utilities.ArrayHelpers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,23 +28,23 @@ public class LoadService {
 		db.clearTables();
 		
 		// Remove duplicate entries
-		// TODO: We may be fine leaning on SQL for this
+		// FIXME: We should be fine leaning on SQL for this
 		List<User> usersToAdd = new ArrayList<>();
 		List<Person> personsToAdd = new ArrayList<>();
 		List<Event> eventsToAdd = new ArrayList<>();
 		
 		for (User user : users) {
-			if (!containsObjectWithSameId(usersToAdd, user)) {
+			if (!ArrayHelpers.containsObjectWithSameId(usersToAdd, user)) {
 				usersToAdd.add(user);
 			}
 		}
 		for (Person person : persons) {
-			if (!containsObjectWithSameId(personsToAdd, person)) {
+			if (!ArrayHelpers.containsObjectWithSameId(personsToAdd, person)) {
 				personsToAdd.add(person);
 			}
 		}
 		for (Event event : events) {
-			if (!containsObjectWithSameId(eventsToAdd, event)) {
+			if (!ArrayHelpers.containsObjectWithSameId(eventsToAdd, event)) {
 				eventsToAdd.add(event);
 			}
 		}
@@ -72,13 +72,6 @@ public class LoadService {
 			personsToAdd.size(),
 			eventsToAdd.size()
 		);
-	}
-	
-	private <S, T extends Identifiable<S>> boolean containsObjectWithSameId(
-		final List<T> list,
-		final T key
-	) {
-		return list.stream().anyMatch(o -> o.getId().equals(key.getId()));
 	}
 	
 }
