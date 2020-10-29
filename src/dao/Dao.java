@@ -68,6 +68,18 @@ public abstract class Dao<T extends ModelData> {
 	}
 	
 	
+	/**
+	 * Removes the stored record, and replaces it with the given record.
+	 *
+	 * @param record The record to update.
+	 * @throws DataAccessException An exception if the write fails.
+	 */
+	public void update(@NotNull T record) throws DataAccessException {
+		delete(record.getId());
+		insert(record);
+	}
+	
+	
 	
 	
 	/**

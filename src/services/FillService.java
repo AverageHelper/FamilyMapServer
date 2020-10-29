@@ -4,6 +4,7 @@ import dao.*;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteErrorCode;
+import server.Server;
 import utilities.NameGenerator;
 import utilities.Pair;
 
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -22,6 +24,8 @@ public class FillService {
 	public FillService(@NotNull Database database) {
 		this.db = database;
 	}
+	
+	
 	
 	/**
 	 * Sets the family tree for the given user to a new tree with the given number of generations.
@@ -36,10 +40,80 @@ public class FillService {
 		assert generations >= 0;
 		assert !userName.isEmpty();
 		
-		AtomicReference<FillResult> result = new AtomicReference<>(null);
+		AtomicInteger personCount = new AtomicInteger(0);
+		AtomicInteger eventCount = new AtomicInteger(0);
 		AtomicReference<Person> userPerson = new AtomicReference<>(null);
 		
 		// Prepare the database for fresh data
+		clearFormerData(userName, userPerson, personCount);
+		
+		// Create new generations
+		Pair<List<Person>, List<Event>> newEntries =
+			generationsFromChild(generations, userPerson.get(), userName);
+		
+		// Write them in
+		FillResult result = fillNewGenerations(personCount, eventCount, newEntries);
+		
+		Server.logger.info("Filled " + generations + " generations of people. Added " +
+			result.getPersonCount() + " people and " +
+			result.getPersonCount() + " events."
+		);
+		
+		return result;
+	}
+	
+	
+	
+	private @NotNull FillResult fillNewGenerations(
+		AtomicInteger personCount,
+		AtomicInteger eventCount,
+		Pair<List<Person>, List<Event>> newEntries
+	) throws DataAccessException {
+		AtomicReference<FillResult> result = new AtomicReference<>(null);
+		
+		try {
+			db.runTransaction(conn -> {
+				PersonDao personDao = new PersonDao(conn);
+				EventDao eventDao = new EventDao(conn);
+				
+				List<Person> userPersons = newEntries.getFirst();
+				List<Event> userEvents = newEntries.getSecond();
+				
+				for (Person person : userPersons) {
+					personDao.insert(person);
+				}
+				for (Event event : userEvents) {
+					eventDao.insert(event);
+				}
+				
+				result.set(new FillResult(
+					userPersons.size() + personCount.get(),
+					userEvents.size() + eventCount.get()
+				));
+				return true;
+			});
+			
+		} catch (DataAccessException e) {
+			SQLiteErrorCode code = e.getErrorCode();
+			String message = e.getMessage();
+			if (code != SQLiteErrorCode.SQLITE_CONSTRAINT || !message.contains(".id")) {
+				throw e;
+			}
+			// Duplicate object
+			result.set(new FillResult(FillFailureReason.DUPLICATE_OBJECT_ID));
+		}
+		
+		return result.get();
+	}
+	
+	
+	private void clearFormerData(
+		@NotNull String userName,
+		AtomicReference<Person> userPerson,
+		AtomicInteger personCount
+	) throws DataAccessException {
+		// Delete the user's old data
+		
 		db.runTransaction(conn -> {
 			UserDao userDao = new UserDao(conn);
 			PersonDao personDao = new PersonDao(conn);
@@ -48,16 +122,13 @@ public class FillService {
 			// Get the user's family tree
 			List<Person> userPersons = personDao.findForUser(userName);
 			
-			// Exempt the user's Person entry
+			// Get the user's Person entry, if they have one
 			User user = userDao.find(userName);
 			if (user == null) {
 				throw new DataAccessException(SQLiteErrorCode.SQLITE_NOTFOUND, "There was no user found with the username '" + userName + "'");
 			}
 			if (user.getPersonID() != null) {
 				userPerson.set(personDao.find(user.getPersonID()));
-			}
-			if (userPerson.get() != null) {
-				userPersons.remove(userPerson.get());
 			}
 			
 			// If the user's Person has generations, remove them
@@ -83,50 +154,24 @@ public class FillService {
 					null,
 					null
 				);
-				personDao.insert(newUserPerson);
 				userPerson.set(newUserPerson);
+				user.setPersonID(newUserPerson.getId());
+				userDao.update(user);
+				personDao.insert(newUserPerson);
+				personCount.addAndGet(1);
 			}
 			
 			return true;
 		});
-		
-		// Create new generations
-		Pair<List<Person>, List<Event>> newEntries =
-			generationsFromChild(generations, userPerson.get(), userName);
-		
-		// Write them in
-		try {
-			db.runTransaction(conn -> {
-				PersonDao personDao = new PersonDao(conn);
-				EventDao eventDao = new EventDao(conn);
-				
-				List<Person> userPersons = newEntries.getFirst();
-				List<Event> userEvents = newEntries.getSecond();
-				
-				for (Person person : userPersons) {
-					personDao.insert(person);
-				}
-				for (Event event : userEvents) {
-					eventDao.insert(event);
-				}
-				
-				result.set(new FillResult(userPersons.size(), userEvents.size()));
-				return true;
-			});
-		} catch (DataAccessException e) {
-			SQLiteErrorCode code = e.getErrorCode();
-			String message = e.getMessage();
-			if (code != SQLiteErrorCode.SQLITE_CONSTRAINT || !message.contains(".id")) {
-				throw e;
-			}
-			// Duplicate object
-			result.set(new FillResult(FillFailureReason.DUPLICATE_OBJECT_ID));
-		}
-		
-		return result.get();
 	}
 	
-	private @NotNull Pair<List<Person>, List<Event>> generationsFromChild(int generations, @NotNull Person child, @NotNull String userName) throws IOException {
+	
+	
+	private @NotNull Pair<List<Person>, List<Event>> generationsFromChild(
+		int generations,
+		@NotNull Person child,
+		@NotNull String userName
+	) throws IOException {
 		
 		// Iteratively create parents from the child, and add the new people to the array.
 		// For each generation...

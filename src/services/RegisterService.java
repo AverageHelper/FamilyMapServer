@@ -3,7 +3,6 @@ package services;
 import dao.*;
 import handlers.RegisterRequest;
 import model.AuthToken;
-import model.Person;
 import model.User;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteErrorCode;
@@ -31,16 +30,6 @@ public class RegisterService {
 	 * @return The result of the request.
 	 */
 	public @NotNull RegisterResult register(RegisterRequest request) throws DataAccessException, IOException {
-		Person newPerson = new Person(
-			NameGenerator.newObjectIdentifier(),
-			request.getUserName(),
-			request.getFirstName(),
-			request.getLastName(),
-			request.getGender(),
-			null,
-			null,
-			null
-		);
 		User newUser = new User(
 			request.getUserName(),
 			request.getPassword(),
@@ -48,7 +37,7 @@ public class RegisterService {
 			request.getFirstName(),
 			request.getLastName(),
 			request.getGender(),
-			newPerson.getId()
+			null
 		);
 		AuthToken newToken = new AuthToken(
 			NameGenerator.newObjectIdentifier(),
@@ -62,21 +51,30 @@ public class RegisterService {
 		try {
 			db.runTransaction(conn -> {
 				UserDao userDao = new UserDao(conn);
-				PersonDao personDao = new PersonDao(conn);
 				AuthTokenDao authTokenDao = new AuthTokenDao(conn);
 				
 				userDao.insert(newUser);
-				personDao.insert(newPerson);
 				authTokenDao.insert(newToken);
 				
-				result.set(new RegisterResult(newToken, newPerson.getId()));
 				return true;
 			});
 			
-			// FIXME: Fill 4 generations for each new user
 			FillService fillService = new FillService(db);
 			fillService.fill(request.getUserName(), 4);
-		
+			
+			db.runTransaction(conn -> {
+				UserDao userDao = new UserDao(conn);
+				
+				User user = userDao.find(request.getUserName());
+				if (user != null && user.getPersonID() != null) {
+					result.set(new RegisterResult(newToken, user.getPersonID()));
+				} else {
+					throw new DataAccessException(SQLiteErrorCode.SQLITE_NOTFOUND, "The user or its person was found null.");
+				}
+				
+				return false;
+			});
+			
 		} catch (DataAccessException e) {
 			SQLiteErrorCode code = e.getErrorCode();
 			String message = e.getMessage();
