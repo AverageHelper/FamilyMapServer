@@ -3,7 +3,7 @@ package handlers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import server.Server;
-import utilities.NameGenerator;
+import utilities.FileHelpers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,13 +51,13 @@ public class FileHandler extends Handler<FileResponse> {
 			if (!fileIsDescendantOfOther(htmlRoot, file)) {
 				throw new FileNotFoundException("Callers cannot access files outside of the HTML root");
 			}
-			String content = NameGenerator.stringFromFile(file);
+			String content = FileHelpers.stringFromFile(file);
 			return new FileResponse(content);
 			
 		} catch (FileNotFoundException e) {
 			Server.logger.finer("File not found.");
 			file = new File(htmlRoot, "HTML/404.html").getAbsoluteFile();
-			String content = NameGenerator.stringFromFile(file);
+			String content = FileHelpers.stringFromFile(file);
 			return new FileResponse(content, HttpURLConnection.HTTP_NOT_FOUND);
 		}
 	}

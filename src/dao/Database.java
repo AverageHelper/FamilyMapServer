@@ -4,11 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.sqlite.SQLiteErrorCode;
 import server.Server;
-import utilities.NameGenerator;
+import utilities.FileHelpers;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 import java.util.logging.Level;
@@ -33,7 +31,7 @@ public class Database {
 		
 		try (Connection conn = DriverManager.getConnection(this.databaseUrl())) {
 			// Create tables if they don't exist
-			String sql = NameGenerator.stringFromFile(new File(CREATE_TABLES_FILE).getAbsoluteFile());
+			String sql = FileHelpers.stringFromFile(new File(CREATE_TABLES_FILE).getAbsoluteFile());
 			
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(sql);

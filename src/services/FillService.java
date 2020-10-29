@@ -5,9 +5,7 @@ import model.*;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteErrorCode;
 import server.Server;
-import utilities.ArrayHelpers;
-import utilities.NameGenerator;
-import utilities.Pair;
+import utilities.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -227,7 +225,7 @@ public class FillService {
 		// Create parents for each person in the previous generation
 		for (Person person : oldGeneration) {
 			// Add them to a new generation array
-			Pair<Person, Person> parents = randomParents(person);
+			Pair<Person, Person> parents = newParents(person);
 			Person father = parents.getFirst();
 			Person mother = parents.getSecond();
 			if (!ArrayHelpers.containsObjectWithSameId(people, person)) {
@@ -251,16 +249,17 @@ public class FillService {
 		return new Pair<>(people, events);
 	}
 	
-	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull String type) {
-		// TODO: Add location info
+	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull String type) throws IOException {
+		Location loc = LocationGenerator.randomLocation();
+		
 		return new Event(
 			NameGenerator.newObjectIdentifier(),
 			userName,
 			person.getId(),
-			null,
-			null,
-			"United States",
-			"Provo",
+			loc.getLatitude(),
+			loc.getLongitude(),
+			loc.getCountry(),
+			loc.getCity(),
 			type,
 			2020
 		);
@@ -269,7 +268,7 @@ public class FillService {
 	/**
 	 * Returns a pair of new parents (ordered father then mother) for the given <code>child</code>.
 	 */
-	private @NotNull Pair<Person, Person> randomParents(@NotNull Person child) throws IOException {
+	private @NotNull Pair<Person, Person> newParents(@NotNull Person child) throws IOException {
 		Pair<Person, Person> result = new Pair<>();
 		
 		// TODO: Add a chance for the parents to retain the child's surname

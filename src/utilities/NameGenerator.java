@@ -3,12 +3,7 @@ package utilities;
 import model.Gender;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class NameGenerator {
@@ -32,39 +27,6 @@ public class NameGenerator {
 		return randomString(OBJECT_ID_LENGTH);
 	}
 	
-	public static @NotNull String stringFromFile(@NotNull File file) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-		StringBuilder sb = new StringBuilder();
-		String line;
-		while ((line = bufferedReader.readLine()) != null)
-		{
-			sb.append(line);
-		}
-		return sb.toString();
-	}
-	
-	public static @NotNull List<String> stringsFromFile(@NotNull File file) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-		List<String> list = new ArrayList<>();
-		String line;
-		while ((line = bufferedReader.readLine()) != null)
-		{
-			if (!line.isEmpty()) {
-				list.add(line);
-			}
-		}
-		return list;
-	}
-	
-	public static @NotNull String randomStringFromFile(@NotNull String filename) throws IOException {
-		final String UTILS_ROOT = "src/utilities/";
-		List<String> names = stringsFromFile(new File(UTILS_ROOT + filename).getAbsoluteFile());
-		Random random = new Random();
-		return names.get(
-			random.nextInt(names.size())
-		);
-	}
-	
 	public static final String FIRST_NAMES_MALE_FILE = "FirstNamesMale.txt";
 	public static final String FIRST_NAMES_FEMALE_FILE = "FirstNamesFemale.txt";
 	
@@ -72,25 +34,25 @@ public class NameGenerator {
 		switch (gender) {
 			case MALE:
 				// Pick a male name
-				return randomStringFromFile(FIRST_NAMES_MALE_FILE);
+				return FileHelpers.randomStringFromFile(FIRST_NAMES_MALE_FILE);
 				
 			case FEMALE:
 				// Pick a female name
-				return randomStringFromFile(FIRST_NAMES_FEMALE_FILE);
+				return FileHelpers.randomStringFromFile(FIRST_NAMES_FEMALE_FILE);
 				
 			default:
 				// Pick a random gender and return that
 				Random random = new Random();
 				if (random.nextBoolean()) {
-					return randomStringFromFile(FIRST_NAMES_MALE_FILE);
+					return FileHelpers.randomStringFromFile(FIRST_NAMES_MALE_FILE);
 				} else {
-					return randomStringFromFile(FIRST_NAMES_FEMALE_FILE);
+					return FileHelpers.randomStringFromFile(FIRST_NAMES_FEMALE_FILE);
 				}
 		}
 	}
 	
 	public static final String LAST_NAMES_FILE = "LastNames.txt";
 	public static @NotNull String randomLastName() throws IOException {
-		return randomStringFromFile(LAST_NAMES_FILE);
+		return FileHelpers.randomStringFromFile(LAST_NAMES_FILE);
 	}
 }

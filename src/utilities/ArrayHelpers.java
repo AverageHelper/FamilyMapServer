@@ -1,6 +1,9 @@
 package utilities;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
+import java.util.Random;
 
 public class ArrayHelpers {
 	/**
@@ -15,5 +18,12 @@ public class ArrayHelpers {
 		final T key
 	) {
 		return list.stream().anyMatch(o -> o.getId().equals(key.getId()));
+	}
+	
+	public static <T> T randomElementFromList(@NotNull List<T> list) {
+		Random random = new Random();
+		return list.get(
+			random.nextInt(list.size())
+		);
 	}
 }
