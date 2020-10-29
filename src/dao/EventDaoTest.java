@@ -1,7 +1,6 @@
 package dao;
 
 import model.Event;
-import model.EventType;
 import model.Gender;
 import model.User;
 import org.jetbrains.annotations.Nullable;

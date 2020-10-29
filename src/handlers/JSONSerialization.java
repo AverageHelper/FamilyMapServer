@@ -10,11 +10,18 @@ import com.google.gson.*;
  * This class also includes a static <code>fromJson</code> helper to instantiate objects of arbitrary types from JSON data.
  */
 public abstract class JSONSerialization implements HTTPSerialization {
+	private static @NotNull Gson getGson() {
+		return new GsonBuilder()
+			.registerTypeAdapter(Gender.class, new GenderCoder())
+			.serializeNulls()
+			.create();
+	}
+	
 	/**
 	 * @return A JSON string representing the object.
 	 */
 	public @NotNull String toJson() {
-		Gson gson = new Gson();
+		Gson gson = getGson();
 		return gson.toJson(this);
 	}
 	
@@ -43,12 +50,7 @@ public abstract class JSONSerialization implements HTTPSerialization {
 		if (jsonString.isEmpty()) {
 			throw new JsonSyntaxException("Cannot parse an empty payload");
 		}
-		Gson gson = new GsonBuilder()
-			.registerTypeAdapter(Gender.class, new ValueSerializer())
-			.registerTypeAdapter(Gender.class, new GenderDeserializer())
-			.registerTypeAdapter(EventType.class, new ValueSerializer())
-			.registerTypeAdapter(EventType.class, new EventTypeDeserializer())
-			.create();
+		Gson gson = getGson();
 		T result = gson.fromJson(jsonString, typeOfT);
 		result.assertCorrectDeserialization();
 		return result;

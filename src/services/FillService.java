@@ -42,14 +42,16 @@ public class FillService {
 		
 		AtomicInteger personCount = new AtomicInteger(0);
 		AtomicInteger eventCount = new AtomicInteger(0);
-		AtomicReference<Person> userPerson = new AtomicReference<>(null);
 		
 		// Prepare the database for fresh data
-		clearFormerData(userName, userPerson, personCount);
+		clearFormerData(userName);
+		
+		Person userPerson = newPersonForUser(userName);
+		personCount.addAndGet(1);
 		
 		// Create new generations
 		Pair<List<Person>, List<Event>> newEntries =
-			generationsFromChild(generations, userPerson.get(), userName);
+			generationsFromChild(generations, userPerson, userName);
 		
 		// Write them in
 		FillResult result = fillNewGenerations(personCount, eventCount, newEntries);
@@ -80,10 +82,10 @@ public class FillService {
 				List<Event> userEvents = newEntries.getSecond();
 				
 				for (Person person : userPersons) {
-					personDao.insert(person);
+					personDao.update(person);
 				}
 				for (Event event : userEvents) {
-					eventDao.insert(event);
+					eventDao.update(event);
 				}
 				
 				result.set(new FillResult(
@@ -107,11 +109,39 @@ public class FillService {
 	}
 	
 	
-	private void clearFormerData(
-		@NotNull String userName,
-		AtomicReference<Person> userPerson,
-		AtomicInteger personCount
-	) throws DataAccessException {
+	private @NotNull Person newPersonForUser(@NotNull String userName) throws DataAccessException {
+		// Make sure the user has a Person entry
+		AtomicReference<Person> newUserPerson = new AtomicReference<>(null);
+		db.runTransaction(conn -> {
+			UserDao userDao = new UserDao(conn);
+			PersonDao personDao = new PersonDao(conn);
+			
+			User user = userDao.find(userName);
+			
+			if (user != null) {
+				newUserPerson.set(new Person(
+					NameGenerator.newObjectIdentifier(),
+					userName,
+					user.getFirstName(),
+					user.getLastName(),
+					user.getGender(),
+					null,
+					null,
+					null
+				));
+				user.setPersonID(newUserPerson.get().getId());
+				userDao.update(user);
+				personDao.insert(newUserPerson.get());
+			}
+			
+			return true;
+		});
+		
+		return newUserPerson.get();
+	}
+	
+	
+	private void clearFormerData(@NotNull String userName) throws DataAccessException {
 		// Delete the user's old data
 		
 		db.runTransaction(conn -> {
@@ -125,40 +155,20 @@ public class FillService {
 			// Get the user's Person entry, if they have one
 			User user = userDao.find(userName);
 			if (user == null) {
-				throw new DataAccessException(SQLiteErrorCode.SQLITE_NOTFOUND, "There was no user found with the username '" + userName + "'");
-			}
-			if (user.getPersonID() != null) {
-				userPerson.set(personDao.find(user.getPersonID()));
+				throw new DataAccessException(
+					SQLiteErrorCode.SQLITE_NOTFOUND,
+					"There was no user found with the username '" + userName + "'"
+				);
 			}
 			
-			// If the user's Person has generations, remove them
+			// Eat the user's tree
 			for (Person person : userPersons) {
-				// Delete the person's events
+				personDao.delete(person.getId());
+				
 				List<Event> personEvents = eventDao.findForPerson(person.getId());
 				for (Event event : personEvents) {
 					eventDao.delete(event.getId());
 				}
-				
-				personDao.delete(person.getId());
-			}
-			
-			// Make sure the user has a Person entry
-			if (userPerson.get() == null) {
-				Person newUserPerson = new Person(
-					NameGenerator.newObjectIdentifier(),
-					userName,
-					user.getFirstName(),
-					user.getLastName(),
-					user.getGender(),
-					null,
-					null,
-					null
-				);
-				userPerson.set(newUserPerson);
-				user.setPersonID(newUserPerson.getId());
-				userDao.update(user);
-				personDao.insert(newUserPerson);
-				personCount.addAndGet(1);
 			}
 			
 			return true;
@@ -198,7 +208,10 @@ public class FillService {
 		return new Pair<>(allNewPersons, allNewEvents);
 	}
 	
-	private @NotNull Pair<List<Person>, List<Event>> generationFrom(@NotNull List<Person> oldGeneration, @NotNull String userName) throws IOException {
+	private @NotNull Pair<List<Person>, List<Event>> generationFrom(
+		@NotNull List<Person> oldGeneration,
+		@NotNull String userName
+	) throws IOException {
 		List<Person> people = new ArrayList<>();
 		List<Event> events = new ArrayList<>();
 		

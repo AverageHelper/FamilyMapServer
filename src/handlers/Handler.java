@@ -283,8 +283,8 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 				String path = exchange.getRequestURI().getPath();
 				String json = getContent(exchange);
 				
-				Server.logger.fine("Handling " +
-					exchange.getRequestMethod().toUpperCase() + " request at path " +
+				Server.logger.fine("[" + this.getClass().getName() + "] " +
+					"Handling " + exchange.getRequestMethod().toUpperCase() + " request at path " +
 					path + ": " +
 					json
 				);
