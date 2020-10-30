@@ -185,6 +185,10 @@ public class FillService {
 	
 	
 	
+	private int thisYear() {
+		return new GregorianCalendar().get(Calendar.YEAR);
+	}
+	
 	private @NotNull Pair<List<Person>, List<Event>> generationsFromChild(
 		int generations,
 		@NotNull Person child,
@@ -194,10 +198,10 @@ public class FillService {
 		// Iteratively create parents from the child, and add the new people to the array.
 		// For each generation...
 		
-		int thisYear = new GregorianCalendar().get(Calendar.YEAR);
-		int daddyAge = 26;
-		int currentChildAge = 23;
-		int fathersBirthYear = thisYear - currentChildAge - daddyAge;
+		int thisYear = this.thisYear();
+		final int DADDY_AGE = 26;
+		final int CHILD_CURRENT_AGE = 23;
+		int fathersBirthYear = thisYear - CHILD_CURRENT_AGE - DADDY_AGE;
 		
 		// Add first generation
 		Pair<List<Person>, List<Event>> firstGeneration =
@@ -211,8 +215,9 @@ public class FillService {
 		
 		for (int idx = 0; idx < generations; idx++) {
 			// Add the generation to the results
+			fathersBirthYear -= DADDY_AGE;
 			Pair<List<Person>, List<Event>> newGeneration =
-				generationFrom(generation, userName, fathersBirthYear - daddyAge);
+				generationFrom(generation, userName, fathersBirthYear);
 			generation = newGeneration.getFirst();
 			
 			allNewEvents.addAll(newGeneration.getSecond());
@@ -236,31 +241,45 @@ public class FillService {
 			Pair<Person, Person> parents = newParents(person);
 			Person father = parents.getFirst();
 			Person mother = parents.getSecond();
+			people.add(father);
+			people.add(mother);
 			if (!ArrayHelpers.containsObjectWithSameId(people, person)) {
 				people.add(person);
 			}
-			people.add(father);
-			people.add(mother);
 			
 			// Create events for them
 			// Birth
 			int birthYear2 = NumberHelpers.randomNumberAround(fathersBirthYear, 5);
 			Event dadBirth = newEvent(userName, father,
-				"Birth", fathersBirthYear);
+				"birth", fathersBirthYear);
 			Event momBirth = newEvent(userName, mother,
-				"Birth", birthYear2);
-			
-			// Marriage
-			int marriageAge = 24;
-			Event dadMarriage = newEvent(userName, father,
-				"Marriage", fathersBirthYear + marriageAge);
-			Event momMarriage = newEvent(userName, mother,
-				"Marriage", birthYear2 + marriageAge);
-			
+				dadBirth.getEventType(), birthYear2);
 			events.add(dadBirth);
 			events.add(momBirth);
+			
+			// Marriage
+			final int MARRIAGE_AGE = 24;
+			Event dadMarriage = newEvent(userName, father,
+				"marriage", fathersBirthYear + MARRIAGE_AGE);
+			Event momMarriage = newEvent(userName, mother,
+				dadMarriage.getEventType(), dadMarriage.getYear());
+			assert momMarriage.getYear() == dadMarriage.getYear();
 			events.add(dadMarriage);
 			events.add(momMarriage);
+			
+			// Death
+			final int DEATH_AGE = 85;
+			int deathYear = fathersBirthYear + DEATH_AGE;
+			int deathYear2 = NumberHelpers.randomNumberAround(DEATH_AGE, 5);
+			if (thisYear() > deathYear) {
+				Event dadDeath = newEvent(userName, father,
+					"death", deathYear);
+				Event momDeath = newEvent(userName, mother,
+					dadDeath.getEventType(), deathYear2);
+				events.add(dadDeath);
+				events.add(momDeath);
+			}
+			
 		}
 		
 		return new Pair<>(people, events);

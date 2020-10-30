@@ -5,6 +5,7 @@ import model.Event;
 import model.Person;
 import model.User;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import utilities.ArrayHelpers;
 
 import java.util.ArrayList;
@@ -21,9 +22,9 @@ public class LoadService {
 	}
 	
 	public @NotNull LoadResult load(
-		@NotNull List<User> users,
-		@NotNull List<Person> persons,
-		@NotNull List<Event> events
+		@Nullable List<User> users,
+		@Nullable List<Person> persons,
+		@Nullable List<Event> events
 	) throws DataAccessException {
 		db.clearTables();
 		
@@ -33,19 +34,25 @@ public class LoadService {
 		List<Person> personsToAdd = new ArrayList<>();
 		List<Event> eventsToAdd = new ArrayList<>();
 		
-		for (User user : users) {
-			if (!ArrayHelpers.containsObjectWithSameId(usersToAdd, user)) {
-				usersToAdd.add(user);
+		if (users != null) {
+			for (User user : users) {
+				if (!ArrayHelpers.containsObjectWithSameId(usersToAdd, user)) {
+					usersToAdd.add(user);
+				}
 			}
 		}
-		for (Person person : persons) {
-			if (!ArrayHelpers.containsObjectWithSameId(personsToAdd, person)) {
-				personsToAdd.add(person);
+		if (persons != null) {
+			for (Person person : persons) {
+				if (!ArrayHelpers.containsObjectWithSameId(personsToAdd, person)) {
+					personsToAdd.add(person);
+				}
 			}
 		}
-		for (Event event : events) {
-			if (!ArrayHelpers.containsObjectWithSameId(eventsToAdd, event)) {
-				eventsToAdd.add(event);
+		if (events != null) {
+			for (Event event : events) {
+				if (!ArrayHelpers.containsObjectWithSameId(eventsToAdd, event)) {
+					eventsToAdd.add(event);
+				}
 			}
 		}
 		

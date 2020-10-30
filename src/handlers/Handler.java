@@ -12,9 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import server.Server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
@@ -163,9 +161,11 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 		Server.logger.fine("Closing with code " + code + ": " + payload);
 		Headers responseHeaders = exchange.getResponseHeaders();
 		responseHeaders.set("Content-Type", res.contentType() + "; charset=UTF-8");
-		exchange.sendResponseHeaders(code, payload.length());
+		exchange.sendResponseHeaders(code, 0);
 		
-		exchange.getResponseBody().write(payload.getBytes(StandardCharsets.UTF_8));
+		OutputStreamWriter sw = new OutputStreamWriter(exchange.getResponseBody());
+		sw.write(payload);
+		sw.flush();
 		exchange.getResponseBody().close();
 	}
 	
@@ -340,7 +340,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 			// Respond with success
 			this.closeWithResponse(exchange, resp);
 			
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			Server.logger.severe(e.getMessage());
 			e.printStackTrace();
 			this.closeWithInternalError(exchange);

@@ -11,33 +11,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoadRequest extends JSONSerialization {
-	private final @NotNull List<User> users;
-	private final @NotNull List<Person> persons;
-	private final @NotNull List<Event> events;
+	private @Nullable List<User> users;
+	private @Nullable List<Person> persons;
+	private @Nullable List<Event> events;
 	
 	public LoadRequest() {
 		this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
 	
 	public LoadRequest(
-		@NotNull List<User> users,
-		@NotNull List<Person> persons,
-		@NotNull List<Event> events
+		@Nullable List<User> users,
+		@Nullable List<Person> persons,
+		@Nullable List<Event> events
 	) {
 		this.users = users;
 		this.persons = persons;
 		this.events = events;
 	}
 	
-	public @NotNull List<User> getUsers() {
+	public @Nullable List<User> getUsers() {
 		return users;
 	}
 	
-	public @NotNull List<Person> getPersons() {
+	public @Nullable List<Person> getPersons() {
 		return persons;
 	}
 	
-	public @NotNull List<Event> getEvents() {
+	public @Nullable List<Event> getEvents() {
 		return events;
 	}
 	
@@ -46,6 +46,9 @@ public class LoadRequest extends JSONSerialization {
 	 * @param user A <code>User</code> representation.
 	 */
 	public void addUser(@NotNull User user) {
+		if (users == null) {
+			users = new ArrayList<>();
+		}
 		users.add(user);
 	}
 	
@@ -54,6 +57,9 @@ public class LoadRequest extends JSONSerialization {
 	 * @param person A <code>Person</code> representation.
 	 */
 	public void addPerson(@NotNull Person person) {
+		if (persons == null) {
+			persons = new ArrayList<>();
+		}
 		persons.add(person);
 	}
 	
@@ -62,6 +68,9 @@ public class LoadRequest extends JSONSerialization {
 	 * @param event A <code>Event</code> representation.
 	 */
 	public void addEvent(@NotNull Event event) {
+		if (events == null) {
+			events = new ArrayList<>();
+		}
 		events.add(event);
 	}
 	
@@ -90,6 +99,9 @@ public class LoadRequest extends JSONSerialization {
 	 * @return The <code>User</code> object that was removed, or <code>null</code> if no user existed in the request with the given ID.
 	 */
 	public @Nullable User removeUser(@NotNull String userName) {
+		if (users == null) {
+			return null;
+		}
 		return removeElement(userName, users);
 	}
 	
@@ -99,6 +111,9 @@ public class LoadRequest extends JSONSerialization {
 	 * @return The <code>Person</code> object that was removed, or <code>null</code> if no object existed in the request with the given ID.
 	 */
 	public @Nullable Person removePerson(@NotNull String id) {
+		if (persons == null) {
+			return null;
+		}
 		return removeElement(id, persons);
 	}
 	
@@ -108,29 +123,29 @@ public class LoadRequest extends JSONSerialization {
 	 * @return The <code>Event</code> object that was removed, or <code>null</code> if no object existed in the request with the given ID.
 	 */
 	public @Nullable Event removeEvent(@NotNull String id) {
+		if (events == null) {
+			return null;
+		}
 		return removeElement(id, events);
 	}
 	
 	@SuppressWarnings("ConstantConditions")
 	@Override
 	public void assertCorrectDeserialization() throws MissingKeyException {
-		if (this.users == null) {
-			throw new MissingKeyException("users");
+		if (this.users != null) {
+			for (User user : users) {
+				user.assertCorrectDeserialization();
+			}
 		}
-		if (this.persons == null) {
-			throw new MissingKeyException("persons");
+		if (this.persons != null) {
+			for (Person person : persons) {
+				person.assertCorrectDeserialization();
+			}
 		}
-		if (this.events == null) {
-			throw new MissingKeyException("events");
-		}
-		for (User user : users) {
-			user.assertCorrectDeserialization();
-		}
-		for (Person person : persons) {
-			person.assertCorrectDeserialization();
-		}
-		for (Event event : events) {
-			event.assertCorrectDeserialization();
+		if (this.events != null) {
+			for (Event event : events) {
+				event.assertCorrectDeserialization();
+			}
 		}
 	}
 }

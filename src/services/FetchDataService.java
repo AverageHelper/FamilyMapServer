@@ -61,7 +61,7 @@ public class FetchDataService {
 					EventDao eventDao = new EventDao(conn);
 					if (request.getId() != null) {
 						Event event = eventDao.find(request.getId());
-						if (event != null) {
+						if (event == null) {
 							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
 							return false;
 						}
@@ -88,7 +88,7 @@ public class FetchDataService {
 					AuthTokenDao authTokenDao = new AuthTokenDao(conn);
 					if (request.getId() != null) {
 						AuthToken token = authTokenDao.find(request.getId());
-						if (token != null) {
+						if (token == null) {
 							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
 							return false;
 						}
