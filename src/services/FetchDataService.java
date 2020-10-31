@@ -2,13 +2,11 @@ package services;
 
 import dao.*;
 import handlers.FetchDataRequest;
-import model.AuthToken;
-import model.Event;
-import model.ModelData;
-import model.Person;
+import model.*;
 import org.jetbrains.annotations.NotNull;
 import server.Server;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,84 +36,192 @@ public class FetchDataService {
 		db.runTransaction(conn -> {
 			List<T> data = new ArrayList<>();
 			
-			switch (request.getTable()) {
-				case PERSON:
-					PersonDao personDao = new PersonDao(conn);
-					if (request.getId() != null) {
-						Person person = personDao.find(request.getId());
-						if (person == null) {
-							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
-							return false;
-						}
-						if (!person.getAssociatedUsername().equals(request.getUserName())) {
-							result.set(new FetchDataResult<T>(FetchDataFailureReason.UNAUTHORIZED));
-							return false;
-						}
-						data.add((T) person);
-					} else {
-						data = (List<T>) personDao.findForUser(request.getUserName());
-					}
-					break;
+			try {
+				switch (request.getTable()) {
+					case PERSON:
+						//noinspection unchecked
+						data.addAll((List<T>) fetchPersons(request, conn));
+						break;
 					
-				case EVENT:
-					EventDao eventDao = new EventDao(conn);
-					if (request.getId() != null) {
-						Event event = eventDao.find(request.getId());
-						if (event == null) {
-							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
-							return false;
-						}
-						if (!event.getAssociatedUsername().equals(request.getUserName())) {
-							result.set(new FetchDataResult<T>(FetchDataFailureReason.UNAUTHORIZED));
-							return false;
-						}
-						data.add((T) event);
-					} else {
-						data = (List<T>) eventDao.findForUser(request.getUserName());
-					}
-					break;
+					case EVENT:
+						//noinspection unchecked
+						data.addAll((List<T>) fetchEvents(request, conn));
+						break;
 					
-				case USER:
-					UserDao userDao = new UserDao(conn);
-					if (request.getId() != null) {
-						data.add((T) userDao.find(request.getId()));
-					} else {
-						data.add((T) userDao.find(request.getUserName()));
-					}
-					break;
+					case AUTH_TOKEN:
+						//noinspection unchecked
+						data.addAll((List<T>) fetchAuthTokens(request, conn));
+						break;
 					
-				case AUTH_TOKEN:
-					AuthTokenDao authTokenDao = new AuthTokenDao(conn);
-					if (request.getId() != null) {
-						AuthToken token = authTokenDao.find(request.getId());
-						if (token == null) {
-							result.set(new FetchDataResult<T>(FetchDataFailureReason.NOT_FOUND));
-							return false;
-						}
-						if (!token.getAssociatedUsername().equals(request.getUserName())) {
-							result.set(new FetchDataResult<T>(FetchDataFailureReason.UNAUTHORIZED));
-							return false;
-						}
-						data.add((T) token);
-					} else {
-						data = (List<T>) authTokenDao.findForUser(request.getUserName());
-					}
-					break;
+					case USER:
+						//noinspection unchecked
+						data.addAll((List<T>) fetchUsers(request, conn));
+						break;
 					
-				default:
-					IllegalStateException e = new IllegalStateException(
-						"Unknown request table: " + request.getTable().getName()
-					);
-					Server.logger.severe(e.getMessage());
-					e.printStackTrace();
-					throw e;
+					default:
+						IllegalStateException e = new IllegalStateException(
+							"Unknown request table: " + request.getTable().getName()
+						);
+						Server.logger.severe(e.getMessage());
+						e.printStackTrace();
+						throw e;
+				}
+				
+				result.set(new FetchDataResult<>(data));
+				
+			} catch (FetchDataFailureException e) {
+				result.set(new FetchDataResult<>(e.getReason()));
 			}
-			
-			result.set(new FetchDataResult<T>(data));
 			
 			return false;
 		});
 		
 		return result.get();
+	}
+	
+	
+	/**
+	 * Fetches <code>Person</code> entries that match details specified in the provided
+	 * <code>request</code>.
+	 *
+	 * @param request Information about the data to be returned.
+	 * @param conn The database connection.
+	 *
+	 * @return A list of matching <code>Person</code> entries.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
+	 * @throws FetchDataFailureException An exception if there is no matching data or the user
+	 * doesn't have permission to access the requested data.
+	 */
+	private @NotNull List<Person> fetchPersons(
+		@NotNull FetchDataRequest request,
+		@NotNull Connection conn
+	) throws DataAccessException, FetchDataFailureException {
+		List<Person> data = new ArrayList<>();
+		
+		PersonDao personDao = new PersonDao(conn);
+		if (request.getId() != null) {
+			Person person = personDao.find(request.getId());
+			if (person == null) {
+				throw new FetchDataFailureException(FetchDataFailureReason.NOT_FOUND);
+			}
+			if (!person.getAssociatedUsername().equals(request.getUserName())) {
+				throw new FetchDataFailureException(FetchDataFailureReason.UNAUTHORIZED);
+			}
+			data.add(person);
+		} else {
+			data = personDao.findForUser(request.getUserName());
+		}
+		
+		return data;
+	}
+	
+	
+	/**
+	 * Fetches <code>Event</code> entries that match details specified in the provided
+	 * <code>request</code>.
+	 *
+	 * @param request Information about the data to be returned.
+	 * @param conn The database connection.
+	 *
+	 * @return A list of matching <code>Event</code> entries.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
+	 * @throws FetchDataFailureException An exception if there is no matching data or the user
+	 * doesn't have permission to access the requested data.
+	 */
+	private @NotNull List<Event> fetchEvents(
+		@NotNull FetchDataRequest request,
+		@NotNull Connection conn
+	) throws DataAccessException, FetchDataFailureException {
+		List<Event> data = new ArrayList<>();
+		
+		EventDao eventDao = new EventDao(conn);
+		if (request.getId() != null) {
+			Event event = eventDao.find(request.getId());
+			if (event == null) {
+				throw new FetchDataFailureException(FetchDataFailureReason.NOT_FOUND);
+			}
+			if (!event.getAssociatedUsername().equals(request.getUserName())) {
+				throw new FetchDataFailureException(FetchDataFailureReason.UNAUTHORIZED);
+			}
+			data.add(event);
+		} else {
+			data = eventDao.findForUser(request.getUserName());
+		}
+		
+		return data;
+	}
+	
+	
+	/**
+	 * Fetches <code>AuthToken</code> entries that match details specified in the provided
+	 * <code>request</code>.
+	 *
+	 * @param request Information about the data to be returned.
+	 * @param conn The database connection.
+	 *
+	 * @return A list of matching <code>AuthToken</code> entries.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
+	 * @throws FetchDataFailureException An exception if there is no matching data or the user
+	 * doesn't have permission to access the requested data.
+	 */
+	private @NotNull List<AuthToken> fetchAuthTokens(
+		@NotNull FetchDataRequest request,
+		@NotNull Connection conn
+	) throws DataAccessException, FetchDataFailureException {
+		List<AuthToken> data = new ArrayList<>();
+		
+		AuthTokenDao authTokenDao = new AuthTokenDao(conn);
+		if (request.getId() != null) {
+			AuthToken token = authTokenDao.find(request.getId());
+			if (token == null) {
+				throw new FetchDataFailureException(FetchDataFailureReason.NOT_FOUND);
+			}
+			if (!token.getAssociatedUsername().equals(request.getUserName())) {
+				throw new FetchDataFailureException(FetchDataFailureReason.UNAUTHORIZED);
+			}
+			data.add(token);
+		} else {
+			data = authTokenDao.findForUser(request.getUserName());
+		}
+		
+		return data;
+	}
+	
+	
+	/**
+	 * Fetches <code>User</code> entries that match details specified in the provided
+	 * <code>request</code>.
+	 *
+	 * @param request Information about the data to be returned.
+	 * @param conn The database connection.
+	 *
+	 * @return A list of matching <code>User</code> entries.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
+	 * @throws FetchDataFailureException An exception if there is no matching data or the user
+	 * doesn't have permission to access the requested data.
+	 */
+	private @NotNull List<User> fetchUsers(
+		@NotNull FetchDataRequest request,
+		@NotNull Connection conn
+	) throws DataAccessException, FetchDataFailureException {
+		List<User> data = new ArrayList<>();
+		
+		UserDao userDao = new UserDao(conn);
+		User user;
+		
+		if (request.getId() != null) {
+			user = userDao.find(request.getId());
+			if (user == null) {
+				throw new FetchDataFailureException(FetchDataFailureReason.NOT_FOUND);
+			}
+		} else {
+			user = userDao.find(request.getUserName());
+		}
+		
+		if (user != null) {
+			data.add(user);
+		}
+		
+		return data;
 	}
 }

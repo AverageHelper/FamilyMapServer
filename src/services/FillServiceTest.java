@@ -27,7 +27,6 @@ class FillServiceTest {
 	
 	private Database db;
 	private FillService service;
-	private User user;
 	private static final String TEST_USER_ID = "bob";
 	private static final String INITIAL_PERSON_ID = "test_person";
 	
