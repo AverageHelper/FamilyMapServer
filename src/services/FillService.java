@@ -3,13 +3,13 @@ package services;
 import dao.*;
 import model.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.sqlite.SQLiteErrorCode;
 import server.Server;
 import utilities.*;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -32,19 +32,24 @@ public class FillService {
 	 *
 	 * @return An object that describes the event.
 	 * @throws DataAccessException An exception if there was an error accessing the database.
+	 * @throws IOException An exception if there was an error generating person or event data.
 	 */
 	public @NotNull FillResult fill(@NotNull String userName, int generations) throws DataAccessException, IOException {
-		assert generations >= 0;
-		assert !userName.isEmpty();
+		if (userName.isEmpty()) {
+			throw new IllegalArgumentException("Username must not be empty");
+		}
+		if (generations < 0) {
+			throw new IllegalArgumentException("Generation count must be positive or 0");
+		}
 		
-		AtomicInteger personCount = new AtomicInteger(0);
-		AtomicInteger eventCount = new AtomicInteger(0);
+		int personCount = 0;
+		int eventCount = 0;
 		
 		// Prepare the database for fresh data
 		clearFormerData(userName);
 		
 		Person userPerson = newPersonForUser(userName);
-		personCount.addAndGet(1);
+		personCount += 1;
 		
 		// Create new generations
 		Pair<List<Person>, List<Event>> newEntries =
@@ -62,10 +67,20 @@ public class FillService {
 	}
 	
 	
-	
+	/**
+	 * Writes new <code>Person</code> and <code>Event</code> entries to the database.
+	 *
+	 * @param personCount The number of persons written so far. This is added to the number
+	 *                    of provided <code>Person</code> entries.
+	 * @param eventCount The number of events written so far. This is added to the number of
+	 *                   provided <code>Event</code> entries.
+	 * @param newEntries The persons and events to write.
+	 * @return The result of the operation.
+	 * @throws DataAccessException An exception if there was a problem writing to the database.
+	 */
 	private @NotNull FillResult fillNewGenerations(
-		AtomicInteger personCount,
-		AtomicInteger eventCount,
+		int personCount,
+		int eventCount,
 		Pair<List<Person>, List<Event>> newEntries
 	) throws DataAccessException {
 		AtomicReference<FillResult> result = new AtomicReference<>(null);
@@ -86,8 +101,8 @@ public class FillService {
 				}
 				
 				result.set(new FillResult(
-					userPersons.size() + personCount.get(),
-					userEvents.size() + eventCount.get()
+					userPersons.size() + personCount,
+					userEvents.size() + eventCount
 				));
 				return true;
 			});
@@ -106,7 +121,20 @@ public class FillService {
 	}
 	
 	
-	private @NotNull Person newPersonForUser(@NotNull String userName) throws DataAccessException {
+	/**
+	 * Creates a new <code>Person</code> entry for the user with the provided
+	 * <code>userName</code>. If the user already has a <code>Person</code> entry, then that
+	 * one is deleted and recreated.
+	 *
+	 * @param userName The ID of the user to modify.
+	 * @return The new <code>Person</code> entry.
+	 * @throws DataAccessException An exception if there was a problem writing to the database.
+	 */
+	public @NotNull Person newPersonForUser(@NotNull String userName) throws DataAccessException {
+		if (userName.isEmpty()) {
+			throw new IllegalArgumentException("Username must not be empty");
+		}
+		
 		// Make sure the user has a Person entry
 		AtomicReference<Person> newUserPerson = new AtomicReference<>(null);
 		db.runTransaction(conn -> {
@@ -149,9 +177,19 @@ public class FillService {
 	}
 	
 	
-	private void clearFormerData(@NotNull String userName) throws DataAccessException {
-		// Delete the user's old data
+	/**
+	 * Deletes all <code>Person</code> and <code>Event</code> entries for the user with the
+	 * provided <code>userName</code>.
+	 *
+	 * @param userName The ID of the user whose data to clear.
+	 * @throws DataAccessException An exception if the write fails.
+	 */
+	public void clearFormerData(@NotNull String userName) throws DataAccessException {
+		if (userName.isEmpty()) {
+			throw new IllegalArgumentException("Username must not be empty");
+		}
 		
+		// Delete the user's old data
 		db.runTransaction(conn -> {
 			UserDao userDao = new UserDao(conn);
 			PersonDao personDao = new PersonDao(conn);
@@ -184,109 +222,196 @@ public class FillService {
 	}
 	
 	
-	
-	private int thisYear() {
+	/**
+	 * @return The current Gregorian year as an integer.
+	 */
+	public int thisYear() {
 		return new GregorianCalendar().get(Calendar.YEAR);
 	}
 	
-	private @NotNull Pair<List<Person>, List<Event>> generationsFromChild(
+	private static final int DADDY_AGE = 23;
+	private static final int CHILD_CURRENT_AGE = 23;
+	private static final int MARRIAGE_AGE = 24;
+	private static final int DEATH_AGE = 85;
+	
+	
+	/**
+	 * Creates realistic <code>Person</code> and <code>Event</code> entries for the given number
+	 * of <code>generations</code> prior to the given <code>child</code>, each tied to the
+	 * provided <code>userName</code>. No new data is written to the database.
+	 *
+	 * @param generations The number of generations of events and people to generate.
+	 * @param child The root of the new family tree.
+	 * @param userName The ID of the user who owns the new records.
+	 *
+	 * @return A <code>Pair</code> of lists containing the new <code>Person</code> and
+	 * <code>Event</code> entries, respectively.
+	 * @throws IOException An exception if there was a problem accessing the bank of random names.
+	 */
+	public @NotNull Pair<List<Person>, List<Event>> generationsFromChild(
 		int generations,
 		@NotNull Person child,
 		@NotNull String userName
 	) throws IOException {
+		if (userName.isEmpty()) {
+			throw new IllegalArgumentException("Username must not be empty");
+		}
+		if (generations < 0) {
+			throw new IllegalArgumentException("Generations must be positive or 0");
+		}
 		
 		// Iteratively create parents from the child, and add the new people to the array.
 		// For each generation...
 		
 		int thisYear = this.thisYear();
-		final int DADDY_AGE = 26;
-		final int CHILD_CURRENT_AGE = 23;
 		int fathersBirthYear = thisYear - CHILD_CURRENT_AGE - DADDY_AGE;
+		Server.logger.finest(
+			"This year is " + thisYear + ". Father was born in " + fathersBirthYear + "."
+		);
 		
-		// Add first generation
-		Pair<List<Person>, List<Event>> firstGeneration =
-			generationFrom(Collections.singletonList(child), userName, fathersBirthYear);
+		List<Person> allNewPersons = new ArrayList<>();
+		List<Event> allNewEvents = new ArrayList<>();
 		
-		List<Person> generation = new ArrayList<>(firstGeneration.getFirst());
-		List<Event> allNewEvents = new ArrayList<>(firstGeneration.getSecond());
-		generations -= 1;
+		List<Person> generation = new ArrayList<>(Collections.singletonList(child));
 		
-		List<Person> allNewPersons = new ArrayList<>(generation);
+		if (generations == 0) {
+			allNewPersons.add(child);
+		}
+		
+		// Add the user's birth event
+		Event userBirth = newEvent(userName, child,
+			"birth", thisYear() - CHILD_CURRENT_AGE, null);
+		allNewEvents.add(userBirth);
 		
 		for (int idx = 0; idx < generations; idx++) {
-			// Add the generation to the results
 			fathersBirthYear -= DADDY_AGE;
-			Pair<List<Person>, List<Event>> newGeneration =
-				generationFrom(generation, userName, fathersBirthYear);
-			generation = newGeneration.getFirst();
+			List<Person> newGeneration = new ArrayList<>();
 			
-			allNewEvents.addAll(newGeneration.getSecond());
-			allNewPersons.addAll(generation);
+			// Create parents for each person in the previous generation
+			for (Person person : generation) {
+				Pair<List<Person>, List<Event>> family =
+					parentalGenerationFromChild(person, userName, fathersBirthYear);
+				for (Person newPerson : family.getFirst()) {
+					ArrayHelpers.updateElementInList(allNewPersons, newPerson);
+					ArrayHelpers.updateElementInList(allNewPersons, child);
+				}
+				allNewEvents.addAll(family.getSecond());
+				newGeneration.addAll(family.getFirst());
+			}
+			
+			generation = newGeneration;
 		}
 		
 		return new Pair<>(allNewPersons, allNewEvents);
 	}
 	
-	private @NotNull Pair<List<Person>, List<Event>> generationFrom(
-		@NotNull List<Person> oldGeneration,
+	
+	
+	
+	/**
+	 * Creates realistic <code>Person</code> and <code>Event</code> entries for a single
+	 * generation past the given <code>child</code>, each tied to the
+	 * provided <code>userName</code>. No new data is written to the database.
+	 *
+	 * @param child The child from which to generate parents and events.
+	 * @param fathersBirthYear The approximate birth year of the previous generation.
+	 * @param userName The ID of the user who owns the new records.
+	 *
+	 * @return A <code>Pair</code> of lists containing the new <code>Person</code> and
+	 * <code>Event</code> entries, respectively. These represent the parents of the given child
+	 * only.
+	 * @throws IOException An exception if there was a problem accessing the bank of random names.
+	 */
+	public @NotNull Pair<List<Person>, List<Event>> parentalGenerationFromChild(
+		@NotNull Person child,
 		@NotNull String userName,
 		int fathersBirthYear
 	) throws IOException {
+		if (userName.isEmpty()) {
+			throw new IllegalArgumentException("Username must not be empty");
+		}
+		
 		List<Person> people = new ArrayList<>();
 		List<Event> events = new ArrayList<>();
 		
-		// Create parents for each person in the previous generation
-		for (Person person : oldGeneration) {
-			// Add them to a new generation array
-			Pair<Person, Person> parents = newParents(person);
-			Person father = parents.getFirst();
-			Person mother = parents.getSecond();
-			people.add(father);
-			people.add(mother);
-			if (!ArrayHelpers.containsObjectWithSameId(people, person)) {
-				people.add(person);
-			}
-			
-			// Create events for them
-			// Birth
-			int birthYear2 = NumberHelpers.randomNumberAround(fathersBirthYear, 5);
-			Event dadBirth = newEvent(userName, father,
-				"birth", fathersBirthYear);
-			Event momBirth = newEvent(userName, mother,
-				dadBirth.getEventType(), birthYear2);
-			events.add(dadBirth);
-			events.add(momBirth);
-			
-			// Marriage
-			final int MARRIAGE_AGE = 24;
-			Event dadMarriage = newEvent(userName, father,
-				"marriage", fathersBirthYear + MARRIAGE_AGE);
-			Event momMarriage = newEvent(userName, mother,
-				dadMarriage.getEventType(), dadMarriage.getYear());
-			assert momMarriage.getYear() == dadMarriage.getYear();
-			events.add(dadMarriage);
-			events.add(momMarriage);
-			
-			// Death
-			final int DEATH_AGE = 85;
-			int deathYear = fathersBirthYear + DEATH_AGE;
-			int deathYear2 = NumberHelpers.randomNumberAround(DEATH_AGE, 5);
-			if (thisYear() > deathYear) {
-				Event dadDeath = newEvent(userName, father,
-					"death", deathYear);
-				Event momDeath = newEvent(userName, mother,
-					dadDeath.getEventType(), deathYear2);
-				events.add(dadDeath);
-				events.add(momDeath);
-			}
-			
-		}
+		// Add them to a new generation array
+		Pair<Person, Person> parents = newParents(child);
+		Person father = parents.getFirst();
+		Person mother = parents.getSecond();
+		people.add(father);
+		people.add(mother);
+		
+		// Create events for them
+		
+		// Birth
+		int birthYear2 = NumberHelpers.randomNumberAround(fathersBirthYear, 2);
+		Event dadBirth = newEvent(userName, father,
+			"birth", fathersBirthYear, null);
+		Event momBirth = newEvent(userName, mother,
+			dadBirth.getEventType(), birthYear2, null);
+		events.add(dadBirth);
+		events.add(momBirth);
+		
+		// Marriage
+		Location marriageLoc = LocationGenerator.randomLocation();
+		Event dadMarriage = newEvent(userName, father,
+			"marriage", fathersBirthYear + MARRIAGE_AGE, marriageLoc);
+		Event momMarriage = newEvent(userName, mother,
+			dadMarriage.getEventType(), dadMarriage.getYear(), marriageLoc);
+		assert momMarriage.getYear() == dadMarriage.getYear();
+		events.add(dadMarriage);
+		events.add(momMarriage);
+		
+		// Death
+		int deathYear = fathersBirthYear + DEATH_AGE;
+		int deathYear2 = NumberHelpers.randomNumberAround(fathersBirthYear + DEATH_AGE, 5);
+		assert deathYear > 1000;
+		assert deathYear2 > 1000;
+//		if (thisYear() > deathYear) {
+			Location deathLoc = LocationGenerator.randomLocation();
+			Event dadDeath = newEvent(userName, father,
+				"death", deathYear, deathLoc);
+			Event momDeath = newEvent(userName, mother,
+				dadDeath.getEventType(), deathYear2, deathLoc);
+			events.add(dadDeath);
+			events.add(momDeath);
+//		}
 		
 		return new Pair<>(people, events);
 	}
 	
-	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull String type, int year) throws IOException {
-		Location loc = LocationGenerator.randomLocation();
+	
+	
+	
+	/**
+	 * Returns a pair of new parents (ordered father then mother) for the given <code>child</code>.
+	 */
+	private @NotNull Pair<Person, Person> newParents(@NotNull Person child) throws IOException {
+		Pair<Person, Person> result = new Pair<>();
+		
+		// TODO: Add a chance for the parents to retain the child's surname
+		
+		Person father = randomPerson(Gender.MALE, child.getAssociatedUsername());
+		Person mother = randomPerson(Gender.FEMALE, child.getAssociatedUsername());
+		mother.setLastName(father.getLastName());
+		
+		father.setSpouseID(mother.getId());
+		mother.setSpouseID(father.getId());
+		
+		child.setFatherID(father.getId());
+		child.setMotherID(mother.getId());
+		
+		result.setFirst(father);
+		result.setSecond(mother);
+		
+		return result;
+	}
+	
+	
+	private @NotNull Event newEvent(@NotNull String userName, @NotNull Person person, @NotNull String type, int year, @Nullable Location loc) throws IOException {
+		if (loc == null) {
+			loc = LocationGenerator.randomLocation();
+		}
 		
 		return new Event(
 			NameGenerator.newObjectIdentifier(),
@@ -300,30 +425,6 @@ public class FillService {
 			year
 		);
 	}
-	
-	/**
-	 * Returns a pair of new parents (ordered father then mother) for the given <code>child</code>.
-	 */
-	private @NotNull Pair<Person, Person> newParents(@NotNull Person child) throws IOException {
-		Pair<Person, Person> result = new Pair<>();
-		
-		// TODO: Add a chance for the parents to retain the child's surname
-		
-		Person father = randomPerson(Gender.MALE, child.getAssociatedUsername());
-		Person mother = randomPerson(Gender.FEMALE, child.getAssociatedUsername());
-		mother.setLastName(father.getLastName());
-		father.setSpouseID(mother.getId());
-		mother.setSpouseID(father.getId());
-		
-		result.setFirst(father);
-		result.setSecond(mother);
-		
-		child.setFatherID(father.getId());
-		child.setMotherID(mother.getId());
-		
-		return result;
-	}
-	
 	
 	
 	private @NotNull Person randomPerson(

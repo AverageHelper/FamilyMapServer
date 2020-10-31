@@ -3,8 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.util.Date;
 
@@ -30,8 +29,7 @@ class AuthTokenTest {
 	}
 	
 	@ParameterizedTest
-	@NullSource
-	@EmptySource
+	@NullAndEmptySource
 	void testInit_shouldFailToSetEmptyId(String newId) {
 		assertThrows(
 			IllegalArgumentException.class,
@@ -45,8 +43,7 @@ class AuthTokenTest {
 	}
 	
 	@ParameterizedTest
-	@NullSource
-	@EmptySource
+	@NullAndEmptySource
 	void testInit_shouldFailToSetEmptyUserId(String newId) {
 		assertThrows(
 			IllegalArgumentException.class,

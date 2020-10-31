@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import utilities.NameGenerator;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +25,18 @@ class RegisterServiceTest {
 		db = new Database(Database.TEST_DATABASE_NAME);
 		service = new RegisterService(db);
 		db.clearTables();
+	}
+	
+	private int getNumberOfAuthTokens() throws DataAccessException {
+		AtomicInteger count = new AtomicInteger(0);
+		
+		db.runTransaction(conn -> {
+			AuthTokenDao authTokenDao = new AuthTokenDao(conn);
+			count.set(authTokenDao.count());
+			return false;
+		});
+		
+		return count.get();
 	}
 	
 	@Test
@@ -47,15 +60,11 @@ class RegisterServiceTest {
 		assertNotNull(token.getId());
 		assertEquals(NameGenerator.OBJECT_ID_LENGTH, token.getId().length());
 		
-		db.runTransaction(conn -> {
-			AuthTokenDao authTokenDao = new AuthTokenDao(conn);
-			assertEquals(
-				1,
-				authTokenDao.count(),
-				"No auth tokens were added to the database."
-			);
-			return false;
-		});
+		int count = getNumberOfAuthTokens();
+		assertEquals(
+			1, count,
+			"No auth tokens were added to the database."
+		);
 	}
 	
 	@Test
@@ -75,14 +84,10 @@ class RegisterServiceTest {
 		assertNull(res.getToken());
 		assertEquals(RegisterFailureReason.DUPLICATE_USERNAME, res.getFailureReason());
 		
-		db.runTransaction(conn -> {
-			AuthTokenDao authTokenDao = new AuthTokenDao(conn);
-			assertEquals(
-				1,
-				authTokenDao.count(),
-				"A token had been added to the database, but should not have been."
-			);
-			return false;
-		});
+		int count = getNumberOfAuthTokens();
+		assertEquals(
+			1, count,
+			"A token had been added to the database, but should not have been."
+		);
 	}
 }

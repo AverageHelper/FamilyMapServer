@@ -18,6 +18,15 @@ public class Server {
 	private static final int MAX_WAITING_CONNECTIONS = 12;
 	public static Logger logger;
 	
+	static {
+		try {
+			initLog(null);
+		} catch (Throwable e) {
+			System.out.println("Failed to initialize logger: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
 	private static void initLog(@Nullable Level logLevel) throws IOException {
 		if (logLevel == null) {
 			logLevel = Level.INFO;
