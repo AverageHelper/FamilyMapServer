@@ -99,13 +99,13 @@ public class Database {
 	/**
 	 * Closes the active database connection.
 	 *
-	 * When we are done manipulating the database it is important to close the connection. This will
-	 * End the transaction and allow us to either commit our changes to the database or rollback any
-	 * changes that were made before we encountered a potential error.
+	 * When we are done manipulating the database it is important to close the connection. This
+	 * will End the transaction and allow us to either commit our changes to the database or
+	 * rollback any changes that were made before we encountered a potential error.
 	 *
-	 * @implNote IMPORTANT: IF YOU FAIL TO CLOSE A CONNECTION AND TRY TO REOPEN THE DATABASE THIS WILL
-	 * CAUSE THE DATABASE TO LOCK. YOUR CODE MUST ALWAYS INCLUDE A CLOSURE OF THE DATABASE NO MATTER
-	 * WHAT ERRORS OR PROBLEMS YOU ENCOUNTER.
+	 * IMPORTANT: IF YOU FAIL TO CLOSE A CONNECTION AND TRY TO REOPEN THE DATABASE THIS WILL
+	 * CAUSE THE DATABASE TO LOCK. YOUR CODE MUST ALWAYS INCLUDE A CLOSURE OF THE DATABASE NO
+	 * MATTER WHAT ERRORS OR PROBLEMS YOU ENCOUNTER.
 	 *
 	 * @param commit Whether changes made during this connection should be saved.
 	 * @throws DataAccessException An exception if there was an issue closing the connection.
@@ -139,6 +139,12 @@ public class Database {
 	 * If any exceptions are thrown during the transaction, then the connection is automatically
 	 * closed without committing changes.
 	 *
+	 * @param transaction The database transaction. This runnable receives a database connection
+	 *                    that is open for the duration of the runtime of
+	 *                    <code>runTransaction</code>. Return <code>true</code> to commit changes
+	 *                    to the database, or <code>false</code> to close the connection without
+	 *                    saving.
+	 *
 	 * @throws DataAccessException An exception if a database error occurs in the transaction body.
 	 */
 	public void runTransaction(@NotNull DatabaseTransaction transaction) throws DataAccessException {
@@ -171,14 +177,6 @@ public class Database {
 				);
 			}
 		}
-	}
-	
-	/**
-	 * Clears all database tables using the provided database connection.
-	 * @throws DataAccessException An exception if there was an issue clearing the database.
-	 */
-	public void clearTablesUsingConnection(@NotNull Connection conn) throws DataAccessException {
-		this._clearTables(conn);
 	}
 	
 	/**

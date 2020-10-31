@@ -18,6 +18,7 @@ public class ClearService {
 	 * Attempts to clear the database.
 	 *
 	 * @return A new <code>ClearResult</code> that describes the result of the operation.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
 	 */
 	public boolean clear() throws DataAccessException {
 		db.clearTables();

@@ -65,6 +65,7 @@ public class RegisterHandler extends Handler<RegisterResponse> {
 	 * @return A new auth token and the ID of the user's generated <code>Person</code>.
 	 * @throws HandlingFailureException If the login failed.
 	 * @throws DataAccessException If there was a problem accessing the database.
+	 * @throws IOException If there was a problem reading from the files of dummy data.
 	 */
 	public @NotNull Pair<@NotNull AuthToken, @NotNull String> register(
 		@NotNull String userName,

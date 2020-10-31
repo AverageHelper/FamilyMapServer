@@ -27,6 +27,7 @@ public class FetchDataService {
 	 * @param request Information about the sort of data to retrieve.
 	 * @param <T> The model type of the data to fetch.
 	 * @return The result of the fetch operation.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
 	 */
 	public <T extends ModelData> @NotNull FetchDataResult<T> fetch(
 		FetchDataRequest request

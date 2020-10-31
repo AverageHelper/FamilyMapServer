@@ -381,10 +381,12 @@ public class FillService {
 	}
 	
 	
-	
-	
 	/**
 	 * Returns a pair of new parents (ordered father then mother) for the given <code>child</code>.
+	 *
+	 * @param child The child from whom to derive a parent couple.
+	 * @return The father and mother, respectively.
+	 * @throws IOException An exception if there was a problem accessing our lists of dummy data.
 	 */
 	private @NotNull Pair<Person, Person> newParents(@NotNull Person child) throws IOException {
 		Pair<Person, Person> result = new Pair<>();

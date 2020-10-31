@@ -23,11 +23,12 @@ public class RegisterService {
 	}
 	
 	/**
-	 * Registers a new user.
+	 * Registers a new user and generates 4 generations of fake family tree data for them.
 	 *
 	 * @param request Information about the new user's account.
-	 * @throws DataAccessException An exception if there was a problem accessing the database.
 	 * @return The result of the request.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
+	 * @throws IOException An exception if there was a problem filling family tree data.
 	 */
 	public @NotNull RegisterResult register(RegisterRequest request) throws DataAccessException, IOException {
 		User newUser = new User(

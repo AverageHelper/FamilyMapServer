@@ -36,6 +36,7 @@ public class ClearHandler extends Handler<ClearResponse> {
 	
 	/**
 	 * Attempts to clear the database.
+	 * @return An object that represents the successful clearing of the database.
 	 * @throws DataAccessException If the operation fails.
 	 */
 	public @NotNull ClearResponse clear() throws DataAccessException {

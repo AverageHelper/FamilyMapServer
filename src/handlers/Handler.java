@@ -18,7 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A class that extends this class has access to the main database.
+ * A type that extends this class handles HTTP responses.
+ *
+ * @param <Response> The type of serializable response that this handler can return to callers.
  */
 public abstract class Handler<Response extends HTTPSerialization> implements HttpHandler {
 	protected final @NotNull Database database;
@@ -60,7 +62,10 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 	 * @param path The request's path string.
 	 * @param userName The ID of the signed-in user, or <code>null</code> if the user is not signed in.
 	 * @param req The JSON payload of the request.
+	 * @return The serializable response that should be sent back to the client.
 	 * @throws DataAccessException An exception if there was a problem accessing the database.
+	 * @throws HandlingFailureException An exception if there was a problem handling the request.
+	 * @throws IOException An exception if there was a problem accessing the local disk.
 	 */
 	public abstract @NotNull Response run(@NotNull String path, @Nullable String userName, @NotNull String req) throws DataAccessException, HandlingFailureException, IOException;
 	
@@ -120,6 +125,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 	 * Checks the database for a user that matches the given auth token.
 	 *
 	 * @param authToken The token to check.
+	 * @throws DataAccessException An exception if there was a problem accessing the database.
 	 * @return The username associated with the auth token if the token is not <code>null</code> and is valid.
 	 */
 	private @Nullable String usernameForAuthToken(
@@ -150,6 +156,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 	 * @param exchange The HTTP exchange.
 	 * @param res The response object to send.
 	 * @param code The HTTP response code to send. Defaults to <code>OK</code> (200).
+	 * @param <T> The type of object to be serialized into a transportable payload.
 	 * @throws IOException An exception if there is an error sending the response.
 	 */
 	private <T extends HTTPSerialization> void closeWithResponse(
@@ -179,6 +186,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 	 *
 	 * @param exchange The HTTP exchange.
 	 * @param res The response object to send.
+	 * @param <T> The type of object to be serialized into a transportable payload.
 	 * @throws IOException An exception if there is an error encoding the JSON payload or sending the response.
 	 */
 	private <T extends HTTPSerialization> void closeWithResponse(

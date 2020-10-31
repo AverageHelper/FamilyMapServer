@@ -179,6 +179,7 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 * @param userName The ID of the current user.
 	 * @return A list of resolved <code>Person</code> entries.
 	 * @throws HandlingFailureException If the fetch fails.
+	 * @throws DataAccessException If there was a problem accessing the database.
 	 */
 	public @NotNull List<Person> listAllPeople(@NotNull String userName) throws HandlingFailureException, DataAccessException {
 		FetchDataRequest request = new FetchDataRequest(
@@ -195,6 +196,7 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 * @param userName The ID of the current user.
 	 * @return A list of resolved <code>Event</code> entries.
 	 * @throws HandlingFailureException If the fetch fails.
+	 * @throws DataAccessException If there was a problem accessing the database.
 	 */
 	public @NotNull List<Event> listAllEvents(@NotNull String userName) throws HandlingFailureException, DataAccessException {
 		FetchDataRequest request = new FetchDataRequest(
@@ -209,8 +211,10 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 * Attempts to fetch data about a <code>Person</code> entry with the given <code>id</code>.
 	 *
 	 * @param id The ID of the person to fetch.
+	 * @param callerUserName The ID of the calling user.
 	 * @return The resolved <code>Person</code> object, or <code>null</code> if the person is not found.
 	 * @throws HandlingFailureException If the fetch fails.
+	 * @throws DataAccessException If there was a problem reading from the database.
 	 */
 	public @Nullable Person getPersonWithId(
 		@NotNull String id,
@@ -229,8 +233,10 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	 * Attempts to fetch data about an <code>Event</code> entry with the given <code>id</code>.
 	 *
 	 * @param id The ID of the person to fetch.
+	 * @param callerUserName The ID of the calling user.
 	 * @return The resolved <code>Event</code> object, or <code>null</code> if the person is not found.
 	 * @throws HandlingFailureException If the fetch fails.
+	 * @throws DataAccessException If there was a problem reading from the database.
 	 */
 	public @Nullable Event getEventWithId(
 		@NotNull String id,

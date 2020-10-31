@@ -15,6 +15,7 @@ public class FetchDataRequest extends JSONSerialization {
 	/**
 	 * Creates a <code>FetchDataRequest</code> object.
 	 * @param databaseTable The name of the type of data to fetch from the database.
+	 * @param userName The user's unique ID.
 	 */
 	public FetchDataRequest(
 		@NotNull DatabaseTable databaseTable,

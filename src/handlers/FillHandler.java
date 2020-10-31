@@ -82,6 +82,8 @@ public class FillHandler extends Handler<FillResponse> {
 	 * @param generations If provided, the number of generations to fill.
 	 * @return The result of the fill operation
 	 * @throws DataAccessException An exception if there is an error accessing the database.
+	 * @throws HandlingFailureException An exception if there was a problem handling the request.
+	 * @throws IOException An exception if there was a problem reading from local storage.
 	 */
 	public @NotNull FillResponse fill(@NotNull String username, @Nullable Integer generations) throws HandlingFailureException, DataAccessException, IOException {
 		int generationCount = 4;

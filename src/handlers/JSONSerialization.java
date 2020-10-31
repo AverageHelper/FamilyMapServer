@@ -42,6 +42,9 @@ public abstract class JSONSerialization implements HTTPSerialization {
 	 * @param typeOfT The type of object to instantiate.
 	 * @param <T> The type of object that will be instantiated.
 	 * @return A new instance of the given object type initialized with the values specified by the JSON fields.
+	 * @throws JsonParseException An exception if there was a problem parsing the JSON payload.
+	 * @throws MissingKeyException An exception if a value in the payload was found to be
+	 * <code>null</code>, but should not have been.
 	 */
 	public static <T extends JSONSerialization> @NotNull T fromJson(
 		@NotNull String jsonString,
@@ -60,6 +63,7 @@ public abstract class JSONSerialization implements HTTPSerialization {
 	 * Called by <code>JSONSerialization</code> after the object is initialized by deserializing a
 	 * JSON string. Throw an exception if any of the instance's values are <code>null</code> where
 	 * they should not be.
+	 * @throws MissingKeyException An exception that describes which key is missing from the object.
 	 */
 	public abstract void assertCorrectDeserialization() throws MissingKeyException;
 }
