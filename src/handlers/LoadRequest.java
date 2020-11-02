@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LoadRequest extends JSONSerialization {
 	private @Nullable List<User> users;
@@ -147,5 +148,20 @@ public class LoadRequest extends JSONSerialization {
 				event.assertCorrectDeserialization();
 			}
 		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		LoadRequest that = (LoadRequest) o;
+		return Objects.equals(getUsers(), that.getUsers()) &&
+			Objects.equals(getPersons(), that.getPersons()) &&
+			Objects.equals(getEvents(), that.getEvents());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(getUsers(), getPersons(), getEvents());
 	}
 }

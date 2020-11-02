@@ -112,7 +112,7 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 					// Event found!
 					return new FetchSingleEventResponse(
 						event.getAssociatedUsername(),
-						event.getPersonID(),
+						event.getId(),
 						event.getPersonID(),
 						event.getLatitude(),
 						event.getLongitude(),

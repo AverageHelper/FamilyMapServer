@@ -50,11 +50,14 @@ public abstract class Dao<T extends ModelData> {
 	 * duplicate another record's ID, then nothing changes.
 	 *
 	 * @param record The data to write.
+	 * @return <code>true</code> if a new record was written to the database.
 	 * @throws DataAccessException An exception if the write fails.
 	 */
-	public void insertIfNotExists(@NotNull T record) throws DataAccessException {
+	public boolean insertIfNotExists(@NotNull T record) throws DataAccessException {
 		try {
 			insert(record);
+			return true;
+			
 		} catch (DataAccessException e) {
 			SQLiteErrorCode code = e.getErrorCode();
 			String message = e.getMessage();
@@ -64,6 +67,8 @@ public abstract class Dao<T extends ModelData> {
 			) {
 				throw e;
 			}
+			
+			return false;
 		}
 	}
 	
