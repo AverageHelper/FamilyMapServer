@@ -28,6 +28,7 @@ public abstract class Handler<Response extends HTTPSerialization> implements Htt
 	
 	public Handler() {
 		this(new Database<>(DatabaseTable.values()));
+		database.setLogger(Server.logger);
 	}
 	
 	public Handler(@NotNull Database<DatabaseTable> database) {

@@ -1,6 +1,8 @@
 package server;
 
 import com.sun.net.httpserver.HttpServer;
+import dao.DatabaseTable;
+import database.Database;
 import handlers.*;
 import handlers.FileHandler;
 import org.jetbrains.annotations.Nullable;
@@ -96,24 +98,26 @@ public class Server {
 		// Use the default executor
 		server.setExecutor(null);
 		
+		logger.info("Starting database");
+		Database<DatabaseTable> db = new Database<>(DatabaseTable.values());
+		db.setLogger(logger);
+		
 		logger.info("Creating contexts");
 		
 		// Users
-		server.createContext("/user/register", new RegisterHandler());
-		server.createContext("/user/login", new LoginHandler());
+		server.createContext("/user/register", new RegisterHandler(db));
+		server.createContext("/user/login", new LoginHandler(db));
 		
 		// Delete everything
-		server.createContext("/clear", new ClearHandler());
+		server.createContext("/clear", new ClearHandler(db));
 		
 		// Add entries
-		server.createContext("/fill", new FillHandler());
-		server.createContext("/load", new LoadHandler());
+		server.createContext("/fill", new FillHandler(db));
+		server.createContext("/load", new LoadHandler(db));
 		
 		// Fetch entries
-//		server.createContext("/person/[personId]", new FetchDataHandler());
-		server.createContext("/person", new FetchDataHandler());
-//		server.createContext("/event/[eventId]", new FetchDataHandler());
-		server.createContext("/event", new FetchDataHandler());
+		server.createContext("/person", new FetchDataHandler(db));
+		server.createContext("/event", new FetchDataHandler(db));
 		
 		// Normal file requests
 		server.createContext("/", new FileHandler());
