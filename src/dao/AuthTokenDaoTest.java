@@ -12,7 +12,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AuthTokenDaoTest {
-	private Database db;
+	private Database<DatabaseTable> db;
 	private AuthTokenDao authTokenDao;
 	private AuthToken testToken;
 	
@@ -25,7 +25,7 @@ class AuthTokenDaoTest {
 			true
 		);
 		
-		db = new Database();
+		db = new Database<>(DatabaseTable.values());
 		db.clearTables();
 		
 		Connection conn = db.getConnection();

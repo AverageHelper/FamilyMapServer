@@ -29,12 +29,12 @@ class LoadServiceTest {
 	
 	private static final String TEST_USER_ID = "test_user";
 	
-	private Database db;
+	private Database<DatabaseTable> db;
 	private LoadService service;
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		db = new Database(Database.TEST_DATABASE_NAME);
+		db = new Database<>(Database.TEST_DATABASE_NAME, DatabaseTable.values());
 		service = new LoadService(db);
 		db.clearTables();
 	}

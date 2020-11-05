@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * An object that manages the reading and writing of <code>Event</code> records in the database.
  */
-public class EventDao extends Dao<Event> {
+public class EventDao extends Dao<Event, DatabaseTable> {
 	/**
 	 * Creates an <code>EventDao</code> object.
 	 *

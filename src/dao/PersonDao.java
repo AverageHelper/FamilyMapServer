@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * An object that manages the reading and writing of <code>Person</code> records in the database.
  */
-public class PersonDao extends Dao<Person> {
+public class PersonDao extends Dao<Person, DatabaseTable> {
 	/**
 	 * Creates a <code>PersonDao</code> object.
 	 *

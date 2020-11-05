@@ -3,6 +3,7 @@ package services;
 import dao.AuthTokenDao;
 import dao.DataAccessException;
 import dao.Database;
+import dao.DatabaseTable;
 import handlers.RegisterRequest;
 import model.AuthToken;
 import model.Gender;
@@ -16,13 +17,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterServiceTest {
-	private Database db;
+	private Database<DatabaseTable> db;
 	private RegisterService service;
 	private final String testUsername = "test_user";
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		db = new Database(Database.TEST_DATABASE_NAME);
+		db = new Database<>(Database.TEST_DATABASE_NAME, DatabaseTable.values());
 		service = new RegisterService(db);
 		db.clearTables();
 	}

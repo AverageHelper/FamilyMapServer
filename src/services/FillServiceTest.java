@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FillServiceTest {
 	
-	private Database db;
+	private Database<DatabaseTable> db;
 	private FillService service;
 	private static final String TEST_USER_ID = "bob";
 	private static final String INITIAL_PERSON_ID = "test_person";
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		db = new Database(Database.TEST_DATABASE_NAME);
+		db = new Database<>(Database.TEST_DATABASE_NAME, DatabaseTable.values());
 		service = new FillService(db);
 		db.clearTables();
 	}

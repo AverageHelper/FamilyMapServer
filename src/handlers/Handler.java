@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpHandler;
 import dao.AuthTokenDao;
 import dao.DataAccessException;
 import dao.Database;
+import dao.DatabaseTable;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,13 +24,13 @@ import java.util.concurrent.atomic.AtomicReference;
  * @param <Response> The type of serializable response that this handler can return to callers.
  */
 public abstract class Handler<Response extends HTTPSerialization> implements HttpHandler {
-	protected final @NotNull Database database;
+	protected final @NotNull Database<DatabaseTable> database;
 	
 	public Handler() {
-		this(new Database());
+		this(new Database<>(DatabaseTable.values()));
 	}
 	
-	public Handler(@NotNull Database database) {
+	public Handler(@NotNull Database<DatabaseTable> database) {
 		this.database = database;
 	}
 	

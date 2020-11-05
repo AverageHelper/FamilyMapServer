@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FetchDataServiceTest {
 	
-	private Database db;
+	private Database<DatabaseTable> db;
 	private FetchDataService service;
 	private static final String TEST_USER_ID = "bob";
 	private static final String TEST_PERSON_ID = "test_person";
@@ -27,7 +27,7 @@ class FetchDataServiceTest {
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		db = new Database(Database.TEST_DATABASE_NAME);
+		db = new Database<>(Database.TEST_DATABASE_NAME, DatabaseTable.values());
 		service = new FetchDataService(db);
 		db.clearTables();
 	}

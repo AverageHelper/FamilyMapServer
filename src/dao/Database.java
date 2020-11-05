@@ -14,20 +14,22 @@ import java.util.logging.Level;
 /**
  * A proxy to create and manage low-level interactions with the database.
  */
-public class Database {
+public class Database<Table extends IDatabaseTable> {
 	private static final String CREATE_TABLES_FILE = "CreateTables.txt";
 	public static final String MAIN_DATABASE_NAME = "familymap.sqlite";
 	public static final String TEST_DATABASE_NAME = "familymap_tests.sqlite";
 	
 	private final @NotNull String databaseName;
 	private @Nullable Connection conn;
+	private final Table[] databaseTables;
 	
-	public Database() {
-		this(MAIN_DATABASE_NAME);
+	public Database(Table[] databaseTables) {
+		this(MAIN_DATABASE_NAME, databaseTables);
 	}
 	
-	public Database(@NotNull String databaseName) {
+	public Database(@NotNull String databaseName, Table[] databaseTables) {
 		this.databaseName = databaseName;
+		this.databaseTables = databaseTables;
 		
 		try (Connection conn = DriverManager.getConnection(this.databaseUrl())) {
 			// Create tables if they don't exist
@@ -158,9 +160,7 @@ public class Database {
 	}
 	
 	private void _clearTables(@NotNull Connection conn) throws DataAccessException {
-		DatabaseTable[] tables = DatabaseTable.values();
-		
-		for (DatabaseTable table : tables) {
+		for (Table table : databaseTables) {
 			// It seems that PreparedStatement doesn't take table names.
 			String sql = "DELETE FROM " + table.getName();
 			

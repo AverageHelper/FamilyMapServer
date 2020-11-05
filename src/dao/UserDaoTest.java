@@ -12,7 +12,7 @@ import java.sql.Connection;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserDaoTest {
-	private Database db;
+	private Database<DatabaseTable> db;
 	private UserDao userDao;
 	private User testUser;
 	
@@ -28,7 +28,7 @@ class UserDaoTest {
 			null
 		);
 		
-		db = new Database();
+		db = new Database<>(DatabaseTable.values());
 		db.clearTables();
 		
 		Connection conn = db.getConnection();

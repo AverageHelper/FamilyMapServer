@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseTest {
 	
-	Database db;
+	Database<DatabaseTable> db;
 	
 	@BeforeEach
 	void setUp() {
-		db = new Database(Database.TEST_DATABASE_NAME);
+		db = new Database<>(Database.TEST_DATABASE_NAME, DatabaseTable.values());
 	}
 	
 	@Test

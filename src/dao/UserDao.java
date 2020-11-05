@@ -9,7 +9,7 @@ import java.sql.*;
 /**
  * An object that manages the reading and writing of <code>User</code> records in the database.
  */
-public class UserDao extends Dao<User> {
+public class UserDao extends Dao<User, DatabaseTable> {
 	/**
 	 * Creates a <code>UserDao</code> object.
 	 *

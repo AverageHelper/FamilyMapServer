@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventDaoTest {
-	private Database db;
+	private Database<DatabaseTable> db;
 	private UserDao userDao;
 	private EventDao eventDao;
 	private User testUser;
@@ -55,7 +55,7 @@ class EventDaoTest {
 			2020
 		);
 		
-		db = new Database();
+		db = new Database<>(DatabaseTable.values());
 		db.clearTables();
 		
 		Connection conn = db.getConnection();

@@ -2,7 +2,7 @@ package dao;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum DatabaseTable {
+public enum DatabaseTable implements IDatabaseTable {
 	// Defined by the database schema
 	AUTH_TOKEN("AuthToken", "id"),
 	EVENT("Event", "id"),
@@ -17,16 +17,12 @@ public enum DatabaseTable {
 		this.primaryKey = primaryKey;
 	}
 	
-	/**
-	 * @return The name of the database table.
-	 */
+	@Override
 	public @NotNull String getName() {
 		return name;
 	}
 	
-	/**
-	 * @return The name of the table's primary key.
-	 */
+	@Override
 	public @NotNull String getPrimaryKey() {
 		return this.primaryKey;
 	}

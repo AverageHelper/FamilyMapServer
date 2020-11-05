@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClearServiceTest {
-	private Database db;
+	private Database<DatabaseTable> db;
 	private ClearService service;
 	private final String testTokenId = "this_authorizes_test_user";
 	private final String testEventId = "test_event";
@@ -63,7 +63,7 @@ class ClearServiceTest {
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		db = new Database(Database.TEST_DATABASE_NAME);
+		db = new Database<>(Database.TEST_DATABASE_NAME, DatabaseTable.values());
 		service = new ClearService(db);
 		db.clearTables();
 	}

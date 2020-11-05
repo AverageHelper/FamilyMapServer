@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Objects that extend this class manage the reading and writing of records in the database.
  */
-public abstract class Dao<T extends ModelData> {
+public abstract class Dao<T extends ModelData, Table extends IDatabaseTable> {
 	protected @NotNull Connection connection;
 	
 	public Dao(@NotNull Connection connection) {
@@ -25,9 +25,9 @@ public abstract class Dao<T extends ModelData> {
 	/**
 	 * The name of the database table associated with records managed by this DAO.
 	 *
-	 * @return A <code>DatabaseTable</code> instance that represents records' table name.
+	 * @return An object that represents records' table name and primary key.
 	 */
-	protected abstract @NotNull DatabaseTable table();
+	protected abstract @NotNull Table table();
 	
 	
 	

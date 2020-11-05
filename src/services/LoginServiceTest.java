@@ -2,6 +2,7 @@ package services;
 
 import dao.DataAccessException;
 import dao.Database;
+import dao.DatabaseTable;
 import handlers.LoginRequest;
 import handlers.RegisterRequest;
 import model.Gender;
@@ -13,14 +14,14 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoginServiceTest {
-	private Database db;
+	private Database<DatabaseTable> db;
 	private LoginService service;
 	private final String testUsername = "test_user";
 	private final String testPassword = "Pa$$w0rd";
 	
 	@BeforeEach
 	void setUp() throws DataAccessException {
-		db = new Database(Database.TEST_DATABASE_NAME);
+		db = new Database<>(Database.TEST_DATABASE_NAME, DatabaseTable.values());
 		service = new LoginService(db);
 		db.clearTables();
 	}

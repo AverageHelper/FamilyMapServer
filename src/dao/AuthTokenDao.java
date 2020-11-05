@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * An object that manages the reading and writing of <code>AuthToken</code> records in the database.
  */
-public class AuthTokenDao extends Dao<AuthToken> {
+public class AuthTokenDao extends Dao<AuthToken, DatabaseTable> {
 	/**
 	 * Creates an <code>AuthTokenDao</code> object.
 	 *
