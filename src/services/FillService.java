@@ -1,6 +1,8 @@
 package services;
 
 import dao.*;
+import database.DataAccessException;
+import database.Database;
 import model.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,9 +18,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * An object that serves a single database-fill request.
  */
 public class FillService {
-	private final Database db;
+	private final Database<DatabaseTable> db;
 	
-	public FillService(@NotNull Database database) {
+	public FillService(@NotNull Database<DatabaseTable> database) {
 		this.db = database;
 	}
 	

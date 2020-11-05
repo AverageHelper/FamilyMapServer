@@ -1,6 +1,8 @@
 package services;
 
 import dao.*;
+import database.DataAccessException;
+import database.Database;
 import handlers.FetchDataRequest;
 import model.*;
 import org.jetbrains.annotations.NotNull;

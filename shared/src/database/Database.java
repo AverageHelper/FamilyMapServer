@@ -1,15 +1,13 @@
-package dao;
+package database;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.sqlite.SQLiteErrorCode;
-import server.Server;
-import utilities.FileHelpers;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.logging.Level;
+import java.util.logging.*;
 
 /**
  * A proxy to create and manage low-level interactions with the database.
@@ -22,6 +20,7 @@ public class Database<Table extends IDatabaseTable> {
 	private final @NotNull String databaseName;
 	private @Nullable Connection conn;
 	private final Table[] databaseTables;
+	private @Nullable Logger logger;
 	
 	public Database(Table[] databaseTables) {
 		this(MAIN_DATABASE_NAME, databaseTables);
@@ -40,11 +39,31 @@ public class Database<Table extends IDatabaseTable> {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			Server.logger.log(Level.SEVERE, "Error while reading CreateTables file: " + e.getMessage(), e);
+			getLogger().log(Level.SEVERE, "Error while reading CreateTables file: " + e.getMessage(), e);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			Server.logger.log(Level.SEVERE, "Error while preparing database tables: " + e.getMessage(), e);
+			getLogger().log(Level.SEVERE, "Error while preparing database tables: " + e.getMessage(), e);
 		}
+	}
+	
+	private @NotNull Logger getLogger() {
+		if (this.logger == null) {
+			// Lazy-load the logger if it doesn't exist yet.
+			logger = Logger.getLogger("org.example.shared.database.Database");
+			Level logLevel = Level.INFO;
+			logger.setLevel(logLevel);
+			logger.setUseParentHandlers(false);
+			
+			Handler consoleHandler = new ConsoleHandler();
+			consoleHandler.setLevel(logLevel);
+			consoleHandler.setFormatter(new SimpleFormatter());
+			logger.addHandler(consoleHandler);
+		}
+		return this.logger;
+	}
+	
+	public void setLogger(@NotNull Logger logger) {
+		this.logger = logger;
 	}
 	
 	private @NotNull String databaseUrl() {

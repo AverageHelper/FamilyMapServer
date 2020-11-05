@@ -1,6 +1,8 @@
 package services;
 
 import dao.*;
+import database.DataAccessException;
+import database.Database;
 import handlers.RegisterRequest;
 import model.AuthToken;
 import model.User;
@@ -16,9 +18,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * An object that serves a single user registration request.
  */
 public class RegisterService {
-	private final @NotNull Database db;
+	private final @NotNull Database<DatabaseTable> db;
 	
-	public RegisterService(@NotNull Database database) {
+	public RegisterService(@NotNull Database<DatabaseTable> database) {
 		this.db = database;
 	}
 	

@@ -1,7 +1,8 @@
 package handlers;
 
-import dao.DataAccessException;
-import dao.Database;
+import dao.DatabaseTable;
+import database.DataAccessException;
+import database.Database;
 import model.AuthToken;
 import model.Gender;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class RegisterHandler extends Handler<RegisterResponse> {
 		super();
 	}
 	
-	public RegisterHandler(@NotNull Database database) {
+	public RegisterHandler(@NotNull Database<DatabaseTable> database) {
 		super(database);
 	}
 	

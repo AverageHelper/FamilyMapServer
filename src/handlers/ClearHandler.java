@@ -1,7 +1,8 @@
 package handlers;
 
-import dao.DataAccessException;
-import dao.Database;
+import dao.DatabaseTable;
+import database.DataAccessException;
+import database.Database;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import services.ClearService;
@@ -15,7 +16,7 @@ public class ClearHandler extends Handler<ClearResponse> {
 		super();
 	}
 	
-	public ClearHandler(@NotNull Database database) {
+	public ClearHandler(@NotNull Database<DatabaseTable> database) {
 		super(database);
 	}
 	

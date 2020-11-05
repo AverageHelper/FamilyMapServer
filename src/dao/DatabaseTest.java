@@ -1,5 +1,7 @@
 package dao;
 
+import database.DataAccessException;
+import database.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

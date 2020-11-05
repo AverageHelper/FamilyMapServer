@@ -1,6 +1,6 @@
 package services;
 
-import dao.DataAccessException;
+import database.DataAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,7 +1,8 @@
 package handlers;
 
-import dao.DataAccessException;
-import dao.Database;
+import dao.DatabaseTable;
+import database.Database;
+import database.DataAccessException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import services.FillResult;
@@ -22,7 +23,7 @@ public class FillHandler extends Handler<FillResponse> {
 		super();
 	}
 	
-	public FillHandler(@NotNull Database database) {
+	public FillHandler(@NotNull Database<DatabaseTable> database) {
 		super(database);
 	}
 	

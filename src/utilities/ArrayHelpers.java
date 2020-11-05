@@ -1,5 +1,6 @@
 package utilities;
 
+import model.Identifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

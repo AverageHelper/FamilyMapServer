@@ -1,6 +1,8 @@
 package services;
 
 import dao.*;
+import database.DataAccessException;
+import database.Database;
 import handlers.JSONSerialization;
 import handlers.LoadRequest;
 import handlers.MissingKeyException;

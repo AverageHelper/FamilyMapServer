@@ -1,8 +1,8 @@
 package services;
 
-import dao.DataAccessException;
-import dao.Database;
 import dao.DatabaseTable;
+import database.DataAccessException;
+import database.Database;
 import handlers.LoginRequest;
 import handlers.RegisterRequest;
 import model.Gender;

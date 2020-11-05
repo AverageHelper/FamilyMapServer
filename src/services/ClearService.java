@@ -1,16 +1,17 @@
 package services;
 
-import dao.DataAccessException;
-import dao.Database;
+import dao.DatabaseTable;
+import database.DataAccessException;
+import database.Database;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An object that serves a single database-clear request.
  */
 public class ClearService {
-	private final Database db;
+	private final Database<DatabaseTable> db;
 	
-	public ClearService(@NotNull Database database) {
+	public ClearService(@NotNull Database<DatabaseTable> database) {
 		this.db = database;
 	}
 	

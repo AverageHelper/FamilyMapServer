@@ -1,9 +1,9 @@
 package services;
 
 import dao.AuthTokenDao;
-import dao.DataAccessException;
-import dao.Database;
 import dao.DatabaseTable;
+import database.DataAccessException;
+import database.Database;
 import handlers.RegisterRequest;
 import model.AuthToken;
 import model.Gender;

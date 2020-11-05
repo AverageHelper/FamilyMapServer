@@ -1,7 +1,8 @@
 package handlers;
 
-import dao.DataAccessException;
-import dao.Database;
+import dao.DatabaseTable;
+import database.Database;
+import database.DataAccessException;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +19,7 @@ public class LoginHandler extends Handler<LoginResponse> {
 		super();
 	}
 	
-	public LoginHandler(@NotNull Database database) {
+	public LoginHandler(@NotNull Database<DatabaseTable> database) {
 		super(database);
 	}
 	

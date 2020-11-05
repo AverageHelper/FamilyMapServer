@@ -1,6 +1,8 @@
 package handlers;
 
-import dao.*;
+import dao.DatabaseTable;
+import database.DataAccessException;
+import database.Database;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import services.LoadResult;
@@ -14,7 +16,7 @@ public class LoadHandler extends Handler<LoadResponse> {
 		super();
 	}
 	
-	public LoadHandler(@NotNull Database database) {
+	public LoadHandler(@NotNull Database<DatabaseTable> database) {
 		super(database);
 	}
 	

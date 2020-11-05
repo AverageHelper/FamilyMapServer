@@ -1,9 +1,10 @@
 package services;
 
 import dao.AuthTokenDao;
-import dao.DataAccessException;
-import dao.Database;
+import dao.DatabaseTable;
 import dao.UserDao;
+import database.DataAccessException;
+import database.Database;
 import handlers.LoginRequest;
 import model.AuthToken;
 import model.User;
@@ -17,9 +18,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * An object that serves a single user login request.
  */
 public class LoginService {
-	private final @NotNull Database db;
+	private final @NotNull Database<DatabaseTable> db;
 	
-	public LoginService(@NotNull Database database) {
+	public LoginService(@NotNull Database<DatabaseTable> database) {
 		this.db = database;
 	}
 	

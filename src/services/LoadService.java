@@ -1,6 +1,8 @@
 package services;
 
 import dao.*;
+import database.DataAccessException;
+import database.Database;
 import model.Event;
 import model.Person;
 import model.User;
@@ -14,9 +16,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * An object that serves a single clear-then-load request.
  */
 public class LoadService {
-	private final Database db;
+	private final Database< DatabaseTable> db;
 	
-	public LoadService(@NotNull Database database) {
+	public LoadService(@NotNull Database<DatabaseTable> database) {
 		this.db = database;
 	}
 	

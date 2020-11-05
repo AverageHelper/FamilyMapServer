@@ -1,5 +1,7 @@
 package dao;
 
+import database.DataAccessException;
+import database.Database;
 import model.AuthToken;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;

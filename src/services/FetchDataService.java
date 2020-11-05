@@ -1,6 +1,8 @@
 package services;
 
 import dao.*;
+import database.DataAccessException;
+import database.Database;
 import handlers.FetchDataRequest;
 import model.*;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +17,9 @@ import java.util.concurrent.atomic.AtomicReference;
  * An object that serves a single data-fetch request.
  */
 public class FetchDataService {
-	private final @NotNull Database db;
+	private final @NotNull Database<DatabaseTable> db;
 	
-	public FetchDataService(@NotNull Database database) {
+	public FetchDataService(@NotNull Database<DatabaseTable> database) {
 		this.db = database;
 	}
 	

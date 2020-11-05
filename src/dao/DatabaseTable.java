@@ -1,5 +1,6 @@
 package dao;
 
+import database.IDatabaseTable;
 import org.jetbrains.annotations.NotNull;
 
 public enum DatabaseTable implements IDatabaseTable {

@@ -1,5 +1,7 @@
 package dao;
 
+import database.Dao;
+import database.DataAccessException;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
 

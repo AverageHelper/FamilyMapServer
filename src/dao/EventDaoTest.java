@@ -1,5 +1,7 @@
 package dao;
 
+import database.DataAccessException;
+import database.Database;
 import model.Event;
 import model.Gender;
 import model.User;

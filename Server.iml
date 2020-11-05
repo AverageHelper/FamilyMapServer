@@ -40,5 +40,6 @@
     </orderEntry>
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="sqlite-jdbc-3.28.0" level="project" />
+    <orderEntry type="module" module-name="shared" />
   </component>
 </module>

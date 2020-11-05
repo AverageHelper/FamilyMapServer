@@ -1,8 +1,8 @@
 package handlers;
 
-import dao.DataAccessException;
-import dao.Database;
 import dao.DatabaseTable;
+import database.Database;
+import database.DataAccessException;
 import model.Event;
 import model.ModelData;
 import model.Person;
@@ -27,7 +27,7 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 		super();
 	}
 	
-	public FetchDataHandler(@NotNull Database database) {
+	public FetchDataHandler(@NotNull Database<DatabaseTable> database) {
 		super(database);
 	}
 	

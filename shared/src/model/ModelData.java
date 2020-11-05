@@ -1,7 +1,5 @@
 package model;
 
-import utilities.Identifiable;
-
 /**
  * A class of types whose instances represent records in the database.
  */
