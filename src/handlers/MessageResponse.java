@@ -1,5 +1,7 @@
 package handlers;
 
+import transport.JSONSerialization;
+import transport.MissingKeyException;
 import org.jetbrains.annotations.NotNull;
 
 public class MessageResponse extends JSONSerialization {

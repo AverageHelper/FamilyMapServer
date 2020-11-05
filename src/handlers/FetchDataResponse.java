@@ -1,5 +1,8 @@
 package handlers;
 
+import transport.JSONSerialization;
+import transport.MissingKeyException;
+
 public class FetchDataResponse extends JSONSerialization {
 	private final boolean success = true;
 	

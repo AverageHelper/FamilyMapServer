@@ -1,5 +1,6 @@
 package handlers;
 
+import transport.MissingKeyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

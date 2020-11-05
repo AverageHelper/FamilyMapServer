@@ -1,9 +1,9 @@
 package model;
 
-import handlers.JSONSerialization;
-import handlers.MissingKeyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import transport.JSONSerialization;
+import transport.MissingKeyException;
 
 import java.util.Objects;
 

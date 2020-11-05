@@ -1,6 +1,7 @@
-package handlers;
+package transport;
 
-import model.*;
+import model.Gender;
+import model.GenderCoder;
 import org.jetbrains.annotations.NotNull;
 import com.google.gson.*;
 

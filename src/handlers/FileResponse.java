@@ -1,5 +1,6 @@
 package handlers;
 
+import transport.HTTPSerialization;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.HttpURLConnection;
