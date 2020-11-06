@@ -6,6 +6,8 @@ import database.DataAccessException;
 import model.AuthToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import requests.LoginRequest;
+import responses.LoginResponse;
 import services.LoginResult;
 import services.LoginService;
 import utilities.Pair;

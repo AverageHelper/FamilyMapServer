@@ -3,7 +3,7 @@ package services;
 import dao.*;
 import database.DataAccessException;
 import database.Database;
-import handlers.RegisterRequest;
+import requests.RegisterRequest;
 import model.AuthToken;
 import model.User;
 import org.jetbrains.annotations.NotNull;

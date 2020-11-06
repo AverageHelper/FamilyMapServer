@@ -7,6 +7,8 @@ import model.AuthToken;
 import model.Gender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import requests.RegisterRequest;
+import responses.RegisterResponse;
 import services.RegisterResult;
 import services.RegisterService;
 import utilities.Pair;

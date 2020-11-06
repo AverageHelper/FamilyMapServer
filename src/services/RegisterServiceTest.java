@@ -4,7 +4,7 @@ import dao.AuthTokenDao;
 import dao.DatabaseTable;
 import database.DataAccessException;
 import database.Database;
-import handlers.RegisterRequest;
+import requests.RegisterRequest;
 import model.AuthToken;
 import model.Gender;
 import org.junit.jupiter.api.BeforeEach;

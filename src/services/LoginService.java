@@ -5,7 +5,7 @@ import dao.DatabaseTable;
 import dao.UserDao;
 import database.DataAccessException;
 import database.Database;
-import handlers.LoginRequest;
+import requests.LoginRequest;
 import model.AuthToken;
 import model.User;
 import org.jetbrains.annotations.NotNull;

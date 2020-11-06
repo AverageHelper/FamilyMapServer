@@ -1,6 +1,7 @@
 package handlers;
 
 import org.jetbrains.annotations.NotNull;
+import responses.MessageResponse;
 
 /**
  * A response to be sent to HTTP clients when something goes wrong.

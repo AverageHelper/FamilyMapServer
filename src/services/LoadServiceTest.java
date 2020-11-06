@@ -4,7 +4,7 @@ import dao.*;
 import database.DataAccessException;
 import database.Database;
 import transport.JSONSerialization;
-import handlers.LoadRequest;
+import requests.LoadRequest;
 import transport.MissingKeyException;
 import model.Event;
 import model.Gender;

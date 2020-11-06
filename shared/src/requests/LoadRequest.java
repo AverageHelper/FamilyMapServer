@@ -1,4 +1,4 @@
-package handlers;
+package requests;
 
 import model.*;
 import org.jetbrains.annotations.NotNull;

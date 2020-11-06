@@ -5,6 +5,7 @@ import database.DataAccessException;
 import database.Database;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import requests.LoadRequest;
 import services.LoadResult;
 import services.LoadService;
 

@@ -1,4 +1,4 @@
-package handlers;
+package requests;
 
 import transport.JSONSerialization;
 import transport.MissingKeyException;

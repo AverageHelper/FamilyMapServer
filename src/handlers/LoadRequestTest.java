@@ -1,5 +1,6 @@
 package handlers;
 
+import requests.LoadRequest;
 import transport.JSONSerialization;
 import transport.MissingKeyException;
 import org.junit.jupiter.api.Assertions;
