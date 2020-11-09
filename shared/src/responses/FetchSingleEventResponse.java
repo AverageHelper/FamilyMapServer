@@ -1,4 +1,4 @@
-package handlers;
+package responses;
 
 import transport.MissingKeyException;
 import org.jetbrains.annotations.NotNull;
