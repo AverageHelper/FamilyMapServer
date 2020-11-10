@@ -15,6 +15,7 @@ import server.Server;
 import services.FetchDataFailureReason;
 import services.FetchDataResult;
 import services.FetchDataService;
+import utilities.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,14 +46,69 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 	}
 	
 	@Override
-	public @NotNull FetchDataResponse run(@NotNull String path, @Nullable String userName, @NotNull String req) throws HandlingFailureException, DataAccessException {
+	public @NotNull FetchDataResponse run(
+		@NotNull String path,
+		@Nullable String userName,
+		@NotNull String req
+	) throws HandlingFailureException, DataAccessException {
 		if (userName == null) {
-			// Should never happen while `requiresAuthToken` returns `true`.
+			// -- Should never happen while `requiresAuthToken` returns `true`.
 			throw new HandlingFailureException(
 				HandlingFailureReason.USER_NOT_FOUND,
 				"No user ID was provided."
 			);
 		}
+		
+		// Get the domain and object ID (if applicable)
+		Pair<@NotNull String, @Nullable String> domainAndID = parsePath(path);
+		String domain = domainAndID.getFirst();
+		String id = domainAndID.getSecond();
+		
+		// Handle actions for each known search domain
+		switch (domain) {
+			case "person":
+				if (id != null) {
+					// Path: /person/{personID}
+					return prepareSinglePersonResponse(userName, id);
+				}
+				
+				// Path: /person
+				return new FetchMultipleItemsResponse<>(
+					listAllPeople(userName)
+				);
+				
+			case "event":
+				if (id != null) {
+					// Path: /event/{eventID}
+					return prepareSingleEventResponse(userName, id);
+				}
+				
+				// Path: /event
+				return new FetchMultipleItemsResponse<>(
+					listAllEvents(userName)
+				);
+				
+			default:
+				throw new HandlingFailureException(
+					HandlingFailureReason.BAD_INPUT,
+					"Unknown fetch domain " + domain
+				);
+		}
+	}
+	
+	
+	/**
+	 * Gets the search domain and object ID components from the provided path string.
+	 *
+	 * @param path The path string. Must begin with a "<code>/</code>" character.
+	 * @return A pair representing the domain and object ID components of the path, in that order.
+	 * The second component (the object ID) may be <code>null</code>.
+	 * @throws HandlingFailureException An exception if there were fewer path components than
+	 * expected.
+	 */
+	private @NotNull Pair<@NotNull String, @Nullable String> parsePath(
+		@NotNull String path
+	) throws HandlingFailureException {
 		// Path: /event/{eventID} or /person/{personID}
 		// Parse the path for the ID, if provided
 		List<String> components = new ArrayList<>(Arrays.asList(path.split(Pattern.quote("/"))));
@@ -72,89 +128,66 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 			id = components.get(1);
 		}
 		
-		if (domain.equals("person")) {
-			// Path: /person/{personID}
-			
-			if (id != null) {
-				// Fetch single person
-				Person person = getPersonWithId(id, userName);
-				if (person != null) {
-					// Person found!
-					return new FetchSinglePersonResponse(
-						person.getAssociatedUsername(),
-						person.getPersonID(),
-						person.getFirstName(),
-						person.getLastName(),
-						person.getGender(),
-						person.getFatherID(),
-						person.getMotherID(),
-						person.getSpouseID()
-					);
-					
-				} else {
-					// Person not found
-					throw new HandlingFailureException(
-						HandlingFailureReason.OBJECT_NOT_FOUND,
-						"No Person with ID '" + id + "'"
-					);
-				}
-				
-			} else {
-				// List all persons
-				List<Person> results = listAllPeople(userName);
-				return new FetchMultipleItemsResponse<>(results);
-			}
-			
-		} else if (domain.equals("event")) {
-			// Path: /event/{eventID}
-			
-			if (id != null) {
-				// Fetch single event
-				Event event = getEventWithId(id, userName);
-				if (event != null) {
-					// Event found!
-					return new FetchSingleEventResponse(
-						event.getAssociatedUsername(),
-						event.getId(),
-						event.getPersonID(),
-						event.getLatitude(),
-						event.getLongitude(),
-						event.getCountry(),
-						event.getCity(),
-						event.getEventType(),
-						event.getYear()
-					);
-					
-				} else {
-					// Event not found
-					throw new HandlingFailureException(
-						HandlingFailureReason.OBJECT_NOT_FOUND,
-						"No Event with ID '" + id + "'"
-					);
-				}
-				
-			} else {
-				// List all events
-				List<Event> results = listAllEvents(userName);
-				return new FetchMultipleItemsResponse<>(results);
-			}
+		return new Pair<>(domain, id);
+	}
+	
+	
+	private @NotNull FetchSinglePersonResponse prepareSinglePersonResponse(
+		@NotNull String userName,
+		@NotNull String id
+	) throws HandlingFailureException, DataAccessException {
+		Person person = getPersonWithId(id, userName);
+		if (person != null) {
+			// Person found!
+			return new FetchSinglePersonResponse(
+				person.getAssociatedUsername(),
+				person.getPersonID(),
+				person.getFirstName(),
+				person.getLastName(),
+				person.getGender(),
+				person.getFatherID(),
+				person.getMotherID(),
+				person.getSpouseID()
+			);
 			
 		} else {
+			// Person not found
 			throw new HandlingFailureException(
-				HandlingFailureReason.BAD_INPUT,
-				"Unknown fetch domain " + domain
+				HandlingFailureReason.OBJECT_NOT_FOUND,
+				"No Person with ID '" + id + "'"
 			);
 		}
 	}
 	
-	private IllegalStateException illegalState(@NotNull Object result) {
-		IllegalStateException e = new IllegalStateException(
-			"There is no valid case where a fetch result has neither value nor error, yet here we are: " + result.toString()
-		);
-		Server.logger.severe(e.getMessage());
-		e.printStackTrace();
-		return e;
+	
+	private @NotNull FetchSingleEventResponse prepareSingleEventResponse(
+		@NotNull String userName,
+		@NotNull String id
+	) throws HandlingFailureException, DataAccessException {
+		Event event = getEventWithId(id, userName);
+		if (event != null) {
+			// Event found!
+			return new FetchSingleEventResponse(
+				event.getAssociatedUsername(),
+				event.getId(),
+				event.getPersonID(),
+				event.getLatitude(),
+				event.getLongitude(),
+				event.getCountry(),
+				event.getCity(),
+				event.getEventType(),
+				event.getYear()
+			);
+			
+		} else {
+			// Event not found
+			throw new HandlingFailureException(
+				HandlingFailureReason.OBJECT_NOT_FOUND,
+				"No Event with ID '" + id + "'"
+			);
+		}
 	}
+	
 	
 	private <T extends ModelData> @NotNull List<T> performFetch(
 		@NotNull FetchDataRequest request
@@ -175,6 +208,20 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 		
 		throw illegalState(result);
 	}
+	
+	private IllegalStateException illegalState(@NotNull Object result) {
+		IllegalStateException e = new IllegalStateException(
+			"There is no valid case where a fetch result has neither value nor error, yet here we are: " + result.toString()
+		);
+		Server.logger.severe(e.getMessage());
+		e.printStackTrace();
+		return e;
+	}
+	
+	
+	
+	
+	// ** Listing Multiple Records
 	
 	/**
 	 * Attempts to fetch data about all stored <code>Person</code> entries for the current user.
@@ -209,6 +256,12 @@ public class FetchDataHandler extends Handler<FetchDataResponse> {
 		
 		return performFetch(request);
 	}
+	
+	
+	
+	
+	
+	// ** Fetching Single Records
 	
 	/**
 	 * Attempts to fetch data about a <code>Person</code> entry with the given <code>id</code>.
