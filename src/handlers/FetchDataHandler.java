@@ -9,6 +9,7 @@ import model.Person;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import responses.FetchDataResponse;
+import responses.FetchMultipleItemsResponse;
 import responses.FetchSingleEventResponse;
 import responses.FetchSinglePersonResponse;
 import server.Server;
